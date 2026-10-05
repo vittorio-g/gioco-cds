@@ -1,154 +1,174 @@
 # Collocamento — cosa dicono le simulazioni
 
-Riguarda il [regolamento](REGOLAMENTO.md) del 5 ottobre 2026: mercato dei lavoratori, un'azione per turno, poteri delle categorie, token obiettivo.
+Riguarda il [regolamento](REGOLAMENTO.md) del 5 ottobre 2026 con le ultime modifiche: 60 lavoratori e **60 ambiti**, mercato dei lavoratori, un'azione per turno, **poteri sui lavoratori**, token obiettivo.
 
 I numeri vengono da [strumenti/analisi.mjs](strumenti/analisi.mjs): 3.000 partite tra bot per ogni variante, con le regole scritte in [strumenti/regole.mjs](strumenti/regole.mjs) e il mazzo a sei simboli.
 
 I bot cercano il set che rende di più per i turni che costa (una pila, un lavoratore del mercato, un lavoro che hanno in mano) e fanno il primo passo; se non vedono niente che valga, pescano. Misurano ritmo e ordini di grandezza: un giocatore vero troverà mosse migliori, quindi i numeri vanno confermati al tavolo.
 
+Due cose non sono ancora decise e le ho fissate io per poter simulare: i 60 ambiti sono **due copie di ognuno dei 30**, e i poteri sono dati a **15 lavoratori per tipo**, a rotazione sul numero della carta. Le altre scelte sono nel capitolo 6.
+
 ## 1. In breve
 
-1. **Il mazzo degli ambiti finisce prima di tutto il resto.** Il quinto set non arriva quasi mai: la partita si chiude perché sono finite le carte. In 3 e in 4 i token obiettivo sono fuori portata.
-2. **Vince chi chiude in fretta**, non chi aspetta l'abbinamento perfetto.
-3. **I poteri 1 e 2 valgono molto più degli altri tre.** Con le regole come sono scritte i poteri 3, 4 e 5 non spostano quasi niente.
-4. **Il mercato può bloccarsi**, e le regole non dicono come uscirne.
-5. **Il bonus per le ambizioni è quasi automatico**: i set da 5 e da 7 punti praticamente non esistono.
+1. **Con 60 ambiti la partita funziona in 2 e in 3**: finisce sempre al quinto set, in circa 25 giri, e i token si assegnano. **In 4 le carte finiscono ancora prima**, nove volte su dieci.
+2. **"Pesca 2 ambiti" vale molto più degli altri tre poteri.** Chi lo ha da solo vince l'84% delle partite a tre.
+3. **"Piazza un lavoratore" e "fino a 2 formazioni" vanno a vuoto una volta su due.**
+4. **Vince chi chiude in fretta**, non chi aspetta l'abbinamento perfetto.
+5. **Il bonus per le ambizioni è quasi automatico**: nove set su dieci valgono 10 o 16 punti.
+6. **I poteri accorciano la partita di due giri e non spostano i punteggi.**
 
-## 2. Il mazzo degli ambiti
+## 2. Come va la partita
 
-Un set chiuso resta sul tavolo con tutte le sue carte: in media 2 formazioni e il lavoro, cioè 3 ambiti. Gli ambiti sono 30. Tolte le carte che restano in mano, bastano per 7 o 8 set in tutto, da dividere tra i giocatori.
-
-Con le regole come sono scritte, senza poteri:
+Con i poteri sui lavoratori, 15 per tipo:
 
 | | In 2 | In 3 | In 4 |
 |---|---|---|---|
-| Partite che finiscono perché gli ambiti sono finiti | 99% | 100% | 100% |
-| Partite in cui qualcuno arriva al quinto set | 3% | 0% | 0% |
-| Set chiusi a testa | 3,9 | 2,4 | 1,7 |
-| Punti a testa | 46 | 29 | 21 |
-| Giri | 23 | 15 | 11 |
-| Token "tre set della stessa categoria" assegnato | 33% | 6% | 0% |
-| Token "quattro categorie diverse" assegnato | 39% | 0% | 0% |
-| Turni in cui non si può fare niente | 4% | 8% | 12% |
-| Carte rimaste in mano alla fine | 2,9 | 2,5 | 2,2 |
+| Giri | 25 | 24 | 22 |
+| Partite che finiscono al quinto set | 100% | 100% | 11% |
+| Partite che finiscono perché gli ambiti sono finiti | 0% | 0% | 89% |
+| Qualcuno arriva al quinto set | 100% | 100% | 37% |
+| Set chiusi a testa | 4,7 | 4,6 | 4,0 |
+| Punti a testa | 56 | 56 | 50 |
+| Punti del vincitore | 62 | 65 | 59 |
+| Token "tre set della stessa categoria" assegnato | 57% | 66% | 61% |
+| Token "quattro categorie diverse" assegnato | 65% | 78% | 69% |
+| Vittorie per posto al tavolo | 51% · 49% | 33% · 33% · 34% | 25% · 26% · 25% · 24% |
 
-In 4 si chiudono meno di due set a testa. Per il token delle quattro categorie servono quattro set: in 3 e in 4 non ci arriva nessuno. Negli ultimi giri il mazzo è vuoto e chi non ha la carta giusta passa.
+Chi comincia non ha vantaggio.
 
-Abbassare la soglia non basta: chiudendo al terzo set, in 3 ci arriva qualcuno in una partita su due, in 4 in una su cento.
+Senza poteri la partita è la stessa, due giri più lunga: in 3 sono 27 giri, 4,6 set e 57 punti a testa.
 
-### Cosa lo sistema
+### In 4 le carte non bastano
 
-| Variante | In 2 | In 3 | In 4 |
+Un set chiuso tiene sul tavolo 3 ambiti: 2 formazioni e il lavoro. Quattro giocatori per cinque set fanno 60 carte, cioè tutto il mazzo, senza contare quelle in mano. Due modi di sistemarlo, provati in 4:
+
+| | Finisce col set che chiude | Giri | Set a testa | Punti a testa |
+|---|---|---|---|---|
+| Regole come sono | 11% | 22 | 4,0 | 50 |
+| Chiuso un set, le sue formazioni vanno negli scarti | 100% | 24 | 4,5 | 56 |
+| In 4 si chiude al quarto set | 99% | 19 | 3,5 | 43 |
+
+### Con 30 ambiti non funziona
+
+Per confronto, con una copia sola di ogni ambito le carte finiscono sempre prima: 3,9 set a testa in 2, 2,4 in 3, 1,6 in 4, e in 3 e in 4 i token non li prende quasi nessuno.
+
+## 3. I poteri dei lavoratori
+
+### Quanto vale ognuno
+
+Per misurarlo ho fatto funzionare un potere per un giocatore solo, su tutti i lavoratori, contro avversari per cui non funziona.
+
+| Potere | In 3 (alla pari: 33%) | In 4 (alla pari: 25%) |
+|---|---|---|
+| 1. Pesca 2 ambiti | vince l'84% | 72% |
+| 2. Prenota un lavoratore | 51% | 35% |
+| 4. Piazza subito un lavoratore | 42% | 28% |
+| 3. Gioca fino a 2 formazioni | 41% | 23% |
+| Tutti e quattro, 15 per tipo | 57% | — |
+
+**"Pesca 2 ambiti" è fuori scala.** Chi lo ha chiude un set in più degli altri (5,1 contro 4,1) e fa 16 punti in più. Due carte gratis sono un'azione intera risparmiata ogni volta, e non possono andare a vuoto.
+
+**Gli altri tre sono vicini tra loro e molto più deboli.**
+
+### Come vengono usati
+
+In 3, con 15 lavoratori per tipo:
+
+| Potere | Attivazioni a partita | Va a vuoto | Attesa al mercato |
 |---|---|---|---|
-| Chiuso un set, le sue formazioni vanno negli scarti (restano lavoratore e lavoro) | finisce col quinto set 100% | 100% | 6% |
-| Due copie di ogni ambito (60 carte) | 100% | 100% | 4% |
-| Tutte e due insieme | — | — | 100% |
+| 1. Pesca 2 ambiti | 3,8 | mai | 2,6 giri |
+| 2. Prenota un lavoratore | 3,5 | mai | 3,1 giri |
+| 3. Gioca fino a 2 formazioni | 2,8 | 44% | 4,0 giri |
+| 4. Piazza subito un lavoratore | 2,9 | 59% | 3,8 giri |
 
-Con una qualunque delle due, in 3 la partita dura 27 giri, si chiudono 4,6 set a testa per 58 punti, e ognuno dei due token viene assegnato in 6–8 partite su 10. In 4 ne serve una in più, oppure una soglia più bassa.
+- **"Fino a 2 formazioni" ne gioca in media 0,9.** Scatta quando inserisci un lavoratore, cioè quando la pila lo copre già: spesso copre già anche il lavoro, e in mano non ci sono le carte per cominciare un'altra pila. Con i bot usarlo fa perfino perdere punti: se tutti i lavoratori hanno questo potere la media scende da 57 a 52, probabilmente perché una carta giocata in fretta come formazione non può più fare da lavoro.
+- **"Piazza un lavoratore" chiede una seconda formazione libera già aperta**, con un lavoratore a un'icona di distanza. I bot la preparano quando possono; un giocatore attento farà meglio, ma resta un potere che va costruito in anticipo.
+- **I prenotati restano lì.** A fine partita ogni giocatore ha in media 0,7 lavoratori prenotati e mai usati.
+- **I lavoratori coi poteri deboli aspettano di più al mercato**: quasi quattro giri contro meno di tre.
 
-Rimettere le formazioni negli scarti ha un difetto: la fine "mazzo esaurito senza scarti" scatta ancora, nei momenti in cui gli scarti sono vuoti per caso. Conviene toglierla, o farla valere solo per il mazzo dei lavoratori.
+### Due correzioni provate
 
-## 3. Ritmo e punteggi
+| | Risultato |
+|---|---|
+| "Pesca" fa pescare 1 carta invece di 2 | Chi lo ha da solo vince il 58% invece dell'84%: resta il più forte, ma nella fascia degli altri. |
+| Il potere più forte ai lavoratori più difficili da accogliere (pesca ai 15 più difficili, poi prenota, piazza, formazioni) | Le attivazioni si pareggiano: 3,0 · 3,3 · 3,3 · 3,3 a partita. |
+| Il contrario (pesca ai 15 più facili) | I lavoratori difficili col potere debole restano al mercato 5,3 giri; quelli con "pesca" 1,8. |
 
-**Due formazioni per set.** Una formazione sola basta se lavoratore, formazione e lavoro hanno le stesse tre icone: 51 lavoratori su 60 hanno un ambito gemello, ma servono due ambiti uguali e quel lavoratore al mercato insieme. Con la mano iniziale si può accogliere un lavoratore del mercato con una formazione in una partita su due (33% in 2, 45% in 3, 55% in 4), con due formazioni quasi sempre.
+"Difficile da accogliere" vuol dire che poche coppie di ambiti coprono le sue tre ambizioni. I 15 più difficili sono i 12 lavoratori con Ricerca, più tre con Creatività o con due icone uguali.
+
+Dare un potere a un lavoratore su due, invece che a tutti, non cambia niente di misurabile.
+
+## 4. Ritmo e punteggi
+
+**Due formazioni per set.** Una sola basta se lavoratore, formazione e lavoro hanno le stesse tre icone: 51 lavoratori su 60 hanno un ambito gemello. Con la mano iniziale si può accogliere un lavoratore del mercato con una formazione in una partita su due circa (33% in 2, 45% in 3, 54% in 4), con due formazioni quasi sempre.
 
 **Il bonus è quasi automatico.** La pila deve coprire sia le ambizioni del lavoratore sia le icone del lavoro, quindi lavoratore e lavoro finiscono per somigliarsi.
 
 | Ambizioni che combaciano col lavoro | 0 | 1 | 2 | 3 |
 |---|---|---|---|---|
 | Punti | 5 | 7 | 10 | 16 |
-| Set chiusi così, in 3 | 0% | 4% | 61% | 35% |
+| Set chiusi così, in 3 | 0% | 11% | 57% | 31% |
 
-Un set vale 10 o 16 punti: le prime due righe della tabella non servono. La partita si decide su quanti set chiudi e su quante volte fai 16.
+La partita si decide su quanti set chiudi e su quante volte fai 16.
 
 **Vince chi fa in fretta.** Tre bot uguali tranne che per la pazienza:
 
 | | Vittorie | Punti |
 |---|---|---|
-| Chiude appena può | 52% | 31 |
-| Via di mezzo | 33% | 29 |
-| Aspetta l'abbinamento migliore | 15% | 25 |
+| Chiude appena può | 50% | 60 |
+| Via di mezzo | 32% | 56 |
+| Aspetta l'abbinamento migliore | 18% | 51 |
 
-Succede anche con le formazioni che tornano negli scarti (54%, 33%, 13%). Gli ambiti sono pochi e comuni a tutti: chi aspetta li lascia agli altri.
+Chi chiude per primo il quinto set decide quando finisce la partita, e gli altri restano con i set a metà.
 
-**Chi comincia è avvantaggiato di poco.** Vittorie per posto al tavolo: 52% e 48% in 2; 37%, 33%, 30% in 3; 27%, 25%, 24%, 24% in 4.
+**Un quarto dei turni si passa a pescare.** In 3: aprire 19%, migliorare 18%, inserire 18%, completare 19%, pescare 26%.
 
-**Un quarto dei turni si passa a pescare.** In 3: aprire 18%, migliorare 17%, inserire 16%, completare 16%, pescare 25%, niente 8%.
-
-**Il limite di mano non morde quasi mai.** In 3 si scarta una carta ogni dieci partite.
-
-## 4. I poteri
-
-Per misurare quanto vale un potere l'ho dato a un giocatore solo, su tutte le categorie, contro due che non ne hanno. In 3, alla pari vincerebbe il 33% delle volte.
-
-| Potere | Regole come sono scritte | Con le formazioni che tornano negli scarti |
-|---|---|---|
-| 1. Pesca 2 ambiti | vince il 57% | 77% |
-| 2. Tre punti in più | 69% | 67% |
-| 3. Gioca subito una formazione | 37% | 57% |
-| 4. Un lavoratore da parte | 37% | 50% |
-| 5. Piazza subito un lavoratore | 34% | 47% |
-
-- **Con le regole come sono scritte mancano le carte, non le azioni.** I poteri che fanno risparmiare un'azione (3 e 5) non valgono quasi niente. Il potere 1 prende due delle poche carte rimaste, il 2 sono punti puri.
-- **Se il mazzo viene sistemato** contano di più tutti, ma l'ordine resta: 1 e 2 davanti, 5 in fondo.
-- **Il potere 3 va a vuoto 4 volte su 10**: chi ha appena chiuso un set spesso non ha più carte in mano.
-- **Il potere 5 va a vuoto una volta su due**: serve una seconda formazione libera già aperta, con un lavoratore a un'icona di distanza. I bot la preparano quando possono; un giocatore attento farà meglio.
-
-### L'abbinamento con le categorie
-
-Senza poteri le categorie non si chiudono con la stessa frequenza. Ricerca e innovazione ha quasi tutte le icone Ricerca, che sono rare.
-
-| | Tecnica | Servizi | Organizzazione | Creatività | Ricerca |
-|---|---|---|---|---|---|
-| Set chiusi, senza poteri | 25% | 19% | 22% | 19% | 14% |
-| Poteri 5 · 3 · 4 · 1 · 2 | 20% | 18% | 19% | 24% | 19% |
-| Poteri 2 · 3 · 1 · 4 · 5 | 33% | 18% | 24% | 14% | 12% |
-
-Dare i poteri forti alle categorie che si chiudono meno le pareggia: **Tecnica 5, Servizi 3, Organizzazione 4, Creatività 1, Ricerca 2**. Il contrario porta un terzo dei set su Tecnica e lascia Ricerca al 12%.
-
-I bot scelgono sapendo quanto vale ogni potere. Un tavolo vero può valutarli diversamente, soprattutto il 5.
+**Il limite di mano conta poco.** In 3 si scarta una carta a partita. Abbassandolo a 4 se ne scartano tre e i punti scendono da 56 a 55.
 
 ## 5. Il mercato dei lavoratori
 
-- Un lavoratore aspetta in media da 3 a 4,4 giri prima che qualcuno lo prenda.
-- A fine partita uno o due lavoratori sono fermi lì da quattro giri o più. Un terzo ha Ricerca tra le ambizioni e un terzo ha due icone uguali: il doppio di quanto pesano nel mazzo.
-- Nel 15% dei turni un giocatore ha una formazione libera e nessun lavoratore che ci possa salire.
+- Un lavoratore aspetta in media 3,4 giri prima che qualcuno lo prenda.
+- A fine partita uno o due lavoratori sono fermi lì da quattro giri o più.
+- Nel 16% dei turni un giocatore ha una formazione libera e nessun lavoratore che ci possa salire.
 
-**Può bloccarsi del tutto.** In una partita su 3.000, in 2, al mercato sono rimasti due lavoratori con Ricerca quando i sei ambiti con Ricerca erano già tutti chiusi nei set. Nessuno poteva più inserire un lavoratore. I giocatori pescavano e scartavano per il limite di mano, gli scarti si rimescolavano, e il mazzo non finiva mai: secondo le regole quella partita non termina.
+**Può bloccarsi del tutto, e le regole non dicono come uscirne.** Se al mercato restano solo lavoratori che nessuno può più accogliere, nessuno inserisce più niente; si pesca, si scarta per il limite di mano, gli scarti si rimescolano e il mazzo non finisce mai. Nelle simulazioni è successo un paio di volte su decine di migliaia di partite. È raro, ma serve una regola.
 
-È raro, ma le regole non hanno un'uscita. Due modi provati in 3:
+Due varianti provate in 3:
 
-| | Set a testa | Punti a testa | Attesa al mercato |
-|---|---|---|---|
-| Regole come sono scritte | 2,4 | 28,7 | 3,6 giri |
-| Un lavoratore fermo da 3 giri viene sostituito | 2,4 | 28,7 | 1,1 giri |
-| Mercato con 2 lavoratori in più | 2,6 | 33,8 | 4,8 giri |
+| | Punti a testa | Attesa al mercato |
+|---|---|---|
+| Regole come sono | 55,8 | 3,4 giri |
+| Un lavoratore fermo da 3 giri viene sostituito | 57,0 | 1,0 giri |
+| Mercato con 2 lavoratori in più | 58,6 | 4,7 giri |
 
-Sostituire i lavoratori fermi non cambia i punteggi e toglie il blocco. Un mercato più largo fa salire i punti del 18%, perché si trova più spesso il lavoratore gemello.
+Sostituire i lavoratori fermi toglie il blocco e cambia poco i punteggi.
 
-## 6. Cose che il testo non dice
+## 6. Come ho inteso quello che non è scritto
 
-Per simulare ho dovuto scegliere. Sono le domande da chiudere nel regolamento.
+Sono le domande da chiudere nel regolamento.
 
 | Punto | Come l'ho inteso |
 |---|---|
-| Chi non può fare nessuna azione | Passa. Succede col mazzo vuoto e nessuna carta utile. |
-| Quando scatta "mazzo esaurito" | Quando si pesca l'ultima carta e non ci sono scarti. Se poi arrivano scarti, si rimescolano e si pesca ancora. |
-| Potere 5: quale lavoratore | Uno del mercato, che si ripristina, oppure uno tenuto da parte. |
-| Potere 5: l'icona ignorata vale anche dopo? | No: conta solo per salire sulla formazione. |
-| Potere 4: quanti lavoratori da parte | Quanti se ne pescano. Li può usare solo chi li ha. |
-| Potere 3 senza carte in mano | Non succede niente. |
+| I 60 ambiti | Due copie di ognuno dei 30 che abbiamo. |
+| Quali lavoratori hanno quale potere | 15 per tipo, a rotazione sul numero della carta. Tutti i lavoratori ne hanno uno. |
+| Quando si attiva il potere | Quando metti il lavoratore su una formazione con l'azione "Inserire un lavoratore", che venga dal mercato o dai prenotati. |
+| Prenotare un lavoratore attiva il suo potere? | No: si attiva quando poi lo inserisci. |
+| Potere 4: "ignorando una formazione" | L'ho letto come prima: ignorando una delle sue icone ambizione. Le altre due devono essere coperte. |
+| Potere 4: quale lavoratore e dove | Uno del mercato, che si ripristina, oppure uno prenotato; su una tua formazione libera. |
+| Potere 2: il mercato | Si ripristina subito. I prenotati non hanno limite e li usa solo chi li ha. |
+| Potere 3: quali formazioni | Carte dalla mano, per aprire pile nuove o migliorare pile non chiuse. |
+| Chi non può fare nessuna azione | Passa. |
+| Quando scatta "mazzo esaurito" | Quando si pesca l'ultima carta e non ci sono scarti. |
 | Quante pile si possono aprire | Quante se ne vuole. |
-| Il limite di mano | Riguarda gli ambiti. I lavoratori da parte non contano. |
-| Gli scarti dei lavoratori | Non esistono: nessuna regola scarta un lavoratore. Il mazzo da 60 non finisce mai. |
-| Se due giocatori raggiungono un obiettivo insieme | Non può succedere: si chiude un set alla volta. |
+| Il limite di mano | Riguarda gli ambiti. I lavoratori prenotati non contano. |
+| Le categorie | Servono solo per i token. |
 
 ## 7. Cosa guardare al tavolo
 
-1. **Come finisce la partita?** Segnate se per il quinto set o per le carte finite, e quanti set ha chiuso ognuno.
-2. **Quante formazioni per set?** Se sono quasi sempre due, il conto delle carte qui sopra regge.
-3. **Qualcuno prende un token?** In 3 e in 4, con le regole come sono scritte, non dovrebbe succedere.
-4. **Chi vince: chi chiude presto o chi aspetta il 16?**
-5. **Quanto restano fermi i lavoratori al mercato?** Segnate se qualcuno ha una formazione pronta e nessuno da metterci.
-6. **Il potere 5 si riesce a usare?** Serve una seconda formazione già aperta.
-7. **Provate una partita rimettendo le formazioni negli scarti** quando un set si chiude.
+1. **In 4, come finisce la partita?** Segnate se per il quinto set o per le carte finite.
+2. **Chi prende i lavoratori con "pesca 2 ambiti" vince?** Contate quanti ne ha preso il vincitore.
+3. **"Piazza un lavoratore" si riesce a usare?** Segnate quante volte va a vuoto.
+4. **"Fino a 2 formazioni": quante se ne giocano davvero?**
+5. **I lavoratori prenotati vengono usati?**
+6. **Chi vince: chi chiude presto o chi aspetta il 16?**
+7. **Quanto restano fermi i lavoratori al mercato?**

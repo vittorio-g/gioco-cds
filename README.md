@@ -1,6 +1,6 @@
 # Collocamento
 
-Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazzi, 60 lavoratori e 30 ambiti, con sei simboli.
+Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazzi da 60 carte, lavoratori e ambiti, con sei simboli.
 
 - **Tavolo online per provarlo:** <https://collocamento.cortivo81.workers.dev>
 - **Salvataggio per Tabletop Simulator:** [tts/Collocamento.json](tts/Collocamento.json)
@@ -11,7 +11,7 @@ Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazz
 
 | Cartella | Contenuto |
 |---|---|
-| `mazzi/` | Gli elenchi delle carte in uso, a sei simboli: `lavoratori.csv` (60) e `ambiti.csv` (30, in 5 categorie). In `dieci_simboli/` ci sono le terne stampate sui PDF originali: servono per confronto nelle simulazioni. |
+| `mazzi/` | Gli elenchi delle carte in uso, a sei simboli: `lavoratori.csv` (60) e `ambiti.csv` (30 ambiti in 5 categorie; nel mazzo ce ne sono due copie di ognuno, 60 carte). In `dieci_simboli/` ci sono le terne stampate sui PDF originali: servono per confronto nelle simulazioni. |
 | `webapp/` | Il tavolo online: un Worker di Cloudflare con un Durable Object per stanza. Non applica regole: le carte si muovono liberamente. |
 | `webapp/public/carte/` | Le carte nella versione leggera che il tavolo mostra. |
 | `webapp/public/tts/` | I fogli di carte che Tabletop Simulator scarica dal tavolo online. |
@@ -100,7 +100,7 @@ Tutte accettano anche l'indirizzo del tavolo online. Subito dopo una pubblicazio
 node strumenti/analisi.mjs
 ```
 
-Partite tra bot con le regole di [REGOLAMENTO.md](REGOLAMENTO.md), scritte in `strumenti/regole.mjs`. I numeri di [BUCHI.md](BUCHI.md) vengono da qui. Le varianti da provare (formazioni negli scarti, due copie degli ambiti, ricambio del mercato) ci sono come opzioni. Ci mette un paio di minuti.
+Partite tra bot con le regole di [REGOLAMENTO.md](REGOLAMENTO.md), scritte in `strumenti/regole.mjs`. I numeri di [BUCHI.md](BUCHI.md) vengono da qui. Le varianti da provare (formazioni negli scarti, una copia sola degli ambiti, ricambio del mercato, chi ha quale potere) ci sono come opzioni. Tutto insieme ci mette qualche minuto; `node strumenti/analisi.mjs valore bilancia` lancia solo alcune parti.
 
 ### Grafica
 

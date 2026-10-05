@@ -2,13 +2,22 @@
 // I tavoli online non le usano: sono liberi e non applicano regole.
 //
 // Un mazzo M è { lav: [{n, att}], form: [{n, cat, lav}] }: i lavoratori con le
-// loro 3 ambizioni e gli ambiti con categoria e 3 competenze. Le carte sono
-// indici in quei due elenchi (con più copie del mazzo, l'ambito è indice % 30).
+// loro 3 ambizioni e i 30 ambiti con categoria e 3 competenze. Il mazzo degli
+// ambiti ha due copie di ognuno, 60 carte: la carta c è l'ambito c % 30.
 //
-// Chi gioca è un oggetto con tre scelte che le regole lasciano al giocatore:
-//   scarta(s, M, p)   -> la carta da scartare quando si supera il limite di mano
-//   potere3(s, M, p)  -> { t: 'apri' | 'migliora', c, k } oppure null
-//   potere5(s, M, p)  -> { w, k } oppure null
+// I poteri stanno sui lavoratori e si attivano quando ne prendi uno con
+// l'azione "Inserire un lavoratore" (dal mercato o tra quelli prenotati):
+//   1  pesca 2 carte ambito
+//   2  prenota un lavoratore del mercato
+//   3  gioca subito fino a 2 formazioni
+//   4  piazza subito un lavoratore su una tua formazione libera, ignorando una
+//      delle sue ambizioni; il potere di quel lavoratore non si attiva
+//
+// Chi gioca è un oggetto con le scelte che le regole lasciano al giocatore:
+//   scarta(s, M, p)         -> la carta da scartare quando si supera il limite di mano
+//   prenota(s, M, p)        -> il lavoratore del mercato da prenotare, oppure null
+//   formazione(s, M, p, n)  -> { t: 'apri' | 'migliora', c, k } oppure null; n = quante ne ha già giocate col potere
+//   piazza(s, M, p)         -> { w, k } oppure null
 
 export const PUNTI = [5, 7, 10, 16]; // per 0, 1, 2, 3 ambizioni che combaciano col lavoro
 
@@ -18,13 +27,11 @@ export const OPZIONI = {
   pescata: 2,
   setPerFinire: 5,
   mercato: 0, // lavoratori scoperti; 0 = quanti i giocatori
-  // Per ogni categoria (01..05) il numero del potere, 0 = nessuno:
-  //   1 pesca 2 ambiti · 2 tre punti in più · 3 gioca subito una formazione
-  //   4 pesca un lavoratore e tienilo da parte · 5 piazza subito un lavoratore ignorando un'ambizione
-  poteri: [0, 0, 0, 0, 0],
-  poteriDi: null, // per misurare quanto vale un potere: lo ha solo questo giocatore (null = tutti)
+  copieAmbiti: 2, // quante copie di ogni ambito ci sono nel mazzo: 2 = 60 carte
+  poteri: null, // il potere di ogni lavoratore, nell'ordine del mazzo (0 = nessuno); null = nessuno ne ha
+  poteriDi: null, // per misurare quanto vale un potere: funziona solo per questo giocatore (null = per tutti)
   // Varianti, non nel regolamento:
-  copieAmbiti: 1, // quante copie di ogni ambito ci sono nel mazzo
+  pescaDelPotere: 2, // quante carte fa pescare il potere 1
   formazioniNegliScarti: false, // chiuso un set, le sue formazioni vanno negli scarti invece di restare sul tavolo
   ricambioMercato: 0, // dopo quanti giri un lavoratore che nessuno prende viene sostituito; 0 = mai
 };
@@ -50,6 +57,8 @@ export const mancanti = (competenze, richieste) => richieste.length - comuni(ric
 
 export const ambito = (M, c) => M.form[c % M.form.length];
 export const iconePila = (M, pila) => pila.form.flatMap((c) => ambito(M, c).lav);
+// Il potere che il giocatore p attiva prendendo il lavoratore w.
+export const poterePer = (s, p, w) => (s.o.poteri && (s.o.poteriDi == null || s.o.poteriDi === p) ? s.o.poteri[w] ?? 0 : 0);
 
 function mescola(carte, rnd) {
   const a = [...carte];
@@ -112,15 +121,16 @@ export function nuovaPartita(M, n, opzioni = {}, rnd = Math.random) {
     giro: 1,
     fine: null,
     finita: false,
-    conta: { rimescolate: 0, scartate: 0, sostituiti: 0, attesa: [], poteri: [0, 0, 0, 0, 0, 0], poteriAVuoto: [0, 0, 0, 0, 0, 0] },
+    conta: {
+      rimescolate: 0, scartate: 0, sostituiti: 0, attesa: [[], [], [], [], []], // l'attesa al mercato, per potere del lavoratore
+      poteri: [0, 0, 0, 0, 0], aVuoto: [0, 0, 0, 0, 0], formazioniDalPotere: 0,
+    },
   };
   for (const g of s.giocatori) for (let i = 0; i < o.manoIniziale; i++) g.mano.push(pescaAmbito(s, rnd));
   for (let i = 0; i < (o.mercato || n); i++) rifornisci(s);
   return s;
 }
 
-// Il potere che il giocatore p attiva chiudendo un set con un lavoro di quella categoria.
-export const poterePer = (s, p, cat) => (s.o.poteriDi == null || s.o.poteriDi === p ? s.o.poteri[Number(cat) - 1] ?? 0 : 0);
 export const puoPescare = (s) => s.mazzoAmb.length + s.scartiAmb.length > 0;
 export const lavoratoriPer = (s, p) => [...s.mercato.map((x) => x.w), ...s.giocatori[p].riserva];
 
@@ -151,18 +161,21 @@ function togli(elenco, x, messaggio) {
   elenco.splice(i, 1);
 }
 
-// Prende un lavoratore dalla riserva del giocatore o dal mercato, che si ripristina subito.
-function prendiLavoratore(s, g, w) {
-  const r = g.riserva.indexOf(w);
-  if (r >= 0) {
-    g.riserva.splice(r, 1);
-    return;
-  }
+// Toglie un lavoratore dal mercato, che si ripristina subito.
+function dalMercato(s, w) {
   const i = s.mercato.findIndex((x) => x.w === w);
-  if (i < 0) throw new Rifiuto('Quel lavoratore non è disponibile.');
-  s.conta.attesa.push(s.giro - s.mercato[i].dal);
+  if (i < 0) return false;
+  s.conta.attesa[s.o.poteri?.[w] ?? 0].push(s.giro - s.mercato[i].dal);
   s.mercato.splice(i, 1);
   rifornisci(s);
+  return true;
+}
+
+// Prende un lavoratore tra quelli prenotati dal giocatore o dal mercato.
+function prendiLavoratore(s, g, w) {
+  const r = g.riserva.indexOf(w);
+  if (r >= 0) g.riserva.splice(r, 1);
+  else if (!dalMercato(s, w)) throw new Rifiuto('Quel lavoratore non è disponibile.');
 }
 
 function giocaFormazione(s, M, g, m) {
@@ -170,6 +183,41 @@ function giocaFormazione(s, M, g, m) {
   if (m.t === 'apri') g.pile.push({ form: [m.c], lav: null });
   else if (g.pile[m.k]) g.pile[m.k].form.push(m.c);
   else throw new Rifiuto('Quella pila non c’è.');
+}
+
+// Il potere del lavoratore appena preso con l'azione "Inserire un lavoratore".
+function attiva(s, M, p, w, chi, rnd) {
+  const g = s.giocatori[p];
+  const potere = poterePer(s, p, w);
+  s.conta.poteri[potere]++;
+  if (potere === 1) {
+    for (let i = 0; i < s.o.pescaDelPotere; i++) {
+      const c = pescaAmbito(s, rnd);
+      if (c != null) g.mano.push(c);
+    }
+  } else if (potere === 2) {
+    const x = chi.prenota(s, M, p);
+    if (x != null && dalMercato(s, x)) g.riserva.push(x);
+    else s.conta.aVuoto[2]++;
+  } else if (potere === 3) {
+    let giocate = 0;
+    for (; giocate < 2; giocate++) {
+      const f = chi.formazione(s, M, p, giocate);
+      if (!f) break;
+      giocaFormazione(s, M, g, f);
+    }
+    s.conta.formazioniDalPotere += giocate;
+    if (!giocate) s.conta.aVuoto[3]++;
+  } else if (potere === 4) {
+    const f = chi.piazza(s, M, p);
+    const pila = f && g.pile[f.k];
+    if (pila && pila.lav == null && mancanti(iconePila(M, pila), M.lav[f.w].att) <= 1) {
+      prendiLavoratore(s, g, f.w);
+      pila.lav = f.w; // piazzato dal potere: il suo potere non si attiva
+    } else {
+      s.conta.aVuoto[4]++;
+    }
+  }
 }
 
 function controllaGettoni(s, g) {
@@ -199,6 +247,7 @@ export function gioca(s, M, m, chi, rnd = Math.random) {
     if (mancanti(iconePila(M, pila), M.lav[m.w].att) > 0) throw new Rifiuto('La formazione non copre le ambizioni del lavoratore.');
     prendiLavoratore(s, g, m.w);
     pila.lav = m.w;
+    attiva(s, M, p, m.w, chi, rnd);
   } else if (m.t === 'completa') {
     const pila = g.pile[m.k];
     if (!pila || pila.lav == null) throw new Rifiuto('Su quella pila non c’è un lavoratore.');
@@ -207,34 +256,9 @@ export function gioca(s, M, m, chi, rnd = Math.random) {
     togli(g.mano, m.c, 'Quella carta non è nella tua mano.');
     g.pile.splice(m.k, 1);
     const icone = comuni(M.lav[pila.lav].att, lavoro.lav);
-    const potere = poterePer(s, p, lavoro.cat);
-    const punti = PUNTI[icone] + (potere === 2 ? 3 : 0);
-    g.set.push({ form: pila.form, lav: pila.lav, lavoro: m.c, icone, punti, cat: lavoro.cat });
-    g.punti += punti;
+    g.set.push({ form: pila.form, lav: pila.lav, lavoro: m.c, icone, punti: PUNTI[icone], cat: lavoro.cat });
+    g.punti += PUNTI[icone];
     if (o.formazioniNegliScarti) s.scartiAmb.push(...pila.form);
-    s.conta.poteri[potere]++;
-    if (potere === 1) {
-      for (let i = 0; i < 2; i++) {
-        const c = pescaAmbito(s, rnd);
-        if (c != null) g.mano.push(c);
-      }
-    } else if (potere === 3) {
-      const f = chi.potere3(s, M, p);
-      if (f) giocaFormazione(s, M, g, f);
-      else s.conta.poteriAVuoto[3]++;
-    } else if (potere === 4) {
-      const w = pescaLavoratore(s);
-      if (w != null) g.riserva.push(w);
-    } else if (potere === 5) {
-      const f = chi.potere5(s, M, p);
-      const pila5 = f && g.pile[f.k];
-      if (pila5 && pila5.lav == null && mancanti(iconePila(M, pila5), M.lav[f.w].att) <= 1) {
-        prendiLavoratore(s, g, f.w);
-        pila5.lav = f.w;
-      } else {
-        s.conta.poteriAVuoto[5]++;
-      }
-    }
     controllaGettoni(s, g);
     if (g.set.length >= o.setPerFinire) scatta(s, 'set');
   } else if (m.t === 'pesca') {
