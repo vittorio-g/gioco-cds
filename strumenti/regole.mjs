@@ -1,44 +1,36 @@
-// Regole di Collocamento, per le simulazioni (strumenti/analisi.mjs).
-// La webapp non le usa: il tavolo online è libero e non applica regole.
+// Regole di Collocamento (REGOLAMENTO.md), per le simulazioni di strumenti/analisi.mjs.
+// I tavoli online non le usano: sono liberi e non applicano regole.
 //
-// Ci sono due mazzi: i lavoratori (3 attitudini) e gli ambiti (una terna di
-// icone, che si gioca come formazione o come lavoro). Un mazzo M è
-// { lav: [{n, att}], form: [{n, cat, lav}] } e le carte sono indici in quei due elenchi.
+// Un mazzo M è { lav: [{n, att}], form: [{n, cat, lav}] }: i lavoratori con le
+// loro 3 ambizioni e gli ambiti con categoria e 3 competenze. Le carte sono
+// indici in quei due elenchi (con più copie del mazzo, l'ambito è indice % 30).
 //
-// Oltre alle regole del regolamento ci sono, come opzioni, le proposte ancora
-// da decidere: servono a confrontarle con le partite tra bot.
+// Chi gioca è un oggetto con tre scelte che le regole lasciano al giocatore:
+//   scarta(s, M, p)   -> la carta da scartare quando si supera il limite di mano
+//   potere3(s, M, p)  -> { t: 'apri' | 'migliora', c, k } oppure null
+//   potere5(s, M, p)  -> { w, k } oppure null
 
-export const BASE = 5;
-export const PREMIO = [0, 3, 7, 12];
-
-// Una richiesta che le regole non permettono: il testo va mostrato al giocatore.
-export class Rifiuto extends Error {
-  constructor(testo, codice = null) {
-    super(testo);
-    this.codice = codice;
-  }
-}
+export const PUNTI = [5, 7, 10, 16]; // per 0, 1, 2, 3 ambizioni che combaciano col lavoro
 
 export const OPZIONI = {
-  attitudiniNelRequisito: false, // le attitudini contano anche per coprire il lavoro
-  premioOspite: 0, // carte fisse in piu' per chi ospita, oltre a 1 per attitudine
-  occupatiPerFinire: 0, // 0 = automatico in base al numero di giocatori
-  manoLavoratori: 2,
-  manoCarte: 2,
-  campoComune: false, // si può mettere un ambito sopra una formazione libera, di chiunque sia
-  premioA: 'apre', // chi prende il premio quando un lavoratore entra: 'apre' (chi aveva aperto, se entra un altro) o 'entra'
-  premioScelta: false, // ogni carta di premio si può pescare oppure usare per giocare una carta in più
+  manoIniziale: 3,
+  limiteMano: 6,
+  pescata: 2,
+  setPerFinire: 5,
+  mercato: 0, // lavoratori scoperti; 0 = quanti i giocatori
+  // Per ogni categoria (01..05) il numero del potere, 0 = nessuno:
+  //   1 pesca 2 ambiti · 2 tre punti in più · 3 gioca subito una formazione
+  //   4 pesca un lavoratore e tienilo da parte · 5 piazza subito un lavoratore ignorando un'ambizione
+  poteri: [0, 0, 0, 0, 0],
+  poteriDi: null, // per misurare quanto vale un potere: lo ha solo questo giocatore (null = tutti)
+  // Varianti, non nel regolamento:
+  copieAmbiti: 1, // quante copie di ogni ambito ci sono nel mazzo
+  formazioniNegliScarti: false, // chiuso un set, le sue formazioni vanno negli scarti invece di restare sul tavolo
+  ricambioMercato: 0, // dopo quanti giri un lavoratore che nessuno prende viene sostituito; 0 = mai
 };
 
-export function occupatiPerFinire(nGiocatori) {
-  return { 2: 5, 3: 4, 4: 3 }[nGiocatori] ?? 3;
-}
-
-function righe(csv) {
-  return csv.trim().split(/\r?\n/).slice(1).map((r) => r.split(',').map((x) => x.trim()));
-}
-export const leggiLavoratori = (csv) => righe(csv).map(([n, ...att]) => ({ n, att }));
-export const leggiAmbiti = (csv) => righe(csv).map(([n, cat, ...lav]) => ({ n, cat, lav }));
+// Una mossa che le regole non permettono.
+export class Rifiuto extends Error {}
 
 // Icone che combaciano una per una (intersezione di multinsiemi).
 export function comuni(a, b) {
@@ -53,16 +45,11 @@ export function comuni(a, b) {
   }
   return n;
 }
+// Quante delle icone richieste non sono coperte dalle competenze.
+export const mancanti = (competenze, richieste) => richieste.length - comuni(richieste, competenze);
 
-// Icone del lavoro che le competenze non coprono.
-export function mancanti(competenze, lavoro) {
-  return lavoro.length - comuni(lavoro, competenze);
-}
-
-export function competenze(M, colonna, opzioni) {
-  const c = colonna.form.flatMap((f) => M.form[f].lav);
-  return opzioni.attitudiniNelRequisito ? c.concat(M.lav[colonna.lav].att) : c;
-}
+export const ambito = (M, c) => M.form[c % M.form.length];
+export const iconePila = (M, pila) => pila.form.flatMap((c) => ambito(M, c).lav);
 
 function mescola(carte, rnd) {
   const a = [...carte];
@@ -73,306 +60,226 @@ function mescola(carte, rnd) {
   return a;
 }
 
-export function nuovaPartita(M, nomi, opzioni = {}, rnd = Math.random) {
+// La fine della partita scatta una volta sola: si chiude il giro in corso e se ne gioca un altro.
+function scatta(s, motivo) {
+  if (!s.fine) s.fine = { motivo, giro: s.giro, da: s.turno };
+}
+
+function pescaAmbito(s, rnd) {
+  if (!s.mazzoAmb.length && s.scartiAmb.length) {
+    s.mazzoAmb = mescola(s.scartiAmb, rnd);
+    s.scartiAmb = [];
+    s.conta.rimescolate++;
+  }
+  if (!s.mazzoAmb.length) return null;
+  const c = s.mazzoAmb.pop();
+  if (!s.mazzoAmb.length) {
+    if (s.scartiAmb.length) {
+      s.mazzoAmb = mescola(s.scartiAmb, rnd);
+      s.scartiAmb = [];
+      s.conta.rimescolate++;
+    } else {
+      scatta(s, 'ambiti');
+    }
+  }
+  return c;
+}
+
+function pescaLavoratore(s) {
+  if (!s.mazzoLav.length) return null;
+  const w = s.mazzoLav.pop();
+  if (!s.mazzoLav.length) scatta(s, 'lavoratori'); // i lavoratori non hanno scarti
+  return w;
+}
+
+function rifornisci(s) {
+  const w = pescaLavoratore(s);
+  if (w != null) s.mercato.push({ w, dal: s.giro });
+}
+
+export function nuovaPartita(M, n, opzioni = {}, rnd = Math.random) {
   const o = { ...OPZIONI, ...opzioni };
   const s = {
-    opzioni: o,
-    soglia: o.occupatiPerFinire || occupatiPerFinire(nomi.length),
-    giocatori: nomi.map((nome) => ({
-      nome, lavoratori: [], carte: [], libere: [], colonne: [], occupati: [], punti: 0, credito: 0,
-    })),
+    o,
+    n,
+    giocatori: Array.from({ length: n }, () => ({ mano: [], pile: [], set: [], riserva: [], punti: 0, gettoni: {} })),
+    mazzoAmb: mescola(Array.from({ length: M.form.length * o.copieAmbiti }, (_, i) => i), rnd),
+    scartiAmb: [],
     mazzoLav: mescola(M.lav.map((_, i) => i), rnd),
-    mazzoFor: mescola(M.form.map((_, i) => i), rnd),
-    scarti: [],
-    impilate: {}, // per ogni formazione libera, gli ambiti messi sopra prima che arrivi un lavoratore
-    primo: Math.floor(rnd() * nomi.length),
-    turno: 0,
+    mercato: [], // { w, dal }: il lavoratore e il giro in cui è stato scoperto
+    gettoni: { uguali: [5, 3], diverse: [5, 3] },
+    turno: 0, // comincia sempre il giocatore 0
     giro: 1,
-    attesa: 'gioca', // il giocatore di turno deve 'gioca' una carta, poi 'pesca'
-    fase: 'gioco',
-    chiusura: null,
-    log: [],
+    fine: null,
+    finita: false,
+    conta: { rimescolate: 0, scartate: 0, sostituiti: 0, attesa: [], poteri: [0, 0, 0, 0, 0, 0], poteriAVuoto: [0, 0, 0, 0, 0, 0] },
   };
-  s.turno = s.primo;
-  for (const g of s.giocatori) {
-    for (let i = 0; i < o.manoLavoratori; i++) g.lavoratori.push(s.mazzoLav.pop());
-    for (let i = 0; i < o.manoCarte; i++) g.carte.push(s.mazzoFor.pop());
-  }
-  nota(s, -1, `Comincia ${s.giocatori[s.primo].nome}.`);
+  for (const g of s.giocatori) for (let i = 0; i < o.manoIniziale; i++) g.mano.push(pescaAmbito(s, rnd));
+  for (let i = 0; i < (o.mercato || n); i++) rifornisci(s);
   return s;
 }
 
-function nota(s, g, testo) {
-  s.log.push({ g, testo });
-  if (s.log.length > 60) s.log.shift();
-}
+// Il potere che il giocatore p attiva chiudendo un set con un lavoro di quella categoria.
+export const poterePer = (s, p, cat) => (s.o.poteriDi == null || s.o.poteriDi === p ? s.o.poteri[Number(cat) - 1] ?? 0 : 0);
+export const puoPescare = (s) => s.mazzoAmb.length + s.scartiAmb.length > 0;
+export const lavoratoriPer = (s, p) => [...s.mercato.map((x) => x.w), ...s.giocatori[p].riserva];
 
-const pescabile = (s, quale) => (quale === 'lav' ? s.mazzoLav.length > 0 : s.mazzoFor.length + s.scarti.length > 0);
-
-function pesca(s, p, quale, rnd) {
+// Le azioni che il giocatore p può fare nel suo turno.
+export function azioni(s, M, p) {
   const g = s.giocatori[p];
-  if (quale === 'lav') {
-    if (!s.mazzoLav.length) return false;
-    g.lavoratori.push(s.mazzoLav.pop());
-    return true;
-  }
-  if (!s.mazzoFor.length && s.scarti.length) {
-    s.mazzoFor = mescola(s.scarti, rnd);
-    s.scarti = [];
-    s.rimescolate = (s.rimescolate ?? 0) + 1;
-    nota(s, -1, 'Il mazzo degli ambiti è finito: si rimescolano gli scarti.');
-  }
-  if (!s.mazzoFor.length) return false;
-  g.carte.push(s.mazzoFor.pop());
-  return true;
-}
-
-const formazioniLibere = (s) => s.giocatori.some((g) => g.libere.length > 0);
-// Una formazione libera con quello che le è stato impilato sopra.
-export const pila = (s, f) => [f, ...(s.impilate[f] ?? [])];
-export const iconePila = (s, M, f) => pila(s, f).flatMap((c) => M.form[c].lav);
-const puoGiocare = (s, p) => s.giocatori[p].carte.length > 0 || (s.giocatori[p].lavoratori.length > 0 && formazioniLibere(s));
-
-function passa(s) {
-  s.piuGiocate = Math.max(s.piuGiocate ?? 0, s.giocateNelTurno ?? 0);
-  s.giocateNelTurno = 0;
-  s.turno = (s.turno + 1) % s.giocatori.length;
-  s.attesa = 'gioca';
-  if (s.turno === s.primo) {
-    if (s.chiusura) s.fase = 'finita';
-    else s.giro++;
-  }
-}
-
-// Salta i passi che il giocatore di turno non può fare: chi non ha carte
-// giocabili pesca soltanto, chi non può pescare passa.
-function sistema(s) {
-  for (const g of s.giocatori) {
-    const p = s.giocatori.indexOf(g);
-    if (g.credito > 0 && !pescabile(s, 'lav') && !pescabile(s, 'for') && !(s.opzioni.premioScelta && puoGiocare(s, p))) g.credito = 0;
-  }
-  for (let salti = 0; s.fase === 'gioco'; salti++) {
-    if (salti > 2 * s.giocatori.length) {
-      s.fase = 'finita'; // nessuno può più giocare né pescare
-      return;
-    }
-    if (s.attesa === 'gioca') {
-      if (puoGiocare(s, s.turno)) return;
-      nota(s, s.turno, 'non può giocare nessuna carta: pesca soltanto.');
-      s.attesa = 'pesca';
-    }
-    if (pescabile(s, 'lav') || pescabile(s, 'for')) return;
-    passa(s);
-  }
-}
-
-const terna = (t) => t.join(' ');
-const carteN = (n) => `${n} ${n === 1 ? 'carta' : 'carte'}`;
-
-export function mosseLegali(s, M, p) {
-  const g = s.giocatori[p];
-  if (s.fase !== 'gioco' || !g) return [];
-  const mosse = [];
-  const pescate = () => {
-    for (const quale of ['lav', 'for']) if (pescabile(s, quale)) mosse.push({ t: 'pesca', m: quale });
-  };
-  if (g.credito > 0) pescate();
-  const diTurno = s.turno === p && s.attesa === 'gioca';
-  const conPremio = s.opzioni.premioScelta && g.credito > 0;
-  if (s.turno === p && s.attesa === 'pesca' && !g.credito) pescate();
-  if (!diTurno && !conPremio) return mosse;
-  for (const c of g.lavoratori) {
-    s.giocatori.forEach((h, di) => {
-      for (const f of h.libere) {
-        const icone = comuni(M.lav[c].att, iconePila(s, M, f));
-        const premio = s.opzioni.premioA === 'entra' ? icone : di === p ? 0 : icone + s.opzioni.premioOspite;
-        mosse.push({ t: 'entra', c, di, f, pesca: premio });
-      }
+  const A = [];
+  for (const c of g.mano) {
+    A.push({ t: 'apri', c });
+    g.pile.forEach((pila, k) => {
+      A.push({ t: 'migliora', c, k });
+      if (pila.lav != null && mancanti(iconePila(M, pila), ambito(M, c).lav) === 0) A.push({ t: 'completa', c, k });
     });
   }
-  for (const c of g.carte) {
-    mosse.push({ t: 'apri', c });
-    if (s.opzioni.campoComune) s.giocatori.forEach((h, di) => { for (const f of h.libere) mosse.push({ t: 'impila', c, di, f }); });
-    for (const col of g.colonne) {
-      mosse.push({ t: 'forma', c, col: col.lav });
-      if (mancanti(competenze(M, col, s.opzioni), M.form[c].lav) === 0) {
-        const icone = comuni(M.lav[col.lav].att, M.form[c].lav);
-        mosse.push({ t: 'lavora', c, col: col.lav, icone, punti: BASE + PREMIO[icone] });
-      }
-    }
-  }
-  return mosse;
+  g.pile.forEach((pila, k) => {
+    if (pila.lav != null) return;
+    const icone = iconePila(M, pila);
+    for (const w of lavoratoriPer(s, p)) if (mancanti(icone, M.lav[w].att) === 0) A.push({ t: 'inserisci', w, k });
+  });
+  if (puoPescare(s)) A.push({ t: 'pesca' });
+  if (!A.length) A.push({ t: 'passa' });
+  return A;
 }
 
-function togli(elenco, carta, messaggio) {
-  const i = elenco.indexOf(carta);
+function togli(elenco, x, messaggio) {
+  const i = elenco.indexOf(x);
   if (i < 0) throw new Rifiuto(messaggio);
   elenco.splice(i, 1);
 }
 
-// Esegue una mossa del giocatore p. Nel suo turno gioca una carta, poi pesca
-// dal mazzo che sceglie. Chi ha ospitato un lavoratore pesca quando vuole.
-export function applica(s, M, p, m, rnd = Math.random) {
-  if (s.fase !== 'gioco') throw new Rifiuto('La partita non è in corso.');
-  const g = s.giocatori[p];
-  if (!g) throw new Rifiuto('Non sei al tavolo.');
-
-  if (m.t === 'pesca') {
-    const quale = m.m === 'lav' ? 'lav' : 'for';
-    const premio = g.credito > 0;
-    if (!premio && !(s.turno === p && s.attesa === 'pesca')) throw new Rifiuto('Ora non devi pescare.');
-    if (!pesca(s, p, quale, rnd)) throw new Rifiuto('Quel mazzo è finito.');
-    if (premio) {
-      g.credito--;
-      if (!pescabile(s, 'lav') && !pescabile(s, 'for')) g.credito = 0;
-    } else {
-      passa(s);
-    }
-    sistema(s);
-    if (s.fase === 'finita') nota(s, -1, 'Partita finita.');
+// Prende un lavoratore dalla riserva del giocatore o dal mercato, che si ripristina subito.
+function prendiLavoratore(s, g, w) {
+  const r = g.riserva.indexOf(w);
+  if (r >= 0) {
+    g.riserva.splice(r, 1);
     return;
   }
-
-  const diTurno = s.turno === p && s.attesa === 'gioca';
-  const conPremio = !diTurno && s.opzioni.premioScelta && g.credito > 0;
-  if (!diTurno && !conPremio) {
-    if (s.turno !== p) throw new Rifiuto('Non è il tuo turno.');
-    throw new Rifiuto('Hai già giocato: ora pesca una carta.');
-  }
-  if (conPremio) g.credito--;
-  s.giocateNelTurno = (s.giocateNelTurno ?? 0) + 1;
-
-  if (m.t === 'impila') {
-    if (!s.opzioni.campoComune) throw new Rifiuto('Su una formazione senza lavoratore non si impila.');
-    const padrone = s.giocatori[m.di];
-    if (!padrone || !padrone.libere.includes(m.f)) throw new Rifiuto('Quella formazione non è più libera.');
-    togli(g.carte, m.c, 'Quella carta non è nella tua mano.');
-    (s.impilate[m.f] ??= []).push(m.c);
-    nota(s, p, `impila ${terna(M.form[m.c].lav)} sulla formazione ${terna(M.form[m.f].lav)}.`);
-  } else if (m.t === 'entra') {
-    const padrone = s.giocatori[m.di];
-    if (!padrone || !padrone.libere.includes(m.f)) throw new Rifiuto('Quella formazione non è più libera.');
-    togli(g.lavoratori, m.c, 'Quel lavoratore non è nella tua mano.');
-    togli(padrone.libere, m.f);
-    // Il lavoratore va sulla formazione e resta lì: la colonna è di chi l'ha mandato.
-    const formazioni = pila(s, m.f);
-    delete s.impilate[m.f];
-    g.colonne.push({ lav: m.c, form: formazioni, presso: m.di });
-    const lavoratore = M.lav[m.c];
-    const chi = `il lavoratore ${lavoratore.n} (${terna(lavoratore.att)})`;
-    const iconeEntrata = comuni(lavoratore.att, formazioni.flatMap((c) => M.form[c].lav));
-    if (s.opzioni.premioA === 'entra') {
-      g.credito += iconeEntrata;
-      nota(s, p, `mette ${chi} su una formazione: ${iconeEntrata} attitudini combaciano.`);
-    } else if (m.di === p) {
-      nota(s, p, `mette ${chi} sulla sua formazione ${terna(M.form[m.f].lav)}.`);
-    } else {
-      const icone = iconeEntrata;
-      const premio = icone + s.opzioni.premioOspite;
-      padrone.credito += premio;
-      nota(
-        s,
-        p,
-        `manda ${chi} da ${padrone.nome}, sulla formazione ${terna(M.form[m.f].lav)}: ` +
-          `${icone} ${icone === 1 ? 'attitudine combacia' : 'attitudini combaciano'}, ` +
-          `${padrone.nome} pesca ${carteN(premio)}.`,
-      );
-    }
-  } else if (m.t === 'apri') {
-    togli(g.carte, m.c, 'Quella carta non è nella tua mano.');
-    g.libere.push(m.c);
-    nota(s, p, `apre la formazione ${terna(M.form[m.c].lav)}.`);
-  } else if (m.t === 'forma' || m.t === 'lavora') {
-    const col = g.colonne.find((x) => x.lav === m.col);
-    if (!col) throw new Rifiuto('Quel lavoratore non è tuo.');
-    if (!g.carte.includes(m.c)) throw new Rifiuto('Quella carta non è nella tua mano.');
-    const lavoratore = M.lav[col.lav];
-    const carta = M.form[m.c];
-    if (m.t === 'forma') {
-      togli(g.carte, m.c);
-      col.form.push(m.c);
-      nota(s, p, `aggiunge la formazione ${terna(carta.lav)} al lavoratore ${lavoratore.n}.`);
-    } else {
-      if (mancanti(competenze(M, col, s.opzioni), carta.lav) > 0) {
-        throw new Rifiuto('Le competenze del lavoratore non coprono tutte le icone del lavoro.');
-      }
-      const icone = comuni(lavoratore.att, carta.lav);
-      const punti = BASE + PREMIO[icone];
-      togli(g.carte, m.c);
-      g.colonne.splice(g.colonne.indexOf(col), 1);
-      g.occupati.push({ lav: col.lav, lavoro: m.c, icone, punti, form: col.form.length });
-      g.punti += punti;
-      s.scarti.push(...col.form);
-      nota(
-        s,
-        p,
-        `manda a lavorare il lavoratore ${lavoratore.n} (${terna(lavoratore.att)}) ` +
-          `come ${terna(carta.lav)}: ${punti} punti.`,
-      );
-      if (!s.chiusura && g.occupati.length >= s.soglia) {
-        s.chiusura = { da: p };
-        nota(s, -1, `${g.nome} ha ${s.soglia} occupati: si chiude il giro e la partita finisce.`);
-      }
-    }
-  } else {
-    throw new Rifiuto('Mossa sconosciuta.');
-  }
-
-  if (!conPremio) s.attesa = 'pesca';
-  sistema(s);
-  if (s.fase === 'finita') nota(s, -1, 'Partita finita.');
+  const i = s.mercato.findIndex((x) => x.w === w);
+  if (i < 0) throw new Rifiuto('Quel lavoratore non è disponibile.');
+  s.conta.attesa.push(s.giro - s.mercato[i].dal);
+  s.mercato.splice(i, 1);
+  rifornisci(s);
 }
 
-// Classifica finale: punti, poi numero di lavoratori da 17.
-export function classifica(s) {
-  return s.giocatori
-    .map((g, i) => ({
-      i,
-      nome: g.nome,
-      punti: g.punti,
-      occupati: g.occupati.length,
-      perfetti: g.occupati.filter((o) => o.icone === 3).length,
-    }))
-    .sort((a, b) => b.punti - a.punti || b.perfetti - a.perfetti);
+function giocaFormazione(s, M, g, m) {
+  togli(g.mano, m.c, 'Quella carta non è nella tua mano.');
+  if (m.t === 'apri') g.pile.push({ form: [m.c], lav: null });
+  else if (g.pile[m.k]) g.pile[m.k].form.push(m.c);
+  else throw new Rifiuto('Quella pila non c’è.');
 }
 
-// Quello che il giocatore p può vedere. Le carte in mano agli altri e i mazzi
-// sono coperti: se ne conosce solo il numero. p = -1 per uno spettatore.
-// Ogni colonna compare nella zona del giocatore che ha aperto la formazione.
-export function vista(s, M, p) {
-  const lavoratore = (id) => ({ id, n: M.lav[id].n, att: M.lav[id].att });
-  const carta = (id) => ({ id, lav: M.form[id].lav });
-  const tutte = s.giocatori.flatMap((g, di) => g.colonne.map((c) => ({ c, di })));
-  return {
-    fase: s.fase,
-    turno: s.turno,
-    attesa: s.attesa,
-    giro: s.giro,
-    chiusura: s.chiusura,
-    soglia: s.soglia,
-    opzioni: s.opzioni,
-    io: p,
-    mazzi: { lav: s.mazzoLav.length, for: s.mazzoFor.length, scarti: s.scarti.length },
-    giocatori: s.giocatori.map((g, i) => ({
-      nome: g.nome,
-      punti: g.punti,
-      credito: g.credito,
-      mano: { lavoratori: g.lavoratori.length, carte: g.carte.length },
-      lavoratori: i === p ? g.lavoratori.map(lavoratore) : null,
-      carte: i === p ? g.carte.map(carta) : null,
-      libere: g.libere.map(carta),
-      colonne: tutte
-        .filter(({ c }) => c.presso === i)
-        .map(({ c, di }) => ({ di, lav: lavoratore(c.lav), form: c.form.map(carta), comp: competenze(M, c, s.opzioni) })),
-      occupati: g.occupati.map((o) => ({
-        lav: lavoratore(o.lav),
-        lavoro: M.form[o.lavoro].lav,
-        icone: o.icone,
-        punti: o.punti,
-      })),
-    })),
-    mosse: mosseLegali(s, M, p),
-    classifica: s.fase === 'finita' ? classifica(s) : null,
-    log: s.log,
+function controllaGettoni(s, g) {
+  const perCategoria = {};
+  for (const x of g.set) perCategoria[x.cat] = (perCategoria[x.cat] ?? 0) + 1;
+  const prendi = (quale, raggiunto) => {
+    if (g.gettoni[quale] || !raggiunto || !s.gettoni[quale].length) return;
+    g.gettoni[quale] = s.gettoni[quale].shift();
+    g.punti += g.gettoni[quale];
   };
+  prendi('uguali', Object.values(perCategoria).some((n) => n >= 3));
+  prendi('diverse', Object.keys(perCategoria).length >= 4);
+}
+
+// Esegue l'azione del giocatore di turno, con i poteri e il limite di mano, e passa il turno.
+export function gioca(s, M, m, chi, rnd = Math.random) {
+  if (s.finita) throw new Rifiuto('La partita è finita.');
+  const p = s.turno;
+  const g = s.giocatori[p];
+  const o = s.o;
+
+  if (m.t === 'apri' || m.t === 'migliora') {
+    giocaFormazione(s, M, g, m);
+  } else if (m.t === 'inserisci') {
+    const pila = g.pile[m.k];
+    if (!pila || pila.lav != null) throw new Rifiuto('Quella formazione non è libera.');
+    if (mancanti(iconePila(M, pila), M.lav[m.w].att) > 0) throw new Rifiuto('La formazione non copre le ambizioni del lavoratore.');
+    prendiLavoratore(s, g, m.w);
+    pila.lav = m.w;
+  } else if (m.t === 'completa') {
+    const pila = g.pile[m.k];
+    if (!pila || pila.lav == null) throw new Rifiuto('Su quella pila non c’è un lavoratore.');
+    const lavoro = ambito(M, m.c);
+    if (mancanti(iconePila(M, pila), lavoro.lav) > 0) throw new Rifiuto('La formazione non copre le icone del lavoro.');
+    togli(g.mano, m.c, 'Quella carta non è nella tua mano.');
+    g.pile.splice(m.k, 1);
+    const icone = comuni(M.lav[pila.lav].att, lavoro.lav);
+    const potere = poterePer(s, p, lavoro.cat);
+    const punti = PUNTI[icone] + (potere === 2 ? 3 : 0);
+    g.set.push({ form: pila.form, lav: pila.lav, lavoro: m.c, icone, punti, cat: lavoro.cat });
+    g.punti += punti;
+    if (o.formazioniNegliScarti) s.scartiAmb.push(...pila.form);
+    s.conta.poteri[potere]++;
+    if (potere === 1) {
+      for (let i = 0; i < 2; i++) {
+        const c = pescaAmbito(s, rnd);
+        if (c != null) g.mano.push(c);
+      }
+    } else if (potere === 3) {
+      const f = chi.potere3(s, M, p);
+      if (f) giocaFormazione(s, M, g, f);
+      else s.conta.poteriAVuoto[3]++;
+    } else if (potere === 4) {
+      const w = pescaLavoratore(s);
+      if (w != null) g.riserva.push(w);
+    } else if (potere === 5) {
+      const f = chi.potere5(s, M, p);
+      const pila5 = f && g.pile[f.k];
+      if (pila5 && pila5.lav == null && mancanti(iconePila(M, pila5), M.lav[f.w].att) <= 1) {
+        prendiLavoratore(s, g, f.w);
+        pila5.lav = f.w;
+      } else {
+        s.conta.poteriAVuoto[5]++;
+      }
+    }
+    controllaGettoni(s, g);
+    if (g.set.length >= o.setPerFinire) scatta(s, 'set');
+  } else if (m.t === 'pesca') {
+    if (!puoPescare(s)) throw new Rifiuto('Non ci sono carte da pescare.');
+    for (let i = 0; i < o.pescata; i++) {
+      const c = pescaAmbito(s, rnd);
+      if (c != null) g.mano.push(c);
+    }
+  } else if (m.t !== 'passa') {
+    throw new Rifiuto('Azione sconosciuta.');
+  }
+
+  // Il limite di mano è l'ultima cosa del turno.
+  while (g.mano.length > o.limiteMano) {
+    const c = chi.scarta(s, M, p);
+    togli(g.mano, c, 'Quella carta non è nella tua mano.');
+    s.scartiAmb.push(c);
+    s.conta.scartate++;
+  }
+
+  s.turno = (s.turno + 1) % s.n;
+  if (s.turno === 0) {
+    if (s.fine && s.giro >= s.fine.giro + 1) {
+      s.finita = true;
+      return;
+    }
+    s.giro++;
+    // Variante: i lavoratori rimasti troppo a lungo al mercato si cambiano.
+    if (o.ricambioMercato) {
+      for (const x of s.mercato) {
+        if (s.giro - x.dal < o.ricambioMercato || !s.mazzoLav.length) continue;
+        s.mazzoLav.unshift(x.w);
+        x.w = s.mazzoLav.pop();
+        x.dal = s.giro;
+        s.conta.sostituiti++;
+      }
+    }
+  }
+}
+
+// Quanti turni ha ancora il giocatore di turno, compreso quello in corso, da quando la fine è scattata.
+export function turniRimasti(s) {
+  return s.fine ? s.fine.giro + 1 - s.giro + 1 : Infinity;
+}
+
+export function classifica(s) {
+  return s.giocatori.map((g, i) => ({ i, punti: g.punti, set: g.set.length })).sort((a, b) => b.punti - a.punti);
 }

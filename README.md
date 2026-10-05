@@ -100,7 +100,7 @@ Tutte accettano anche l'indirizzo del tavolo online. Subito dopo una pubblicazio
 node strumenti/analisi.mjs
 ```
 
-Conti sui mazzi e partite tra bot, con le regole scritte in `strumenti/regole.mjs`. I numeri di [BUCHI.md](BUCHI.md) vengono da qui. Le proposte di regola non ancora decise ci sono come opzioni, per confrontarle.
+Partite tra bot con le regole di [REGOLAMENTO.md](REGOLAMENTO.md), scritte in `strumenti/regole.mjs`. I numeri di [BUCHI.md](BUCHI.md) vengono da qui. Le varianti da provare (formazioni negli scarti, due copie degli ambiti, ricambio del mercato) ci sono come opzioni. Ci mette un paio di minuti.
 
 ### Grafica
 

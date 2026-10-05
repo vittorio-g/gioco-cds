@@ -1,17 +1,17 @@
-// Conti sui mazzi e partite simulate tra bot, con le regole di strumenti/regole.mjs.
+// Partite simulate tra bot con le regole di strumenti/regole.mjs.
 // I numeri di BUCHI.md vengono da qui.
 //
 // Uso:  node strumenti/analisi.mjs
 import { readFileSync } from 'node:fs';
-import {
-  leggiLavoratori, leggiAmbiti, comuni, mancanti, competenze, nuovaPartita, mosseLegali, applica, classifica, iconePila,
-} from './regole.mjs';
+import { PUNTI, nuovaPartita, gioca, ambito, puoPescare, lavoratoriPer, turniRimasti, classifica, poterePer } from './regole.mjs';
 
 const radice = new URL('..', import.meta.url);
-const testo = (nome) => readFileSync(new URL(`mazzi/${nome}.csv`, radice), 'utf8');
-const mazzo = (cartella) => ({ lav: leggiLavoratori(testo(`${cartella}lavoratori`)), form: leggiAmbiti(testo(`${cartella}ambiti`)) });
-const MAZZO = mazzo(''); // quello in uso
-const DIECI = mazzo('dieci_simboli/'); // le terne a 10 simboli stampate sui PDF originali, per confronto
+const righe = (nome) => readFileSync(new URL(`mazzi/${nome}.csv`, radice), 'utf8').trim().split(/\r?\n/).slice(1).map((r) => r.split(',').map((x) => x.trim()));
+const M = {
+  lav: righe('lavoratori').map(([n, ...att]) => ({ n, att })),
+  form: righe('ambiti').map(([n, cat, ...lav]) => ({ n, cat, lav })),
+};
+const CATEGORIE = ['Tecnica e produzione', 'Servizi e relazioni', 'Organizzazione e gestione', 'Creatività e comunicazione', 'Ricerca e innovazione'];
 
 function mulberry32(a) {
   return () => {
@@ -21,274 +21,396 @@ function mulberry32(a) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-const pct = (x, tot) => `${((100 * x) / tot).toFixed(0)}%`;
-const media = (a) => a.reduce((x, y) => x + y, 0) / a.length;
+const pct = (x, tot) => (tot ? `${((100 * x) / tot).toFixed(0)}%` : '-');
+const media = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0);
+const f1 = (x) => x.toFixed(1);
 
-// ---------------------------------------------------------------------------
-// 1. Conti sui mazzi
-// ---------------------------------------------------------------------------
-function contiMazzo(nome, M) {
-  const W = M.lav.length;
-  const J = M.form.length;
-  console.log(`\n=== Mazzo ${nome} ===`);
-  const conta = (carte, campo) => {
-    const c = {};
-    for (const x of carte) for (const s of x[campo]) c[s] = (c[s] ?? 0) + 1;
-    return Object.entries(c).sort((a, b) => b[1] - a[1]).map(([s, n]) => `${s} ${n}`).join('  ');
-  };
-  console.log(`Icone sui lavoratori: ${conta(M.lav, 'att')}`);
-  console.log(`Icone sugli ambiti:   ${conta(M.form, 'lav')}`);
-  const terne = (carte, campo) => {
-    const t = new Map();
-    for (const x of carte) {
-      const k = [...x[campo]].sort().join(' ');
-      t.set(k, (t.get(k) ?? 0) + 1);
-    }
-    return t;
-  };
-  const tl = terne(M.lav, 'att');
-  const ta = terne(M.form, 'lav');
-  console.log(`Terne diverse: ${tl.size} tra i ${W} lavoratori (la più ripetuta ${Math.max(...tl.values())} volte),`,
-    `${ta.size} tra i ${J} ambiti (la più ripetuta ${Math.max(...ta.values())} volte)`);
+// Le icone come conteggi per simbolo: i confronti tra multinsiemi diventano somme.
+const SIMBOLI = [...new Set([...M.form.flatMap((a) => a.lav), ...M.lav.flatMap((l) => l.att)])];
+const vettore = (icone) => SIMBOLI.map((s) => icone.filter((x) => x === s).length);
+const VA = M.form.map((a) => vettore(a.lav));
+const VW = M.lav.map((l) => vettore(l.att));
+const va = (c) => VA[c % M.form.length];
+const zero = () => SIMBOLI.map(() => 0);
+const piu = (a, b) => a.map((x, i) => x + b[i]);
+const massimo = (a, b) => a.map((x, i) => Math.max(x, b[i]));
+const manca = (serve, ho) => serve.map((x, i) => Math.max(0, x - ho[i]));
+const somma = (a) => a.reduce((x, y) => x + y, 0);
+const inComune = (a, b) => a.reduce((x, y, i) => x + Math.min(y, b[i]), 0);
 
-  const dist = [0, 0, 0, 0];
-  for (const w of M.lav) for (const j of M.form) dist[comuni(w.att, j.lav)]++;
-  console.log('Coppie lavoratore-ambito per icone che combaciano:', dist.map((x, k) => `${k}: ${pct(x, W * J)}`).join('  '));
-  const migliore = M.lav.map((w) => Math.max(...M.form.map((j) => comuni(w.att, j.lav))));
-  console.log(`Lavoratori che possono fare 12: ${migliore.filter((x) => x === 3).length}/${W};`,
-    `al massimo 7: ${migliore.filter((x) => x === 2).length};  al massimo 3: ${migliore.filter((x) => x <= 1).length}`);
-
-  let una = 0;
-  for (let f = 0; f < J; f++) for (let j = 0; j < J; j++) if (f !== j && mancanti(M.form[f].lav, M.form[j].lav) === 0) una++;
-  console.log(`Coppie formazione-lavoro in cui basta una formazione: ${una} su ${J * (J - 1)} (${pct(una, J * (J - 1))})`);
-
-  // Mano iniziale: 2 lavoratori e 2 ambiti.
-  const rnd = mulberry32(1);
-  const T = 40000;
-  const best = [0, 0, 0, 0];
-  const due = (n) => {
-    const a = Math.floor(rnd() * n);
-    let b = Math.floor(rnd() * (n - 1));
-    if (b >= a) b++;
-    return [a, b];
-  };
-  for (let t = 0; t < T; t++) {
-    const ws = due(W);
-    const js = due(J);
-    best[Math.max(...ws.flatMap((w) => js.map((j) => comuni(M.lav[w].att, M.form[j].lav))))]++;
+// Tutti i sottoinsiemi di n carte, dai più piccoli.
+const bit = (x) => { let n = 0; for (; x; x >>= 1) n += x & 1; return n; };
+const SOTTOINSIEMI = Array.from({ length: 9 }, (_, n) => Array.from({ length: (1 << n) - 1 }, (_, i) => i + 1).sort((a, b) => bit(a) - bit(b)));
+// Il minor numero di carte, tra quelle date, le cui icone coprono `serve`.
+function minimo(carte, serve) {
+  if (!somma(serve)) return [];
+  const c = carte.slice(0, 8);
+  for (const m of SOTTOINSIEMI[c.length]) {
+    let ho = zero();
+    for (let i = 0; i < c.length; i++) if (m & (1 << i)) ho = piu(ho, va(c[i]));
+    if (!somma(manca(serve, ho))) return c.filter((_, i) => m & (1 << i));
   }
-  console.log('Mano iniziale (2 + 2), miglior coppia lavoratore-ambito:', best.map((x, k) => `${k}: ${pct(x, T)}`).join('  '));
+  return null;
 }
 
 // ---------------------------------------------------------------------------
-// 2. Bot
+// Il bot
 // ---------------------------------------------------------------------------
-// Sceglie la coppia lavoratore-lavoro che rende di più tra quelle che ha in
-// mano e la porta a termine. Segue al massimo due colonne.
-// stile.ospite: manda i lavoratori anche sulle formazioni aperte dagli altri.
-// stile.riapre: con una carta di premio da giocare, apre anche una formazione nuova.
-function scegli(s, M, p, stile, conta) {
-  const g = s.giocatori[p];
-  const o = s.opzioni;
-  const mosse = mosseLegali(s, M, p);
-  const pesche = mosse.filter((m) => m.t === 'pesca');
-  const pescata = () => pesche.find((m) => m.m === (g.lavoratori.length < 1 ? 'lav' : 'for')) ?? pesche[0];
-  const W = g.lavoratori;
-  const J = g.carte;
-  const att = (w) => M.lav[w].att;
-  const lavoro = (j) => M.form[j].lav;
-  const valore = (ic, cop) => ic * 100 + cop * 10;
+// Cerca il set che rende di più per i turni che costa: una pila (anche ancora da
+// aprire), un lavoratore del mercato o tenuto da parte, e un lavoro che ha in
+// mano. Poi fa il primo passo. Se non vede niente che valga la pena, pesca.
+//   stile.costo   quanti punti vale per lui un turno: alto = fa in fretta, basso = aspetta l'abbinamento buono
+//   stile.atteso  quanto pensa di ricavare da un lavoratore inserito senza avere ancora il lavoro
+const STIMA_POTERE = [0, 2.5, 3, 1.5, 1, 1]; // quanti punti vale per lui ogni potere: dalle misure qui sotto
 
-  function giocata(conPremio) {
-    const lavori = mosse.filter((m) => m.t === 'lavora');
-    if (lavori.length) return lavori.reduce((a, b) => (b.punti > a.punti ? b : a));
+function bot(stile = {}) {
+  const costo = stile.costo ?? 2;
+  const atteso = stile.atteso ?? 8;
 
-    // Avanzare una colonna: la formazione che avvicina di più al lavoro migliore.
-    let top = null;
-    for (const col of g.colonne) {
-      const comp = competenze(M, col, o);
-      for (const j of J) {
-        const ic = comuni(att(col.lav), lavoro(j));
-        const manc = mancanti(comp, lavoro(j));
-        for (const f of J) {
-          if (f === j) continue;
-          const guad = manc - mancanti(comp.concat(lavoro(f)), lavoro(j));
-          const v = ic * 100 + guad * 10 - (manc - guad);
-          if (guad > 0 && (!top || v > top.v)) top = { v, m: { t: 'forma', c: f, col: col.lav } };
-        }
-      }
+  function valore(s, g, w, j) {
+    const a = ambito(M, j);
+    let v = PUNTI[inComune(VW[w], va(j))] + STIMA_POTERE[poterePer(s, s.giocatori.indexOf(g), a.cat)];
+    const perCat = {};
+    for (const x of g.set) perCat[x.cat] = (perCat[x.cat] ?? 0) + 1;
+    if (!g.gettoni.uguali && s.gettoni.uguali.length) {
+      const n = (perCat[a.cat] ?? 0) + 1;
+      v += n >= 3 ? s.gettoni.uguali[0] : n === 2 ? 1 : 0;
     }
-    if (top) return top.m;
+    if (!g.gettoni.diverse && s.gettoni.diverse.length && !perCat[a.cat]) {
+      v += Object.keys(perCat).length + 1 >= 4 ? s.gettoni.diverse[0] : 0.5;
+    }
+    return v;
+  }
 
-    // Cominciare una colonna su una formazione libera.
-    if (g.colonne.length < 2) {
-      let ing = null;
-      s.giocatori.forEach((h, di) => {
-        if (di !== p && !stile.ospite) return;
-        for (const f of h.libere) {
-          const icone = iconePila(s, M, f);
-          for (const w of W) {
-            const base = o.attitudiniNelRequisito ? icone.concat(att(w)) : icone;
-            let vw = di === p ? 0 : -1; // la formazione altrui serve solo se copre qualcosa
-            for (const j of J) {
-              if (di !== p && mancanti(icone, lavoro(j)) === 3) continue;
-              vw = Math.max(vw, valore(comuni(att(w), lavoro(j)), 3 - mancanti(base, lavoro(j))) + (di !== p ? 1 : 0));
-            }
-            // se il premio va a chi entra, contano anche le attitudini che combaciano con la formazione
-            if (vw >= 0 && o.premioA === 'entra') vw += 5 * comuni(att(w), icone);
-            if (vw >= 0 && (!ing || vw > ing.v)) ing = { v: vw, m: { t: 'entra', c: w, di, f } };
+  // La carta, tra quelle scelte, che copre di più `prima`; a parità, `poi`.
+  const migliore = (carte, prima, poi) => carte.reduce((a, b) => {
+    const pa = inComune(va(a), prima) * 10 + inComune(va(a), poi);
+    const pb = inComune(va(b), prima) * 10 + inComune(va(b), poi);
+    return pb > pa ? b : a;
+  });
+
+  function piano(s, p, soloFormazioni = false) {
+    const g = s.giocatori[p];
+    const mano = g.mano;
+    const lavoratori = lavoratoriPer(s, p);
+    const rimasti = turniRimasti(s);
+    let top = null;
+    const prova = (v, turni, azione) => {
+      if (turni > rimasti) return;
+      if (soloFormazioni && azione.t !== 'apri' && azione.t !== 'migliora') return;
+      const netto = v - costo * turni;
+      if (!top || netto > top.netto) top = { netto, azione };
+    };
+    const senza = (j) => mano.filter((c) => c !== j);
+
+    g.pile.forEach((pila, k) => {
+      const ho = pila.form.reduce((x, c) => piu(x, va(c)), zero());
+      if (pila.lav != null) {
+        // manca solo il lavoro
+        for (const j of mano) {
+          const serve = manca(va(j), ho);
+          const carte = minimo(senza(j), serve);
+          if (!carte) continue;
+          prova(valore(s, g, pila.lav, j), carte.length + 1,
+            carte.length ? { t: 'migliora', c: migliore(carte, serve, serve), k } : { t: 'completa', c: j, k });
+        }
+        return;
+      }
+      for (const w of lavoratori) {
+        const perLui = manca(VW[w], ho);
+        for (const j of mano) {
+          const serve = manca(massimo(VW[w], va(j)), ho);
+          const carte = minimo(senza(j), serve);
+          if (!carte) continue;
+          prova(valore(s, g, w, j), carte.length + 2,
+            somma(perLui) ? { t: 'migliora', c: migliore(carte, perLui, serve), k } : { t: 'inserisci', w, k });
+        }
+        // intanto il lavoratore: il lavoro si cercherà dopo
+        const carte = minimo(mano, perLui);
+        if (carte) prova(atteso, carte.length + 4, carte.length ? { t: 'migliora', c: migliore(carte, perLui, perLui), k } : { t: 'inserisci', w, k });
+      }
+    });
+
+    // una pila nuova
+    for (const w of lavoratori) {
+      for (const j of mano) {
+        const serve = massimo(VW[w], va(j));
+        const carte = minimo(senza(j), serve);
+        if (carte) prova(valore(s, g, w, j), carte.length + 2, { t: 'apri', c: migliore(carte, VW[w], serve) });
+      }
+      const carte = minimo(mano, VW[w]);
+      if (carte) prova(atteso, carte.length + 4, { t: 'apri', c: migliore(carte, VW[w], VW[w]) });
+    }
+    return top;
+  }
+
+  return {
+    scegli(s, M_, p) {
+      const g = s.giocatori[p];
+      const top = piano(s, p);
+      // Prima di chiudere con un lavoro che fa piazzare subito un lavoratore (potere 5),
+      // conviene avere pronta una formazione libera su cui metterlo.
+      if (top?.azione.t === 'completa' && poterePer(s, p, ambito(M, top.azione.c).cat) === 5 && turniRimasti(s) >= 2
+        && !g.pile.some((x) => x.lav == null)) {
+        const lavoratori = lavoratoriPer(s, p);
+        const adatta = g.mano.filter((c) => c !== top.azione.c).find((c) => lavoratori.some((w) => somma(manca(VW[w], va(c))) <= 1));
+        if (adatta != null) return { t: 'apri', c: adatta };
+      }
+      if (top && top.netto >= 0) return top.azione;
+      // con la mano quasi piena conviene usare le carte invece di scartarle
+      if (top && g.mano.length >= s.o.limiteMano - 1) return top.azione;
+      if (puoPescare(s)) return { t: 'pesca' };
+      return top ? top.azione : { t: 'passa' };
+    },
+    // Una formazione in più non costa un turno: si gioca sempre, se c'è una carta.
+    potere3(s, M_, p) {
+      const g = s.giocatori[p];
+      const pensata = piano(s, p, true)?.azione;
+      if (pensata || !g.mano.length) return pensata ?? null;
+      const lavoratori = lavoratoriPer(s, p);
+      const copre = (c) => Math.max(0, ...lavoratori.map((w) => inComune(va(c), VW[w])));
+      return { t: 'apri', c: g.mano.reduce((a, b) => (copre(b) > copre(a) ? b : a)) };
+    },
+    potere5(s, M_, p) {
+      const g = s.giocatori[p];
+      let top = null;
+      g.pile.forEach((pila, k) => {
+        if (pila.lav != null) return;
+        const ho = pila.form.reduce((x, c) => piu(x, va(c)), zero());
+        for (const w of lavoratoriPer(s, p)) {
+          if (somma(manca(VW[w], ho)) > 1) continue;
+          let v = atteso - costo * 3;
+          for (const j of g.mano) {
+            const carte = minimo(g.mano.filter((c) => c !== j), manca(va(j), ho));
+            if (carte) v = Math.max(v, valore(s, g, w, j) - costo * (carte.length + 1));
           }
+          if (!top || v > top.v) top = { v, w, k };
         }
       });
-      if (ing) return ing.m;
-    }
-    if (conPremio && !stile.riapre) return null;
-
-    // Preparare la prossima colonna: aprire una formazione o, col campo comune, impilarla su una libera.
-    if (g.colonne.length + g.libere.length < 2 && J.length) {
-      let ap = null;
-      const prova = (m, icone, f) => {
-        let v = 0;
-        for (const j of J) {
-          if (j === f) continue;
-          v = Math.max(v, valore(Math.max(0, ...W.map((w) => comuni(att(w), lavoro(j)))), 3 - mancanti(icone, lavoro(j))));
-        }
-        if (!ap || v > ap.v) ap = { v, m };
-      };
-      for (const f of J) {
-        prova({ t: 'apri', c: f }, lavoro(f), f);
-        if (o.campoComune) {
-          s.giocatori.forEach((h, di) => {
-            for (const k of h.libere) prova({ t: 'impila', c: f, di, f: k }, iconePila(s, M, k).concat(lavoro(f)), f);
-          });
-        }
-      }
-      return ap.m;
-    }
-    if (conPremio) return null;
-
-    // Niente di utile: si scarica la carta meno promettente.
-    conta.scarichi++;
-    if (J.length) {
-      const utile = (c) => Math.max(0, ...W.map((w) => comuni(att(w), lavoro(c))), ...g.colonne.map((col) => comuni(att(col.lav), lavoro(c))));
-      const peggiore = J.reduce((a, b) => (utile(b) < utile(a) ? b : a));
-      if (g.colonne.length) return { t: 'forma', c: peggiore, col: g.colonne[0].lav };
-      return { t: 'apri', c: peggiore };
-    }
-    return mosse.find((m) => m.t === 'entra') ?? null;
-  }
-
-  if (s.turno === p && s.attesa === 'gioca') return giocata(false);
-  // una carta di premio da usare, oppure la pescata di fine turno
-  if (g.credito > 0 && o.premioScelta) {
-    const m = giocata(true);
-    if (m) {
-      conta.premiGiocati++;
-      return m;
-    }
-  }
-  return pesche.length ? pescata() : null;
-}
-
-// Nessuna carta deve sparire o raddoppiare.
-function verifica(s, M) {
-  const lavoratori = [...s.mazzoLav];
-  const carte = [...s.mazzoFor, ...s.scarti, ...Object.values(s.impilate).flat()];
-  for (const g of s.giocatori) {
-    lavoratori.push(...g.lavoratori);
-    carte.push(...g.carte, ...g.libere);
-    for (const c of g.colonne) { lavoratori.push(c.lav); carte.push(...c.form); }
-    for (const o of g.occupati) { lavoratori.push(o.lav); carte.push(o.lavoro); }
-  }
-  if (new Set(lavoratori).size !== M.lav.length || lavoratori.length !== M.lav.length) throw new Error('lavoratori persi o doppi');
-  if (new Set(carte).size !== M.form.length || carte.length !== M.form.length) throw new Error('carte perse o doppie');
-}
-
-function partita(M, stili, opzioni, rnd) {
-  const s = nuovaPartita(M, stili.map((_, i) => `G${i + 1}`), opzioni, rnd);
-  const conta = { scarichi: 0, giocate: 0, aperte: 0, impilate: 0, visite: 0, premi: 0, premiGiocati: 0 };
-  for (let passi = 0; s.fase === 'gioco' && passi < 6000; passi++) {
-    // Chi ha un premio lo usa subito, anche fuori turno.
-    const creditore = s.giocatori.findIndex((g) => g.credito > 0);
-    const p = creditore >= 0 ? creditore : s.turno;
-    const prima = s.giocatori.reduce((x, g) => x + g.credito, 0);
-    const m = scegli(s, M, p, stili[p], conta);
-    if (!m) {
-      s.giocatori[p].credito = 0; // un premio che non si può usare
-      continue;
-    }
-    if (m.t === 'apri') conta.aperte++;
-    if (m.t === 'impila') conta.impilate++;
-    if (m.t === 'entra' && m.di !== p) conta.visite++;
-    if (m.t !== 'pesca') conta.giocate++;
-    applica(s, M, p, m, rnd);
-    conta.premi += Math.max(0, s.giocatori.reduce((x, g) => x + g.credito, 0) - prima);
-    verifica(s, M);
-  }
-  return { s, conta };
-}
-
-function esperimento(titolo, M, stili, opzioni = {}, T = 4000, seme = 7) {
-  const rnd = mulberry32(seme);
-  const perStile = new Map();
-  const tot = { giri: [], piu: [], lunghe: 0, primo: 0, rimescolate: 0, scarichi: 0, giocate: 0, aperte: 0, impilate: 0, visite: 0, premi: 0, premiGiocati: 0, mano: [] };
-  const icone = [0, 0, 0, 0];
-  const occ = { n: 0, punti: 0, form: 0 };
-  for (let t = 0; t < T; t++) {
-    const { s, conta } = partita(M, stili, opzioni, rnd);
-    if (s.fase !== 'finita') throw new Error('partita non conclusa');
-    tot.giri.push(s.giro);
-    tot.piu.push(s.piuGiocate ?? 1);
-    if ((s.piuGiocate ?? 1) >= 4) tot.lunghe++;
-    tot.rimescolate += s.rimescolate ?? 0;
-    for (const k of ['scarichi', 'giocate', 'aperte', 'impilate', 'visite', 'premi', 'premiGiocati']) tot[k] += conta[k];
-    tot.mano.push(media(s.giocatori.map((g) => g.lavoratori.length + g.carte.length)));
-    const cl = classifica(s);
-    const vincitori = cl.filter((x) => x.punti === cl[0].punti && x.perfetti === cl[0].perfetti).map((x) => x.i);
-    if (vincitori.includes(s.primo)) tot.primo += 1 / vincitori.length;
-    s.giocatori.forEach((g, i) => {
-      const nome = stili[i].nome;
-      const r = perStile.get(nome) ?? { partite: 0, punti: 0, vittorie: 0 };
-      r.partite++;
-      r.punti += g.punti;
-      if (vincitori.includes(i)) r.vittorie += 1 / vincitori.length;
-      perStile.set(nome, r);
-      for (const o of g.occupati) { icone[o.icone]++; occ.n++; occ.punti += o.punti; occ.form += o.form; }
-    });
-  }
-  console.log(`\n${titolo}`);
-  console.log(`  giri ${media(tot.giri).toFixed(1)}   punti per occupato ${(occ.punti / occ.n).toFixed(1)}   formazioni per occupato ${(occ.form / occ.n).toFixed(2)}`,
-    `  icone che combaciano: ${icone.map((x, k) => `${k}: ${pct(x, occ.n)}`).join(' ')}`);
-  console.log(`  formazioni aperte ${(tot.aperte / T).toFixed(1)} a partita, impilate senza lavoratore ${(tot.impilate / T).toFixed(1)}, usate da un altro ${pct(tot.visite, tot.aperte)}`,
-    `  carte di premio ${(tot.premi / T).toFixed(1)} a partita${tot.premiGiocati ? `, giocate invece che pescate ${pct(tot.premiGiocati, tot.premi)}` : ''}`);
-  console.log(`  carte giocate nel turno più lungo: ${media(tot.piu).toFixed(1)} in media, partite con un turno da 4 o più ${pct(tot.lunghe, T)}`,
-    `  carte in mano alla fine ${media(tot.mano).toFixed(1)}   mazzo degli ambiti rimescolato ${(tot.rimescolate / T).toFixed(1)} volte a partita   chi comincia vince ${pct(tot.primo, T)}`);
-  if (perStile.size > 1) for (const [nome, r] of perStile) console.log(`  ${nome.padEnd(10)} punti ${(r.punti / r.partite).toFixed(1)}  vittorie ${pct(r.vittorie, r.partite)}`);
+      return top;
+    },
+    // Si scarta la carta che serve meno: a nessun lavoratore in vista e a nessuna pila.
+    scarta(s, M_, p) {
+      const g = s.giocatori[p];
+      const lavoratori = lavoratoriPer(s, p);
+      const utile = (c) => Math.max(0, ...lavoratori.map((w) => inComune(va(c), VW[w])),
+        ...g.pile.filter((x) => x.lav != null).map((x) => inComune(va(c), VW[x.lav]) + 1));
+      return g.mano.reduce((a, b) => (utile(b) < utile(a) ? b : a));
+    },
+  };
 }
 
 // ---------------------------------------------------------------------------
-contiMazzo('in uso (6 simboli)', MAZZO);
-contiMazzo('a 10 simboli, per confronto', DIECI);
+// Partite e conti
+// ---------------------------------------------------------------------------
+// Nessuna carta deve sparire o raddoppiare.
+function verifica(s) {
+  const amb = [...s.mazzoAmb, ...s.scartiAmb];
+  const lav = [...s.mazzoLav, ...s.mercato.map((x) => x.w)];
+  for (const g of s.giocatori) {
+    amb.push(...g.mano);
+    lav.push(...g.riserva);
+    for (const x of g.pile) { amb.push(...x.form); if (x.lav != null) lav.push(x.lav); }
+    for (const x of g.set) { amb.push(x.lavoro); lav.push(x.lav); if (!s.o.formazioniNegliScarti) amb.push(...x.form); }
+  }
+  const tutti = M.form.length * s.o.copieAmbiti;
+  if (new Set(amb).size !== tutti || amb.length !== tutti) throw new Error('ambiti persi o doppi');
+  if (new Set(lav).size !== M.lav.length || lav.length !== M.lav.length) throw new Error('lavoratori persi o doppi');
+}
 
-const OSP = { nome: 'ospite', ospite: true };
-const SOLO = { nome: 'solitario', ospite: false };
-const RIAPRE = { nome: 'ospite', ospite: true, riapre: true };
-const TRE = [OSP, OSP, OSP];
+function partita(n, opzioni, stili, rnd) {
+  const s = nuovaPartita(M, n, opzioni, rnd);
+  const chi = stili.map(bot);
+  const azioni = { apri: 0, migliora: 0, inserisci: 0, completa: 0, pesca: 0, passa: 0 };
+  let fermi = 0; // turni con una formazione libera e nessun lavoratore che ci possa salire
+  let turni = 0;
+  let aVuoto = 0; // turni di fila in cui tutti pescano o passano
+  while (!s.finita) {
+    turni++;
+    // Le regole non lo prevedono: se per 10 giri nessuno riesce a giocare una carta, la partita è bloccata.
+    if (aVuoto >= 10 * n) {
+      s.fine = { motivo: 'stallo', giro: s.giro };
+      break;
+    }
+    const p = s.turno;
+    const g = s.giocatori[p];
+    const libere = g.pile.filter((x) => x.lav == null);
+    if (libere.length && !libere.some((x) => {
+      const ho = x.form.reduce((v, c) => piu(v, va(c)), zero());
+      return lavoratoriPer(s, p).some((w) => !somma(manca(VW[w], ho)));
+    })) fermi++;
+    const m = chi[p].scegli(s, M, p);
+    azioni[m.t]++;
+    aVuoto = m.t === 'pesca' || m.t === 'passa' ? aVuoto + 1 : 0;
+    gioca(s, M, m, chi[p], rnd);
+    verifica(s);
+  }
+  return { s, azioni, fermi, turni };
+}
 
-console.log('\n=== Partite a 3 tra bot: mano 2 + 2, una carta giocata e una pescata per turno ===');
-esperimento('A. Regole di adesso', MAZZO, TRE);
-esperimento('A10. Le stesse regole col mazzo a 10 simboli', DIECI, TRE);
-esperimento('B. Nessuno va sulle formazioni degli altri', MAZZO, [SOLO, SOLO, SOLO]);
-esperimento('D. Uno solo va dagli altri', MAZZO, [OSP, SOLO, SOLO]);
-esperimento('E. Come D, chi ospita pesca 1 carta in più', MAZZO, [OSP, SOLO, SOLO], { premioOspite: 1 });
-esperimento('F. Come D, chi ospita pesca 2 carte in più', MAZZO, [OSP, SOLO, SOLO], { premioOspite: 2 });
-esperimento('G. Le attitudini valgono anche per il requisito del lavoro', MAZZO, TRE, { attitudiniNelRequisito: true });
-for (const n of [3, 5]) esperimento(`H${n}. Si chiude a ${n} occupati invece di 4`, MAZZO, TRE, { occupatiPerFinire: n }, 2000);
+function esperimento(titolo, n, opzioni = {}, stili = null, T = 3000, seme = 11) {
+  const rnd = mulberry32(seme);
+  stili ??= Array.from({ length: n }, () => ({}));
+  const t = {
+    giri: [], turni: 0, fermi: 0, fine: { set: 0, ambiti: 0, lavoratori: 0, stallo: 0 }, azioni: { apri: 0, migliora: 0, inserisci: 0, completa: 0, pesca: 0, passa: 0 },
+    set: [], setMax: [], punti: [], puntiVincitore: [], icone: [0, 0, 0, 0], formazioni: [], perCategoria: [0, 0, 0, 0, 0], puntiCategoria: [0, 0, 0, 0, 0],
+    gettoni: { uguali: [0, 0], diverse: [0, 0] }, inMano: [], aMeta: [], scartate: 0, rimescolate: 0, sostituiti: 0, attesa: [], vecchi: [],
+    posto: Array(n).fill(0), puntiPosto: Array(n).fill(0), setPosto: Array(n).fill(0), cinque: 0, poteri: [0, 0, 0, 0, 0, 0], aVuoto: [0, 0, 0, 0, 0, 0],
+  };
+  const perStile = new Map();
+  const solo = { vittorie: 0, punti: 0, set: 0, puntiAltri: 0, setAltri: 0 }; // chi ha il potere, quando lo ha uno solo
+  for (let k = 0; k < T; k++) {
+    const { ruota, ...regole } = opzioni;
+    const { s, azioni, fermi, turni } = partita(n, ruota ? { ...regole, poteriDi: k % n } : regole, stili, rnd);
+    t.giri.push(s.giro);
+    t.turni += turni;
+    t.fermi += fermi;
+    t.fine[s.fine.motivo]++;
+    for (const a in azioni) t.azioni[a] += azioni[a];
+    const cl = classifica(s);
+    const primi = cl.filter((x) => x.punti === cl[0].punti).map((x) => x.i);
+    t.puntiVincitore.push(cl[0].punti);
+    t.setMax.push(Math.max(...s.giocatori.map((g) => g.set.length)));
+    if (s.giocatori.some((g) => g.set.length >= s.o.setPerFinire)) t.cinque++;
+    s.giocatori.forEach((g, i) => {
+      t.set.push(g.set.length);
+      t.punti.push(g.punti);
+      t.inMano.push(g.mano.length);
+      t.aMeta.push(g.pile.length);
+      t.puntiPosto[i] += g.punti;
+      t.setPosto[i] += g.set.length;
+      if (primi.includes(i)) t.posto[i] += 1 / primi.length;
+      for (const x of g.set) {
+        t.icone[x.icone]++;
+        t.formazioni.push(x.form.length);
+        t.perCategoria[Number(x.cat) - 1]++;
+        t.puntiCategoria[Number(x.cat) - 1] += x.punti;
+      }
+      for (const q of ['uguali', 'diverse']) if (g.gettoni[q]) t.gettoni[q][g.gettoni[q] === 5 ? 0 : 1]++;
+      const nome = stili[i].nome;
+      if (nome) {
+        const r = perStile.get(nome) ?? { partite: 0, punti: 0, set: 0, vittorie: 0 };
+        r.partite++; r.punti += g.punti; r.set += g.set.length;
+        if (primi.includes(i)) r.vittorie += 1 / primi.length;
+        perStile.set(nome, r);
+      }
+    });
+    if (opzioni.ruota) {
+      const io = k % n;
+      if (primi.includes(io)) solo.vittorie += 1 / primi.length;
+      s.giocatori.forEach((g, i) => {
+        if (i === io) {
+          solo.punti += g.punti;
+          solo.set += g.set.length;
+        } else {
+          solo.puntiAltri += g.punti / (n - 1);
+          solo.setAltri += g.set.length / (n - 1);
+        }
+      });
+    }
+    t.scartate += s.conta.scartate;
+    t.rimescolate += s.conta.rimescolate;
+    t.sostituiti += s.conta.sostituiti;
+    t.attesa.push(...s.conta.attesa);
+    t.vecchi.push(s.mercato.filter((x) => s.giro - x.dal >= 4).length);
+    s.conta.poteri.forEach((x, i) => { t.poteri[i] += x; });
+    s.conta.poteriAVuoto.forEach((x, i) => { t.aVuoto[i] += x; });
+  }
+  const nSet = somma(t.icone);
+  console.log(`\n${titolo}`);
+  console.log(`  giri ${f1(media(t.giri))}   finisce per: quinto set ${pct(t.fine.set, T)}, ambiti finiti ${pct(t.fine.ambiti, T)}, lavoratori finiti ${pct(t.fine.lavoratori, T)}, bloccata ${t.fine.stallo} su ${T}`,
+    `  partite in cui qualcuno arriva a ${opzioni.setPerFinire ?? 5} set: ${pct(t.cinque, T)}`);
+  console.log(`  set a testa ${f1(media(t.set))} (il migliore ${f1(media(t.setMax))})   punti a testa ${f1(media(t.punti))}, del vincitore ${f1(media(t.puntiVincitore))}`,
+    `  punti per set ${f1(media(t.punti) / Math.max(0.01, media(t.set)))}   formazioni per set ${(media(t.formazioni)).toFixed(2)}`);
+  console.log(`  ambizioni che combaciano col lavoro: ${t.icone.map((x, k) => `${k}: ${pct(x, nSet)}`).join('  ')}`);
+  console.log(`  azioni: ${Object.entries(t.azioni).map(([a, x]) => `${a} ${pct(x, t.turni)}`).join('  ')}`);
+  console.log(`  gettoni presi: tre uguali ${pct(t.gettoni.uguali[0], T)} (il secondo ${pct(t.gettoni.uguali[1], T)}), quattro diverse ${pct(t.gettoni.diverse[0], T)} (il secondo ${pct(t.gettoni.diverse[1], T)})`);
+  console.log(`  a fine partita: ${f1(media(t.inMano))} carte in mano e ${f1(media(t.aMeta))} pile non chiuse a testa; scartate per il limite ${f1(t.scartate / T)} carte a partita; scarti rimescolati ${f1(t.rimescolate / T)} volte`);
+  console.log(`  mercato: un lavoratore aspetta ${f1(media(t.attesa))} giri prima di essere preso; a fine partita ${f1(media(t.vecchi))} sono lì da 4 giri o più;`,
+    `turni con una formazione libera e nessun lavoratore adatto ${pct(t.fermi, t.turni)}${t.sostituiti ? `; sostituiti ${f1(t.sostituiti / T)} a partita` : ''}`);
+  console.log(`  per posto al tavolo: vittorie ${t.posto.map((x) => pct(x, T)).join(' ')}   punti ${t.puntiPosto.map((x) => f1(x / T)).join(' ')}   set ${t.setPosto.map((x) => f1(x / T)).join(' ')}`);
+  console.log(`  set chiusi per categoria: ${t.perCategoria.map((x, i) => `${i + 1}: ${pct(x, nSet)} (${f1(t.puntiCategoria[i] / Math.max(1, x))} p.)`).join('  ')}`);
+  if (t.poteri.slice(1).some((x) => x)) {
+    console.log(`  poteri usati a partita: ${t.poteri.slice(1).map((x, i) => `${i + 1}: ${f1(x / T)}`).join('  ')}`,
+      `  a vuoto: potere 3 ${pct(t.aVuoto[3], t.poteri[3])}, potere 5 ${pct(t.aVuoto[5], t.poteri[5])}`);
+  }
+  if (opzioni.ruota) {
+    console.log(`  CHI HA IL POTERE: vince ${pct(solo.vittorie, T)} (alla pari sarebbe ${pct(1, n)}), ${f1(solo.punti / T)} punti e ${f1(solo.set / T)} set;`,
+      `gli altri ${f1(solo.puntiAltri / T)} punti e ${f1(solo.setAltri / T)} set`);
+  }
+  for (const [nome, r] of perStile) console.log(`  ${nome.padEnd(10)} punti ${f1(r.punti / r.partite)}  set ${f1(r.set / r.partite)}  vittorie ${pct(r.vittorie, r.partite)}`);
+  return t;
+}
 
-console.log('\n=== Le due proposte da valutare ===');
-esperimento('P1. Campo comune: ambito su ambito anche senza lavoratore. Premio come adesso', MAZZO, TRE, { campoComune: true });
-esperimento('P2a. Premio a chi aveva aperto, da pescare o da giocare; si gioca solo per far avanzare un lavoratore', MAZZO, TRE, { premioScelta: true });
-esperimento('P2b. Come P2a, ma col premio si riapre anche una formazione', MAZZO, [RIAPRE, RIAPRE, RIAPRE], { premioScelta: true });
-esperimento('P3. Campo comune, premio a chi mette il lavoratore, solo da pescare', MAZZO, TRE, { campoComune: true, premioA: 'entra' });
-esperimento('P4. Campo comune, premio a chi mette il lavoratore, da pescare o da giocare', MAZZO, TRE, { campoComune: true, premioA: 'entra', premioScelta: true });
-esperimento('P4b. Come P4, e col premio si riapre anche una formazione', MAZZO, [RIAPRE, RIAPRE, RIAPRE], { campoComune: true, premioA: 'entra', premioScelta: true });
+// ---------------------------------------------------------------------------
+// Conti sulle carte
+// ---------------------------------------------------------------------------
+{
+  console.log('=== Le carte ===');
+  const uguali = (a, b) => !somma(manca(a, b)) && !somma(manca(b, a));
+  const conUnAmbito = M.lav.filter((_, w) => VA.some((a) => uguali(a, VW[w]))).length;
+  console.log(`Lavoratori che una sola formazione può accogliere (un ambito con le sue stesse icone): ${conUnAmbito} su ${M.lav.length}`);
+  let coppie = 0;
+  let adatte = 0;
+  for (let w = 0; w < VW.length; w++) for (let a = 0; a < VA.length; a++) for (let b = a + 1; b < VA.length; b++) {
+    coppie++;
+    if (!somma(manca(VW[w], piu(VA[a], VA[b])))) adatte++;
+  }
+  console.log(`Coppie di ambiti che, insieme, coprono le ambizioni di un lavoratore: ${pct(adatte, coppie)}`);
+  // con 3 ambiti in mano e il mercato scoperto: si può già inserire qualcuno con due formazioni?
+  const rnd = mulberry32(3);
+  for (const n of [2, 3, 4]) {
+    let ok1 = 0;
+    let ok2 = 0;
+    const T = 20000;
+    for (let t = 0; t < T; t++) {
+      const amb = [];
+      while (amb.length < 3) { const x = Math.floor(rnd() * VA.length); if (!amb.includes(x)) amb.push(x); }
+      const lav = [];
+      while (lav.length < n) { const x = Math.floor(rnd() * VW.length); if (!lav.includes(x)) lav.push(x); }
+      if (lav.some((w) => amb.some((a) => uguali(VA[a], VW[w])))) ok1++;
+      if (lav.some((w) => amb.some((a, i) => amb.some((b, k) => k > i && !somma(manca(VW[w], piu(VA[a], VA[b]))))))) ok2++;
+    }
+    console.log(`In ${n}: con la mano iniziale si può accogliere un lavoratore del mercato con una formazione nel ${pct(ok1, T)} dei casi, con due nel ${pct(ok2, T)}`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+const NESSUNO = [0, 0, 0, 0, 0];
+const TUTTI = (k) => [k, k, k, k, k];
+
+console.log('\n=== Regole come sono scritte, senza poteri ===');
+for (const n of [2, 3, 4]) esperimento(`${n} giocatori`, n, { poteri: NESSUNO });
+
+const RIMESSE = { formazioniNegliScarti: true };
+
+console.log('\n=== Quanto vale un potere: lo ha un giocatore solo, su tutte le categorie (3 giocatori) ===');
+for (let k = 1; k <= 5; k++) esperimento(`Potere ${k}, regole come sono scritte`, 3, { poteri: TUTTI(k), ruota: true });
+for (let k = 1; k <= 5; k++) esperimento(`Potere ${k}, con le formazioni che tornano negli scarti`, 3, { poteri: TUTTI(k), ruota: true, ...RIMESSE });
+
+console.log('\n=== Abbinamenti tra categorie e poteri (3 giocatori) ===');
+esperimento('Poteri 1 2 3 4 5 nell\u2019ordine delle categorie', 3, { poteri: [1, 2, 3, 4, 5] });
+esperimento('I poteri forti alle categorie che si chiudono meno: 5 3 4 1 2', 3, { poteri: [5, 3, 4, 1, 2] });
+esperimento('I poteri forti alle categorie che si chiudono di più: 2 3 1 4 5', 3, { poteri: [2, 3, 1, 4, 5] });
+esperimento('Poteri 1 2 3 4 5, con le formazioni che tornano negli scarti', 3, { poteri: [1, 2, 3, 4, 5], ...RIMESSE });
+esperimento('Poteri 5 3 4 1 2, con le formazioni che tornano negli scarti', 3, { poteri: [5, 3, 4, 1, 2], ...RIMESSE });
+esperimento('Poteri 2 3 1 4 5, con le formazioni che tornano negli scarti', 3, { poteri: [2, 3, 1, 4, 5], ...RIMESSE });
+
+console.log('\n=== Chi fa in fretta e chi aspetta l\u2019abbinamento buono (3 giocatori, senza poteri) ===');
+const RAPIDO = { nome: 'rapido', costo: 3.5 };
+const NORMALE = { nome: 'normale', costo: 2 };
+const PAZIENTE = { nome: 'paziente', costo: 1 };
+esperimento('Uno rapido, uno normale, uno paziente', 3, { poteri: NESSUNO }, [RAPIDO, NORMALE, PAZIENTE]);
+esperimento('Gli stessi, in ordine inverso', 3, { poteri: NESSUNO }, [PAZIENTE, NORMALE, RAPIDO]);
+esperimento('Gli stessi, con le formazioni che tornano negli scarti', 3, { poteri: NESSUNO, ...RIMESSE }, [RAPIDO, NORMALE, PAZIENTE]);
+
+console.log('\n=== Varianti (senza poteri) ===');
+for (const n of [2, 3, 4]) esperimento(`Chiuso un set, le sue formazioni vanno negli scarti: in ${n}`, n, { poteri: NESSUNO, ...RIMESSE });
+for (const n of [2, 3, 4]) esperimento(`Due copie di ogni ambito (60 carte): in ${n}`, n, { poteri: NESSUNO, copieAmbiti: 2 });
+esperimento('Due copie e formazioni negli scarti: in 4', 4, { poteri: NESSUNO, copieAmbiti: 2, ...RIMESSE });
+esperimento('Si chiude al quarto set, in 3', 3, { poteri: NESSUNO, setPerFinire: 4 });
+esperimento('Si chiude al terzo set, in 3', 3, { poteri: NESSUNO, setPerFinire: 3 });
+esperimento('Si chiude al terzo set, in 4', 4, { poteri: NESSUNO, setPerFinire: 3 });
+esperimento('Mercato con 2 lavoratori in pi\u00f9, in 3', 3, { poteri: NESSUNO, mercato: 5 });
+esperimento('Un lavoratore fermo al mercato da 3 giri viene sostituito, in 3', 3, { poteri: NESSUNO, ricambioMercato: 3 });
+esperimento('Si pescano 3 carte invece di 2, in 3', 3, { poteri: NESSUNO, pescata: 3 });
