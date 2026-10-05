@@ -6,7 +6,7 @@
    "battuta": "Ha una tabella per tutto. Anche per le tabelle.",
    "attitudini": [
     "DI",
-    "OR",
+    "MA",
     "OR"
    ]
   },
@@ -17,7 +17,7 @@
    "attitudini": [
     "MA",
     "CO",
-    "CD"
+    "CR"
    ]
   },
   "03": {
@@ -25,8 +25,8 @@
    "nome": "L'Archistar",
    "battuta": "Bellissimo. Cade, ma è bellissimo.",
    "attitudini": [
-    "CL",
-    "AN",
+    "CO",
+    "DI",
     "CR"
    ]
   },
@@ -37,7 +37,7 @@
    "attitudini": [
     "MA",
     "CO",
-    "ST"
+    "OR"
    ]
   },
   "05": {
@@ -46,8 +46,8 @@
    "battuta": "Sa dov'è ogni cosa. Anche le tue ferie del 2019.",
    "attitudini": [
     "OR",
-    "RI",
-    "RI"
+    "DI",
+    "MA"
    ]
   },
   "06": {
@@ -56,8 +56,8 @@
    "battuta": "Sei in muto. Sei ancora in muto.",
    "attitudini": [
     "DI",
-    "CL",
-    "CD"
+    "CO",
+    "OR"
    ]
   },
   "07": {
@@ -66,8 +66,8 @@
    "battuta": "Sa il nome del tuo gatto. E di quello del capo.",
    "attitudini": [
     "CO",
-    "CL",
-    "CL"
+    "MA",
+    "CO"
    ]
   },
   "08": {
@@ -75,7 +75,7 @@
    "nome": "L'Artista dei Grafici",
    "battuta": "Il dato è sbagliato. Ma guarda che colori.",
    "attitudini": [
-    "AN",
+    "RI",
     "CR",
     "CR"
    ]
@@ -86,8 +86,8 @@
    "battuta": "Sa tutto. Ti passa l'interno.",
    "attitudini": [
     "CO",
-    "OR",
-    "CL"
+    "MA",
+    "CO"
    ]
   },
   "10": {
@@ -105,9 +105,9 @@
    "nome": "La Mediatrice",
    "battuta": "Ha un sondaggio anche per scegliere la pizza.",
    "attitudini": [
-    "CL",
-    "CL",
-    "AN"
+    "CO",
+    "CR",
+    "MA"
    ]
   },
   "12": {
@@ -116,7 +116,7 @@
    "battuta": "Funziona. Non chiedere come.",
    "attitudini": [
     "MA",
-    "AN",
+    "RI",
     "CR"
    ]
   },
@@ -127,7 +127,7 @@
    "attitudini": [
     "DI",
     "DI",
-    "AN"
+    "RI"
    ]
   },
   "14": {
@@ -136,8 +136,8 @@
    "battuta": "Ha fatto il gruppo prima che servisse.",
    "attitudini": [
     "CO",
-    "CL",
-    "CD"
+    "CO",
+    "DI"
    ]
   },
   "15": {
@@ -146,8 +146,8 @@
    "battuta": "Ha un piano quinquennale per le zucchine.",
    "attitudini": [
     "MA",
-    "AN",
-    "ST"
+    "RI",
+    "DI"
    ]
   },
   "16": {
@@ -157,7 +157,7 @@
    "attitudini": [
     "MA",
     "DI",
-    "CD"
+    "OR"
    ]
   },
   "17": {
@@ -167,7 +167,7 @@
    "attitudini": [
     "MA",
     "DI",
-    "CL"
+    "CO"
    ]
   },
   "18": {
@@ -176,8 +176,8 @@
    "battuta": "Trenta slide. Per dirti di no.",
    "attitudini": [
     "CO",
-    "OR",
-    "AN"
+    "MA",
+    "RI"
    ]
   },
   "19": {
@@ -186,8 +186,8 @@
    "battuta": "Fa domande. Poi domande sulle risposte.",
    "attitudini": [
     "CO",
-    "CL",
-    "RI"
+    "CO",
+    "DI"
    ]
   },
   "20": {
@@ -196,7 +196,7 @@
    "battuta": "Ha un'idea. Anzi dodici. Nessuna entro venerdì.",
    "attitudini": [
     "CO",
-    "CO",
+    "MA",
     "CR"
    ]
   },
@@ -206,8 +206,8 @@
    "battuta": "Non sa bene cosa fa. Ma lo posta.",
    "attitudini": [
     "DI",
-    "CO",
-    "CL"
+    "CR",
+    "CO"
    ]
   },
   "22": {
@@ -217,7 +217,7 @@
    "attitudini": [
     "DI",
     "CO",
-    "CD"
+    "OR"
    ]
   },
   "23": {
@@ -225,9 +225,9 @@
    "nome": "Il Precisino",
    "battuta": "Ti aiuta volentieri. Poi ti corregge.",
    "attitudini": [
-    "CL",
-    "AN",
-    "AN"
+    "CO",
+    "CR",
+    "RI"
    ]
   },
   "24": {
@@ -237,7 +237,7 @@
    "attitudini": [
     "MA",
     "OR",
-    "ST"
+    "CR"
    ]
   },
   "25": {
@@ -246,8 +246,8 @@
    "battuta": "Aggiusta, riordina e sa i fatti di tutti.",
    "attitudini": [
     "MA",
-    "OR",
-    "CL"
+    "DI",
+    "CO"
    ]
   },
   "26": {
@@ -255,9 +255,9 @@
    "nome": "Radio Corridoio",
    "battuta": "Lo sapeva già. Prima di te.",
    "attitudini": [
+    "DI",
     "CO",
-    "CO",
-    "CL"
+    "MA"
    ]
   },
   "27": {
@@ -267,7 +267,7 @@
    "attitudini": [
     "CO",
     "OR",
-    "OR"
+    "DI"
    ]
   },
   "28": {
@@ -277,7 +277,7 @@
    "attitudini": [
     "MA",
     "MA",
-    "CL"
+    "CO"
    ]
   },
   "29": {
@@ -286,7 +286,7 @@
    "battuta": "Con due tappi e uno spago ti fa un lampadario.",
    "attitudini": [
     "MA",
-    "CL",
+    "CO",
     "CR"
    ]
   },
@@ -296,8 +296,8 @@
    "battuta": "Cerca un tubo. Trova un reperto.",
    "attitudini": [
     "MA",
-    "CL",
-    "RI"
+    "CO",
+    "CR"
    ]
   },
   "31": {
@@ -335,9 +335,9 @@
    "nome": "Il Consulente",
    "battuta": "Ti dice che ore sono. Col tuo orologio.",
    "attitudini": [
-    "OR",
-    "AN",
-    "ST"
+    "DI",
+    "RI",
+    "OR"
    ]
   },
   "35": {
@@ -347,7 +347,7 @@
    "attitudini": [
     "DI",
     "OR",
-    "AN"
+    "RI"
    ]
   },
   "36": {
@@ -356,8 +356,8 @@
    "battuta": "In ufficio tace. Nella lega è Napoleone.",
    "attitudini": [
     "DI",
-    "CL",
-    "ST"
+    "CO",
+    "OR"
    ]
   },
   "37": {
@@ -366,8 +366,8 @@
    "battuta": "Sei piatti, due braccia, nessuna pietà.",
    "attitudini": [
     "MA",
-    "CO",
-    "CL"
+    "DI",
+    "CO"
    ]
   },
   "38": {
@@ -375,9 +375,9 @@
    "nome": "La Regista del Caos",
    "battuta": "Ha un piano. È a colori.",
    "attitudini": [
-    "OR",
+    "MA",
     "CR",
-    "CD"
+    "DI"
    ]
   },
   "39": {
@@ -386,8 +386,8 @@
    "battuta": "La password? No.",
    "attitudini": [
     "DI",
-    "OR",
-    "CD"
+    "MA",
+    "OR"
    ]
   },
   "40": {
@@ -395,9 +395,9 @@
    "nome": "La Sondaggista",
    "battuta": "Ha solo due domande. Sono quaranta.",
    "attitudini": [
+    "CR",
     "CO",
-    "CO",
-    "RI"
+    "MA"
    ]
   },
   "41": {
@@ -407,7 +407,7 @@
    "attitudini": [
     "DI",
     "CO",
-    "ST"
+    "OR"
    ]
   },
   "42": {
@@ -426,8 +426,8 @@
    "battuta": "Ha una teoria. E quattro dottorandi per dimostrarla.",
    "attitudini": [
     "OR",
-    "CD",
-    "RI"
+    "MA",
+    "DI"
    ]
   },
   "44": {
@@ -435,9 +435,9 @@
    "nome": "La Direttrice",
    "battuta": "La sua porta è sempre aperta. Lei non c'è.",
    "attitudini": [
-    "CL",
-    "CD",
-    "ST"
+    "CO",
+    "CR",
+    "OR"
    ]
   },
   "45": {
@@ -447,7 +447,7 @@
    "attitudini": [
     "DI",
     "CO",
-    "AN"
+    "MA"
    ]
   },
   "46": {
@@ -457,7 +457,7 @@
    "attitudini": [
     "MA",
     "CR",
-    "CD"
+    "OR"
    ]
   },
   "47": {
@@ -466,8 +466,8 @@
    "battuta": "Ogni cosa al suo posto. Anche tu.",
    "attitudini": [
     "MA",
-    "OR",
-    "OR"
+    "CR",
+    "DI"
    ]
   },
   "48": {
@@ -476,8 +476,8 @@
    "battuta": "Il divano passa. Fidati.",
    "attitudini": [
     "MA",
-    "CD",
-    "ST"
+    "DI",
+    "OR"
    ]
   },
   "49": {
@@ -496,8 +496,8 @@
    "battuta": "Ha spostato la riunione. Tre volte.",
    "attitudini": [
     "DI",
-    "OR",
-    "CL"
+    "MA",
+    "CO"
    ]
   },
   "51": {
@@ -507,7 +507,7 @@
    "attitudini": [
     "MA",
     "CO",
-    "OR"
+    "DI"
    ]
   },
   "52": {
@@ -515,9 +515,9 @@
    "nome": "La Direttrice Creativa",
    "battuta": "Più grande il logo. No, più emozione.",
    "attitudini": [
-    "CL",
+    "CO",
     "CR",
-    "ST"
+    "OR"
    ]
   },
   "53": {
@@ -526,7 +526,7 @@
    "battuta": "Ha sempre la colla. E un piano B.",
    "attitudini": [
     "OR",
-    "CL",
+    "CO",
     "CR"
    ]
   },
@@ -536,8 +536,8 @@
    "battuta": "Tu vai. Tu fermo. Tu... chi sei?",
    "attitudini": [
     "CO",
-    "CD",
-    "CD"
+    "MA",
+    "OR"
    ]
   },
   "55": {
@@ -545,9 +545,9 @@
    "nome": "Il Pianificatore",
    "battuta": "Ha un piano B. E un C. Sta finendo l'alfabeto.",
    "attitudini": [
-    "OR",
-    "AN",
-    "CD"
+    "CR",
+    "RI",
+    "DI"
    ]
   },
   "56": {
@@ -567,7 +567,7 @@
    "attitudini": [
     "MA",
     "DI",
-    "AN"
+    "RI"
    ]
   },
   "58": {
@@ -586,8 +586,8 @@
    "battuta": "Ha fatto le sue ricerche. Te le inoltra.",
    "attitudini": [
     "DI",
-    "CL",
-    "RI"
+    "CO",
+    "MA"
    ]
   },
   "60": {
@@ -609,7 +609,7 @@
    "terna": [
     "MA",
     "DI",
-    "CL"
+    "CO"
    ],
    "categoria": "01"
   },
@@ -620,7 +620,7 @@
    "terna": [
     "MA",
     "DI",
-    "AN"
+    "DI"
    ],
    "categoria": "01"
   },
@@ -630,7 +630,7 @@
    "battuta": "Fatto a mano. Si vede.",
    "terna": [
     "MA",
-    "CL",
+    "CO",
     "CR"
    ],
    "categoria": "01"
@@ -641,8 +641,8 @@
    "battuta": "Doveva piovere. Ha grandinato.",
    "terna": [
     "MA",
-    "AN",
-    "ST"
+    "DI",
+    "OR"
    ],
    "categoria": "01"
   },
@@ -652,8 +652,8 @@
    "battuta": "La catena non si ferma. La pausa sì.",
    "terna": [
     "MA",
-    "OR",
-    "CL"
+    "DI",
+    "CO"
    ],
    "categoria": "01"
   },
@@ -675,7 +675,7 @@
    "terna": [
     "DI",
     "CO",
-    "OR"
+    "MA"
    ],
    "categoria": "02"
   },
@@ -686,7 +686,7 @@
    "terna": [
     "MA",
     "CO",
-    "CL"
+    "CO"
    ],
    "categoria": "02"
   },
@@ -695,8 +695,8 @@
    "nome": "Educazione",
    "battuta": "Oggi lavoretto. Domani colla ovunque.",
    "terna": [
-    "OR",
-    "CL",
+    "MA",
+    "CO",
     "CR"
    ],
    "categoria": "02"
@@ -707,8 +707,8 @@
    "battuta": "La tua opinione conta. Compila il modulo.",
    "terna": [
     "CO",
-    "CL",
-    "CD"
+    "CR",
+    "OR"
    ],
    "categoria": "02"
   },
@@ -718,8 +718,8 @@
    "battuta": "Tutto incluso. Quasi.",
    "terna": [
     "CO",
-    "CL",
-    "OR"
+    "CO",
+    "CR"
    ],
    "categoria": "02"
   },
@@ -728,9 +728,9 @@
    "nome": "Sanità",
    "battuta": "Il prossimo, prego.",
    "terna": [
-    "CL",
-    "AN",
-    "RI"
+    "CO",
+    "RI",
+    "DI"
    ],
    "categoria": "02"
   },
@@ -750,9 +750,9 @@
    "nome": "Segreteria",
    "battuta": "Le faremo sapere.",
    "terna": [
-    "CO",
+    "DI",
     "OR",
-    "CL"
+    "CO"
    ],
    "categoria": "03"
   },
@@ -763,7 +763,7 @@
    "terna": [
     "DI",
     "OR",
-    "AN"
+    "MA"
    ],
    "categoria": "03"
   },
@@ -774,7 +774,7 @@
    "terna": [
     "DI",
     "CO",
-    "CD"
+    "OR"
    ],
    "categoria": "03"
   },
@@ -783,9 +783,9 @@
    "nome": "Direzione",
    "battuta": "La porta è sempre aperta. L'ufficio è vuoto.",
    "terna": [
-    "CL",
-    "CD",
-    "ST"
+    "CO",
+    "MA",
+    "OR"
    ],
    "categoria": "03"
   },
@@ -795,8 +795,8 @@
    "battuta": "Tutti fermi. Tu no. Anzi sì.",
    "terna": [
     "CO",
-    "CD",
-    "CD"
+    "MA",
+    "OR"
    ],
    "categoria": "03"
   },
@@ -816,9 +816,9 @@
    "nome": "Pubblicità",
    "battuta": "Il cliente vuole il logo più grande.",
    "terna": [
-    "CL",
+    "CO",
     "CR",
-    "ST"
+    "MA"
    ],
    "categoria": "04"
   },
@@ -829,7 +829,7 @@
    "terna": [
     "MA",
     "CR",
-    "CD"
+    "OR"
    ],
    "categoria": "04"
   },
@@ -840,7 +840,7 @@
    "terna": [
     "DI",
     "CO",
-    "ST"
+    "OR"
    ],
    "categoria": "04"
   },
@@ -849,8 +849,8 @@
    "nome": "Architettura",
    "battuta": "Bellissimo. E il bagno dove va?",
    "terna": [
-    "CL",
-    "AN",
+    "CO",
+    "MA",
     "CR"
    ],
    "categoria": "04"
@@ -871,8 +871,8 @@
    "nome": "Ricerca",
    "battuta": "I fondi sono finiti. Le ipotesi no.",
    "terna": [
-    "OR",
-    "CD",
+    "CR",
+    "DI",
     "RI"
    ],
    "categoria": "05"
@@ -894,7 +894,7 @@
    "battuta": "È tutto qui. Da qualche parte.",
    "terna": [
     "OR",
-    "RI",
+    "DI",
     "RI"
    ],
    "categoria": "05"
@@ -905,7 +905,7 @@
    "battuta": "Sul mio computer funziona.",
    "terna": [
     "DI",
-    "OR",
+    "MA",
     "CR"
    ],
    "categoria": "05"
@@ -915,9 +915,9 @@
    "nome": "Consulenza",
    "battuta": "Ti dice che ore sono. Col tuo orologio.",
    "terna": [
-    "OR",
-    "AN",
-    "ST"
+    "CR",
+    "DI",
+    "OR"
    ],
    "categoria": "05"
   },
@@ -927,8 +927,8 @@
    "battuta": "I numeri parlano. A bassa voce.",
    "terna": [
     "DI",
-    "AN",
-    "ST"
+    "RI",
+    "MA"
    ],
    "categoria": "05"
   }
@@ -945,15 +945,12 @@
   "DI": "Digitale",
   "CO": "Comunicazione",
   "OR": "Organizzazione",
-  "CL": "Collaborazione",
-  "AN": "Analisi",
   "CR": "Creatività",
-  "CD": "Coordinamento",
-  "RI": "Ricerca",
-  "ST": "Strategia"
+  "RI": "Ricerca"
  },
  "dorsi": {
   "lavoratori": "dorso_lavoratori.webp",
   "ambiti": "dorso_ambiti.webp"
- }
+ },
+ "legenda": "legenda.webp"
 }

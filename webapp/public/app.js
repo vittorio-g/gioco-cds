@@ -460,8 +460,9 @@ function regole() {
         h('li', {}, h('b', {}, 'Muovere il tavolo. '), 'Trascina lo sfondo per spostarlo. Con due dita, o con Ctrl e la rotella, lo ingrandisci; il pulsante con la percentuale lo riadatta allo schermo. Tenendo una carta vicino al bordo il tavolo scorre.')),
       h('p', { class: 'nota' }, 'Il tavolo non applica nessuna regola: tutti possono fare tutto, come con le carte vere. Ogni azione finisce nella cronaca.'),
       h('h2', {}, 'I simboli'),
-      h('ul', { class: 'legenda' }, Object.entries(INDICE?.simboli ?? {}).map(([sigla, nome]) => h('li', {}, icona(sigla), h('b', {}, sigla), nome))),
-      h('p', { class: 'nota' }, 'La stellina segna i due simboli più rari.'),
+      INDICE?.legenda
+        ? h('img', { class: 'legenda-disegnata', src: `/carte/${INDICE.legenda}`, alt: `I simboli: ${Object.entries(INDICE.simboli).map(([sigla, nome]) => `${sigla} ${nome}`).join(', ')}.` })
+        : h('ul', { class: 'legenda' }, Object.entries(INDICE?.simboli ?? {}).map(([sigla, nome]) => h('li', {}, icona(sigla), h('b', {}, sigla), nome))),
       h('h2', {}, 'Le regole in breve'),
       h('ul', {},
         h('li', {}, 'Ci sono due mazzi: 60 lavoratori e 30 ambiti. Un ambito si gioca come formazione oppure come lavoro.'),

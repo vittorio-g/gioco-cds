@@ -1,11 +1,13 @@
 // Regole di Collocamento, per le simulazioni (strumenti/analisi.mjs).
 // La webapp non le usa: il tavolo online è libero e non applica regole.
 //
-// Ci sono due mazzi: i lavoratori (3 attitudini) e le carte lavoro/formazione
-// (una terna di icone). Un mazzo M è { lav: [{n, att}], form: [{n, lav}] } e
-// le carte sono indici in quei due elenchi.
+// Ci sono due mazzi: i lavoratori (3 attitudini) e gli ambiti (una terna di
+// icone, che si gioca come formazione o come lavoro). Un mazzo M è
+// { lav: [{n, att}], form: [{n, cat, lav}] } e le carte sono indici in quei due elenchi.
+//
+// Oltre alle regole del regolamento ci sono, come opzioni, le proposte ancora
+// da decidere: servono a confrontarle con le partite tra bot.
 
-export const SIMBOLI = ['MA', 'DI', 'CO', 'OR', 'CL', 'AN', 'CR', 'CD', 'RI', 'ST'];
 export const BASE = 5;
 export const PREMIO = [0, 3, 7, 12];
 
@@ -18,12 +20,14 @@ export class Rifiuto extends Error {
 }
 
 export const OPZIONI = {
-  mazzo: 'v3',
   attitudiniNelRequisito: false, // le attitudini contano anche per coprire il lavoro
   premioOspite: 0, // carte fisse in piu' per chi ospita, oltre a 1 per attitudine
   occupatiPerFinire: 0, // 0 = automatico in base al numero di giocatori
   manoLavoratori: 2,
   manoCarte: 2,
+  campoComune: false, // si può mettere un ambito sopra una formazione libera, di chiunque sia
+  premioA: 'apre', // chi prende il premio quando un lavoratore entra: 'apre' (chi aveva aperto, se entra un altro) o 'entra'
+  premioScelta: false, // ogni carta di premio si può pescare oppure usare per giocare una carta in più
 };
 
 export function occupatiPerFinire(nGiocatori) {
@@ -34,7 +38,7 @@ function righe(csv) {
   return csv.trim().split(/\r?\n/).slice(1).map((r) => r.split(',').map((x) => x.trim()));
 }
 export const leggiLavoratori = (csv) => righe(csv).map(([n, ...att]) => ({ n, att }));
-export const leggiLavori = (csv) => righe(csv).map(([n, ...lav]) => ({ n, lav }));
+export const leggiAmbiti = (csv) => righe(csv).map(([n, cat, ...lav]) => ({ n, cat, lav }));
 
 // Icone che combaciano una per una (intersezione di multinsiemi).
 export function comuni(a, b) {
@@ -80,6 +84,7 @@ export function nuovaPartita(M, nomi, opzioni = {}, rnd = Math.random) {
     mazzoLav: mescola(M.lav.map((_, i) => i), rnd),
     mazzoFor: mescola(M.form.map((_, i) => i), rnd),
     scarti: [],
+    impilate: {}, // per ogni formazione libera, gli ambiti messi sopra prima che arrivi un lavoratore
     primo: Math.floor(rnd() * nomi.length),
     turno: 0,
     giro: 1,
@@ -114,7 +119,8 @@ function pesca(s, p, quale, rnd) {
   if (!s.mazzoFor.length && s.scarti.length) {
     s.mazzoFor = mescola(s.scarti, rnd);
     s.scarti = [];
-    nota(s, -1, 'Il mazzo dei lavori è finito: si rimescolano gli scarti.');
+    s.rimescolate = (s.rimescolate ?? 0) + 1;
+    nota(s, -1, 'Il mazzo degli ambiti è finito: si rimescolano gli scarti.');
   }
   if (!s.mazzoFor.length) return false;
   g.carte.push(s.mazzoFor.pop());
@@ -122,9 +128,14 @@ function pesca(s, p, quale, rnd) {
 }
 
 const formazioniLibere = (s) => s.giocatori.some((g) => g.libere.length > 0);
+// Una formazione libera con quello che le è stato impilato sopra.
+export const pila = (s, f) => [f, ...(s.impilate[f] ?? [])];
+export const iconePila = (s, M, f) => pila(s, f).flatMap((c) => M.form[c].lav);
 const puoGiocare = (s, p) => s.giocatori[p].carte.length > 0 || (s.giocatori[p].lavoratori.length > 0 && formazioniLibere(s));
 
 function passa(s) {
+  s.piuGiocate = Math.max(s.piuGiocate ?? 0, s.giocateNelTurno ?? 0);
+  s.giocateNelTurno = 0;
   s.turno = (s.turno + 1) % s.giocatori.length;
   s.attesa = 'gioca';
   if (s.turno === s.primo) {
@@ -136,6 +147,10 @@ function passa(s) {
 // Salta i passi che il giocatore di turno non può fare: chi non ha carte
 // giocabili pesca soltanto, chi non può pescare passa.
 function sistema(s) {
+  for (const g of s.giocatori) {
+    const p = s.giocatori.indexOf(g);
+    if (g.credito > 0 && !pescabile(s, 'lav') && !pescabile(s, 'for') && !(s.opzioni.premioScelta && puoGiocare(s, p))) g.credito = 0;
+  }
   for (let salti = 0; s.fase === 'gioco'; salti++) {
     if (salti > 2 * s.giocatori.length) {
       s.fase = 'finita'; // nessuno può più giocare né pescare
@@ -162,21 +177,22 @@ export function mosseLegali(s, M, p) {
     for (const quale of ['lav', 'for']) if (pescabile(s, quale)) mosse.push({ t: 'pesca', m: quale });
   };
   if (g.credito > 0) pescate();
-  if (s.turno !== p) return mosse;
-  if (s.attesa === 'pesca') {
-    if (!g.credito) pescate();
-    return mosse;
-  }
+  const diTurno = s.turno === p && s.attesa === 'gioca';
+  const conPremio = s.opzioni.premioScelta && g.credito > 0;
+  if (s.turno === p && s.attesa === 'pesca' && !g.credito) pescate();
+  if (!diTurno && !conPremio) return mosse;
   for (const c of g.lavoratori) {
     s.giocatori.forEach((h, di) => {
       for (const f of h.libere) {
-        const premio = di === p ? 0 : comuni(M.lav[c].att, M.form[f].lav) + s.opzioni.premioOspite;
+        const icone = comuni(M.lav[c].att, iconePila(s, M, f));
+        const premio = s.opzioni.premioA === 'entra' ? icone : di === p ? 0 : icone + s.opzioni.premioOspite;
         mosse.push({ t: 'entra', c, di, f, pesca: premio });
       }
     });
   }
   for (const c of g.carte) {
     mosse.push({ t: 'apri', c });
+    if (s.opzioni.campoComune) s.giocatori.forEach((h, di) => { for (const f of h.libere) mosse.push({ t: 'impila', c, di, f }); });
     for (const col of g.colonne) {
       mosse.push({ t: 'forma', c, col: col.lav });
       if (mancanti(competenze(M, col, s.opzioni), M.form[c].lav) === 0) {
@@ -217,22 +233,41 @@ export function applica(s, M, p, m, rnd = Math.random) {
     return;
   }
 
-  if (s.turno !== p) throw new Rifiuto('Non è il tuo turno.');
-  if (s.attesa !== 'gioca') throw new Rifiuto('Hai già giocato: ora pesca una carta.');
+  const diTurno = s.turno === p && s.attesa === 'gioca';
+  const conPremio = !diTurno && s.opzioni.premioScelta && g.credito > 0;
+  if (!diTurno && !conPremio) {
+    if (s.turno !== p) throw new Rifiuto('Non è il tuo turno.');
+    throw new Rifiuto('Hai già giocato: ora pesca una carta.');
+  }
+  if (conPremio) g.credito--;
+  s.giocateNelTurno = (s.giocateNelTurno ?? 0) + 1;
 
-  if (m.t === 'entra') {
+  if (m.t === 'impila') {
+    if (!s.opzioni.campoComune) throw new Rifiuto('Su una formazione senza lavoratore non si impila.');
+    const padrone = s.giocatori[m.di];
+    if (!padrone || !padrone.libere.includes(m.f)) throw new Rifiuto('Quella formazione non è più libera.');
+    togli(g.carte, m.c, 'Quella carta non è nella tua mano.');
+    (s.impilate[m.f] ??= []).push(m.c);
+    nota(s, p, `impila ${terna(M.form[m.c].lav)} sulla formazione ${terna(M.form[m.f].lav)}.`);
+  } else if (m.t === 'entra') {
     const padrone = s.giocatori[m.di];
     if (!padrone || !padrone.libere.includes(m.f)) throw new Rifiuto('Quella formazione non è più libera.');
     togli(g.lavoratori, m.c, 'Quel lavoratore non è nella tua mano.');
     togli(padrone.libere, m.f);
     // Il lavoratore va sulla formazione e resta lì: la colonna è di chi l'ha mandato.
-    g.colonne.push({ lav: m.c, form: [m.f], presso: m.di });
+    const formazioni = pila(s, m.f);
+    delete s.impilate[m.f];
+    g.colonne.push({ lav: m.c, form: formazioni, presso: m.di });
     const lavoratore = M.lav[m.c];
     const chi = `il lavoratore ${lavoratore.n} (${terna(lavoratore.att)})`;
-    if (m.di === p) {
+    const iconeEntrata = comuni(lavoratore.att, formazioni.flatMap((c) => M.form[c].lav));
+    if (s.opzioni.premioA === 'entra') {
+      g.credito += iconeEntrata;
+      nota(s, p, `mette ${chi} su una formazione: ${iconeEntrata} attitudini combaciano.`);
+    } else if (m.di === p) {
       nota(s, p, `mette ${chi} sulla sua formazione ${terna(M.form[m.f].lav)}.`);
     } else {
-      const icone = comuni(lavoratore.att, M.form[m.f].lav);
+      const icone = iconeEntrata;
       const premio = icone + s.opzioni.premioOspite;
       padrone.credito += premio;
       nota(
@@ -283,7 +318,7 @@ export function applica(s, M, p, m, rnd = Math.random) {
     throw new Rifiuto('Mossa sconosciuta.');
   }
 
-  s.attesa = 'pesca';
+  if (!conPremio) s.attesa = 'pesca';
   sistema(s);
   if (s.fase === 'finita') nota(s, -1, 'Partita finita.');
 }

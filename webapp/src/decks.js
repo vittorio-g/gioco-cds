@@ -1,5 +1,5 @@
 import lavoratori from '../../mazzi/lavoratori.csv';
-import ambiti from '../../mazzi/ambiti_v4.csv';
+import ambiti from '../../mazzi/ambiti.csv';
 import indice from '../public/carte/indice.json';
 
 const righe = (csv) => csv.trim().split(/\r?\n/).slice(1).map((r) => r.split(',').map((x) => x.trim()));

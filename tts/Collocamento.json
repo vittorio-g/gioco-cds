@@ -520,8 +520,8 @@
       ],
       "CustomDeck": {
         "11": {
-          "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-          "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+          "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+          "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
           "NumWidth": 5,
           "NumHeight": 3,
           "BackIsHidden": true,
@@ -529,8 +529,8 @@
           "Type": 0
         },
         "12": {
-          "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-          "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+          "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+          "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
           "NumWidth": 5,
           "NumHeight": 3,
           "BackIsHidden": true,
@@ -538,8 +538,8 @@
           "Type": 0
         },
         "13": {
-          "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-          "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+          "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+          "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
           "NumWidth": 5,
           "NumHeight": 3,
           "BackIsHidden": true,
@@ -547,8 +547,8 @@
           "Type": 0
         },
         "14": {
-          "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-          "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+          "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+          "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
           "NumWidth": 5,
           "NumHeight": 3,
           "BackIsHidden": true,
@@ -572,7 +572,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Regina delle Tabelle",
-          "Description": "DI OR OR\nHa una tabella per tutto. Anche per le tabelle.",
+          "Description": "DI MA OR\nHa una tabella per tutto. Anche per le tabelle.",
           "GMNotes": "lavoratore 01",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -598,8 +598,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -623,7 +623,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Capocantiere",
-          "Description": "MA CO CD\nUrla istruzioni che nessuno aveva chiesto.",
+          "Description": "MA CO CR\nUrla istruzioni che nessuno aveva chiesto.",
           "GMNotes": "lavoratore 02",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -649,8 +649,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -674,7 +674,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "L'Archistar",
-          "Description": "CL AN CR\nBellissimo. Cade, ma è bellissimo.",
+          "Description": "CO DI CR\nBellissimo. Cade, ma è bellissimo.",
           "GMNotes": "lavoratore 03",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -700,8 +700,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -725,7 +725,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Venditore di Trapani",
-          "Description": "MA CO ST\nTi serviva un buco. Hai comprato tre trapani.",
+          "Description": "MA CO OR\nTi serviva un buco. Hai comprato tre trapani.",
           "GMNotes": "lavoratore 04",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -751,8 +751,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -776,7 +776,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "L'Archivista",
-          "Description": "OR RI RI\nSa dov'è ogni cosa. Anche le tue ferie del 2019.",
+          "Description": "OR DI MA\nSa dov'è ogni cosa. Anche le tue ferie del 2019.",
           "GMNotes": "lavoratore 05",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -802,8 +802,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -827,7 +827,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Regista delle Call",
-          "Description": "DI CL CD\nSei in muto. Sei ancora in muto.",
+          "Description": "DI CO OR\nSei in muto. Sei ancora in muto.",
           "GMNotes": "lavoratore 06",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -853,8 +853,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -878,7 +878,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "L'Amico di Tutti",
-          "Description": "CO CL CL\nSa il nome del tuo gatto. E di quello del capo.",
+          "Description": "CO MA CO\nSa il nome del tuo gatto. E di quello del capo.",
           "GMNotes": "lavoratore 07",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -904,8 +904,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -929,7 +929,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "L'Artista dei Grafici",
-          "Description": "AN CR CR\nIl dato è sbagliato. Ma guarda che colori.",
+          "Description": "RI CR CR\nIl dato è sbagliato. Ma guarda che colori.",
           "GMNotes": "lavoratore 08",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -955,8 +955,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -980,7 +980,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Segretaria Onnisciente",
-          "Description": "CO OR CL\nSa tutto. Ti passa l'interno.",
+          "Description": "CO MA CO\nSa tutto. Ti passa l'interno.",
           "GMNotes": "lavoratore 09",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1006,8 +1006,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1057,8 +1057,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1082,7 +1082,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Mediatrice",
-          "Description": "CL CL AN\nHa un sondaggio anche per scegliere la pizza.",
+          "Description": "CO CR MA\nHa un sondaggio anche per scegliere la pizza.",
           "GMNotes": "lavoratore 11",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1108,8 +1108,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1133,7 +1133,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "L'Inventore da Garage",
-          "Description": "MA AN CR\nFunziona. Non chiedere come.",
+          "Description": "MA RI CR\nFunziona. Non chiedere come.",
           "GMNotes": "lavoratore 12",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1159,8 +1159,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1184,7 +1184,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Nerd dei Dati",
-          "Description": "DI DI AN\nNon esce da tre giorni. I numeri sì.",
+          "Description": "DI DI RI\nNon esce da tre giorni. I numeri sì.",
           "GMNotes": "lavoratore 13",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1210,8 +1210,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1235,7 +1235,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Capoclasse",
-          "Description": "CO CL CD\nHa fatto il gruppo prima che servisse.",
+          "Description": "CO CO DI\nHa fatto il gruppo prima che servisse.",
           "GMNotes": "lavoratore 14",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1261,8 +1261,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1286,7 +1286,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Generale dell'Orto",
-          "Description": "MA AN ST\nHa un piano quinquennale per le zucchine.",
+          "Description": "MA RI DI\nHa un piano quinquennale per le zucchine.",
           "GMNotes": "lavoratore 15",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1312,8 +1312,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "11": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.cdbe4880.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_1.51f08448.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1337,7 +1337,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Caporeparto",
-          "Description": "MA DI CD\nComanda i robot. I robot hanno paura.",
+          "Description": "MA DI OR\nComanda i robot. I robot hanno paura.",
           "GMNotes": "lavoratore 16",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1363,8 +1363,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1388,7 +1388,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Tecnico Paziente",
-          "Description": "MA DI CL\nTe lo rispiega. Per la quarta volta. Sorridendo.",
+          "Description": "MA DI CO\nTe lo rispiega. Per la quarta volta. Sorridendo.",
           "GMNotes": "lavoratore 17",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1414,8 +1414,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1439,7 +1439,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Signora delle Slide",
-          "Description": "CO OR AN\nTrenta slide. Per dirti di no.",
+          "Description": "CO MA RI\nTrenta slide. Per dirti di no.",
           "GMNotes": "lavoratore 18",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1465,8 +1465,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1490,7 +1490,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Curiosa",
-          "Description": "CO CL RI\nFa domande. Poi domande sulle risposte.",
+          "Description": "CO CO DI\nFa domande. Poi domande sulle risposte.",
           "GMNotes": "lavoratore 19",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1516,8 +1516,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1541,7 +1541,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Fiume in Piena",
-          "Description": "CO CO CR\nHa un'idea. Anzi dodici. Nessuna entro venerdì.",
+          "Description": "CO MA CR\nHa un'idea. Anzi dodici. Nessuna entro venerdì.",
           "GMNotes": "lavoratore 20",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1567,8 +1567,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1592,7 +1592,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Social Media Coso",
-          "Description": "DI CO CL\nNon sa bene cosa fa. Ma lo posta.",
+          "Description": "DI CR CO\nNon sa bene cosa fa. Ma lo posta.",
           "GMNotes": "lavoratore 21",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1618,8 +1618,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1643,7 +1643,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Project Manager",
-          "Description": "DI CO CD\nTi ha messo in copia. Di nuovo.",
+          "Description": "DI CO OR\nTi ha messo in copia. Di nuovo.",
           "GMNotes": "lavoratore 22",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1669,8 +1669,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1694,7 +1694,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Precisino",
-          "Description": "CL AN AN\nTi aiuta volentieri. Poi ti corregge.",
+          "Description": "CO CR RI\nTi aiuta volentieri. Poi ti corregge.",
           "GMNotes": "lavoratore 23",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1720,8 +1720,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1745,7 +1745,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Magazziniera",
-          "Description": "MA OR ST\nSa dov'è ogni scatola. E dove sarà nel 2031.",
+          "Description": "MA OR CR\nSa dov'è ogni scatola. E dove sarà nel 2031.",
           "GMNotes": "lavoratore 24",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1771,8 +1771,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1796,7 +1796,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Portinaio Tuttofare",
-          "Description": "MA OR CL\nAggiusta, riordina e sa i fatti di tutti.",
+          "Description": "MA DI CO\nAggiusta, riordina e sa i fatti di tutti.",
           "GMNotes": "lavoratore 25",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1822,8 +1822,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1847,7 +1847,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Radio Corridoio",
-          "Description": "CO CO CL\nLo sapeva già. Prima di te.",
+          "Description": "DI CO MA\nLo sapeva già. Prima di te.",
           "GMNotes": "lavoratore 26",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1873,8 +1873,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1898,7 +1898,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Burocrate Gentile",
-          "Description": "CO OR OR\nManca un timbro. Gli dispiace moltissimo.",
+          "Description": "CO OR DI\nManca un timbro. Gli dispiace moltissimo.",
           "GMNotes": "lavoratore 27",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1924,8 +1924,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -1949,7 +1949,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Muratore Filosofo",
-          "Description": "MA MA CL\nTira su muri. Abbatte certezze.",
+          "Description": "MA MA CO\nTira su muri. Abbatte certezze.",
           "GMNotes": "lavoratore 28",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -1975,8 +1975,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2000,7 +2000,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Maga della Colla a Caldo",
-          "Description": "MA CL CR\nCon due tappi e uno spago ti fa un lampadario.",
+          "Description": "MA CO CR\nCon due tappi e uno spago ti fa un lampadario.",
           "GMNotes": "lavoratore 29",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2026,8 +2026,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2051,7 +2051,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "L'Esploratore di Cantine",
-          "Description": "MA CL RI\nCerca un tubo. Trova un reperto.",
+          "Description": "MA CO CR\nCerca un tubo. Trova un reperto.",
           "GMNotes": "lavoratore 30",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2077,8 +2077,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "12": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.b9cbc1a9.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_2.a866303a.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2128,8 +2128,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2179,8 +2179,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2230,8 +2230,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2255,7 +2255,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Consulente",
-          "Description": "OR AN ST\nTi dice che ore sono. Col tuo orologio.",
+          "Description": "DI RI OR\nTi dice che ore sono. Col tuo orologio.",
           "GMNotes": "lavoratore 34",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2281,8 +2281,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2306,7 +2306,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Contabile",
-          "Description": "DI OR AN\nTrova l'errore. Lo trova sempre.",
+          "Description": "DI OR RI\nTrova l'errore. Lo trova sempre.",
           "GMNotes": "lavoratore 35",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2332,8 +2332,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2357,7 +2357,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Capitano del Fantacalcio",
-          "Description": "DI CL ST\nIn ufficio tace. Nella lega è Napoleone.",
+          "Description": "DI CO OR\nIn ufficio tace. Nella lega è Napoleone.",
           "GMNotes": "lavoratore 36",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2383,8 +2383,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2408,7 +2408,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Cameriere Acrobata",
-          "Description": "MA CO CL\nSei piatti, due braccia, nessuna pietà.",
+          "Description": "MA DI CO\nSei piatti, due braccia, nessuna pietà.",
           "GMNotes": "lavoratore 37",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2434,8 +2434,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2459,7 +2459,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Regista del Caos",
-          "Description": "OR CR CD\nHa un piano. È a colori.",
+          "Description": "MA CR DI\nHa un piano. È a colori.",
           "GMNotes": "lavoratore 38",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2485,8 +2485,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2510,7 +2510,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Sistemista",
-          "Description": "DI OR CD\nLa password? No.",
+          "Description": "DI MA OR\nLa password? No.",
           "GMNotes": "lavoratore 39",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2536,8 +2536,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2561,7 +2561,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Sondaggista",
-          "Description": "CO CO RI\nHa solo due domande. Sono quaranta.",
+          "Description": "CR CO MA\nHa solo due domande. Sono quaranta.",
           "GMNotes": "lavoratore 40",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2587,8 +2587,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2612,7 +2612,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Guru del Marketing",
-          "Description": "DI CO ST\nDiventerà virale. Lo dice lui.",
+          "Description": "DI CO OR\nDiventerà virale. Lo dice lui.",
           "GMNotes": "lavoratore 41",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2638,8 +2638,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2689,8 +2689,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2714,7 +2714,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Professore",
-          "Description": "OR CD RI\nHa una teoria. E quattro dottorandi per dimostrarla.",
+          "Description": "OR MA DI\nHa una teoria. E quattro dottorandi per dimostrarla.",
           "GMNotes": "lavoratore 43",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2740,8 +2740,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2765,7 +2765,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Direttrice",
-          "Description": "CL CD ST\nLa sua porta è sempre aperta. Lei non c'è.",
+          "Description": "CO CR OR\nLa sua porta è sempre aperta. Lei non c'è.",
           "GMNotes": "lavoratore 44",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2791,8 +2791,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2816,7 +2816,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Quello dei Grafici",
-          "Description": "DI CO AN\nTi dà torto. Con le fonti.",
+          "Description": "DI CO MA\nTi dà torto. Con le fonti.",
           "GMNotes": "lavoratore 45",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2842,8 +2842,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "13": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.e8043c3d.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_3.f60509c0.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2867,7 +2867,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Scenografa",
-          "Description": "MA CR CD\nDammi un martello e quattro volontari.",
+          "Description": "MA CR OR\nDammi un martello e quattro volontari.",
           "GMNotes": "lavoratore 46",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2893,8 +2893,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2918,7 +2918,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Signore degli Scaffali",
-          "Description": "MA OR OR\nOgni cosa al suo posto. Anche tu.",
+          "Description": "MA CR DI\nOgni cosa al suo posto. Anche tu.",
           "GMNotes": "lavoratore 47",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2944,8 +2944,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -2969,7 +2969,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Comandante dei Traslochi",
-          "Description": "MA CD ST\nIl divano passa. Fidati.",
+          "Description": "MA DI OR\nIl divano passa. Fidati.",
           "GMNotes": "lavoratore 48",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -2995,8 +2995,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3046,8 +3046,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3071,7 +3071,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Custode del Calendario",
-          "Description": "DI OR CL\nHa spostato la riunione. Tre volte.",
+          "Description": "DI MA CO\nHa spostato la riunione. Tre volte.",
           "GMNotes": "lavoratore 50",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3097,8 +3097,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3122,7 +3122,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Banconista",
-          "Description": "MA CO OR\nAltro? Altro? Altro?",
+          "Description": "MA CO DI\nAltro? Altro? Altro?",
           "GMNotes": "lavoratore 51",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3148,8 +3148,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3173,7 +3173,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Direttrice Creativa",
-          "Description": "CL CR ST\nPiù grande il logo. No, più emozione.",
+          "Description": "CO CR OR\nPiù grande il logo. No, più emozione.",
           "GMNotes": "lavoratore 52",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3199,8 +3199,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3224,7 +3224,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Maestro dei Lavoretti",
-          "Description": "OR CL CR\nHa sempre la colla. E un piano B.",
+          "Description": "OR CO CR\nHa sempre la colla. E un piano B.",
           "GMNotes": "lavoratore 53",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3250,8 +3250,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3275,7 +3275,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "La Torre di Controllo",
-          "Description": "CO CD CD\nTu vai. Tu fermo. Tu... chi sei?",
+          "Description": "CO MA OR\nTu vai. Tu fermo. Tu... chi sei?",
           "GMNotes": "lavoratore 54",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3301,8 +3301,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3326,7 +3326,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Pianificatore",
-          "Description": "OR AN CD\nHa un piano B. E un C. Sta finendo l'alfabeto.",
+          "Description": "CR RI DI\nHa un piano B. E un C. Sta finendo l'alfabeto.",
           "GMNotes": "lavoratore 55",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3352,8 +3352,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3403,8 +3403,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3428,7 +3428,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Il Collaudatore",
-          "Description": "MA DI AN\nÈ perfetto. Rifallo.",
+          "Description": "MA DI RI\nÈ perfetto. Rifallo.",
           "GMNotes": "lavoratore 57",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3454,8 +3454,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3505,8 +3505,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3530,7 +3530,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Quello che Ha Letto un Articolo",
-          "Description": "DI CL RI\nHa fatto le sue ricerche. Te le inoltra.",
+          "Description": "DI CO MA\nHa fatto le sue ricerche. Te le inoltra.",
           "GMNotes": "lavoratore 59",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3556,8 +3556,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3607,8 +3607,8 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "14": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.061e686e.jpg",
-              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.26d3e6da.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_4.6fc3aa6c.jpg",
+              "BackURL": "https://collocamento.cortivo81.workers.dev/tts/lavoratori_dorso.3e80c5d0.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
               "BackIsHidden": true,
@@ -3691,7 +3691,7 @@
       ],
       "CustomDeck": {
         "21": {
-          "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+          "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
           "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
           "NumWidth": 5,
           "NumHeight": 3,
@@ -3700,7 +3700,7 @@
           "Type": 0
         },
         "22": {
-          "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+          "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
           "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
           "NumWidth": 5,
           "NumHeight": 3,
@@ -3725,7 +3725,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Assistenza tecnica",
-          "Description": "MA DI CL\nTecnica e produzione\nEra il cavo. È sempre il cavo.",
+          "Description": "MA DI CO\nTecnica e produzione\nEra il cavo. È sempre il cavo.",
           "GMNotes": "ambito 01",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3751,7 +3751,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -3776,7 +3776,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Controllo qualità",
-          "Description": "MA DI AN\nTecnica e produzione\nÈ perfetto. Rifallo.",
+          "Description": "MA DI DI\nTecnica e produzione\nÈ perfetto. Rifallo.",
           "GMNotes": "ambito 02",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3802,7 +3802,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -3827,7 +3827,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Artigianato",
-          "Description": "MA CL CR\nTecnica e produzione\nFatto a mano. Si vede.",
+          "Description": "MA CO CR\nTecnica e produzione\nFatto a mano. Si vede.",
           "GMNotes": "ambito 03",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3853,7 +3853,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -3878,7 +3878,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Agricoltura",
-          "Description": "MA AN ST\nTecnica e produzione\nDoveva piovere. Ha grandinato.",
+          "Description": "MA DI OR\nTecnica e produzione\nDoveva piovere. Ha grandinato.",
           "GMNotes": "ambito 04",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3904,7 +3904,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -3929,7 +3929,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Produzione",
-          "Description": "MA OR CL\nTecnica e produzione\nLa catena non si ferma. La pausa sì.",
+          "Description": "MA DI CO\nTecnica e produzione\nLa catena non si ferma. La pausa sì.",
           "GMNotes": "ambito 05",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -3955,7 +3955,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4006,7 +4006,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4031,7 +4031,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Assistenza clienti",
-          "Description": "DI CO OR\nServizi e relazioni\nHa provato a spegnere e riaccendere?",
+          "Description": "DI CO MA\nServizi e relazioni\nHa provato a spegnere e riaccendere?",
           "GMNotes": "ambito 07",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4057,7 +4057,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4082,7 +4082,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Ristorazione",
-          "Description": "MA CO CL\nServizi e relazioni\nIl cliente ha sempre ragione. Purtroppo.",
+          "Description": "MA CO CO\nServizi e relazioni\nIl cliente ha sempre ragione. Purtroppo.",
           "GMNotes": "ambito 08",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4108,7 +4108,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4133,7 +4133,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Educazione",
-          "Description": "OR CL CR\nServizi e relazioni\nOggi lavoretto. Domani colla ovunque.",
+          "Description": "MA CO CR\nServizi e relazioni\nOggi lavoretto. Domani colla ovunque.",
           "GMNotes": "ambito 09",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4159,7 +4159,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4184,7 +4184,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Risorse umane",
-          "Description": "CO CL CD\nServizi e relazioni\nLa tua opinione conta. Compila il modulo.",
+          "Description": "CO CR OR\nServizi e relazioni\nLa tua opinione conta. Compila il modulo.",
           "GMNotes": "ambito 10",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4210,7 +4210,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4235,7 +4235,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Turismo",
-          "Description": "CO CL OR\nServizi e relazioni\nTutto incluso. Quasi.",
+          "Description": "CO CO CR\nServizi e relazioni\nTutto incluso. Quasi.",
           "GMNotes": "ambito 11",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4261,7 +4261,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4286,7 +4286,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Sanità",
-          "Description": "CL AN RI\nServizi e relazioni\nIl prossimo, prego.",
+          "Description": "CO RI DI\nServizi e relazioni\nIl prossimo, prego.",
           "GMNotes": "ambito 12",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4312,7 +4312,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4363,7 +4363,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4388,7 +4388,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Segreteria",
-          "Description": "CO OR CL\nOrganizzazione e gestione\nLe faremo sapere.",
+          "Description": "DI OR CO\nOrganizzazione e gestione\nLe faremo sapere.",
           "GMNotes": "ambito 14",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4414,7 +4414,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4439,7 +4439,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Contabilità",
-          "Description": "DI OR AN\nOrganizzazione e gestione\nMancano tre centesimi. Nessuno va a casa.",
+          "Description": "DI OR MA\nOrganizzazione e gestione\nMancano tre centesimi. Nessuno va a casa.",
           "GMNotes": "ambito 15",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4465,7 +4465,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "21": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.83ebfd45.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_1.0fd4132a.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4490,7 +4490,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Gestione progetti",
-          "Description": "DI CO CD\nOrganizzazione e gestione\nSiamo in ritardo. Facciamo una riunione.",
+          "Description": "DI CO OR\nOrganizzazione e gestione\nSiamo in ritardo. Facciamo una riunione.",
           "GMNotes": "ambito 16",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4516,7 +4516,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4541,7 +4541,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Direzione",
-          "Description": "CL CD ST\nOrganizzazione e gestione\nLa porta è sempre aperta. L'ufficio è vuoto.",
+          "Description": "CO MA OR\nOrganizzazione e gestione\nLa porta è sempre aperta. L'ufficio è vuoto.",
           "GMNotes": "ambito 17",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4567,7 +4567,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4592,7 +4592,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Torre di controllo",
-          "Description": "CO CD CD\nOrganizzazione e gestione\nTutti fermi. Tu no. Anzi sì.",
+          "Description": "CO MA OR\nOrganizzazione e gestione\nTutti fermi. Tu no. Anzi sì.",
           "GMNotes": "ambito 18",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4618,7 +4618,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4669,7 +4669,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4694,7 +4694,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Pubblicità",
-          "Description": "CL CR ST\nCreatività e comunicazione\nIl cliente vuole il logo più grande.",
+          "Description": "CO CR MA\nCreatività e comunicazione\nIl cliente vuole il logo più grande.",
           "GMNotes": "ambito 20",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4720,7 +4720,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4745,7 +4745,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Spettacolo",
-          "Description": "MA CR CD\nCreatività e comunicazione\nChi è di scena? Il fondale no.",
+          "Description": "MA CR OR\nCreatività e comunicazione\nChi è di scena? Il fondale no.",
           "GMNotes": "ambito 21",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4771,7 +4771,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4796,7 +4796,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Marketing",
-          "Description": "DI CO ST\nCreatività e comunicazione\nDiventerà virale. Fidati.",
+          "Description": "DI CO OR\nCreatività e comunicazione\nDiventerà virale. Fidati.",
           "GMNotes": "ambito 22",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4822,7 +4822,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4847,7 +4847,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Architettura",
-          "Description": "CL AN CR\nCreatività e comunicazione\nBellissimo. E il bagno dove va?",
+          "Description": "CO MA CR\nCreatività e comunicazione\nBellissimo. E il bagno dove va?",
           "GMNotes": "ambito 23",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4873,7 +4873,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4924,7 +4924,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -4949,7 +4949,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Ricerca",
-          "Description": "OR CD RI\nRicerca e innovazione\nI fondi sono finiti. Le ipotesi no.",
+          "Description": "CR DI RI\nRicerca e innovazione\nI fondi sono finiti. Le ipotesi no.",
           "GMNotes": "ambito 25",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -4975,7 +4975,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -5026,7 +5026,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -5051,7 +5051,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Archivio",
-          "Description": "OR RI RI\nRicerca e innovazione\nÈ tutto qui. Da qualche parte.",
+          "Description": "OR DI RI\nRicerca e innovazione\nÈ tutto qui. Da qualche parte.",
           "GMNotes": "ambito 27",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -5077,7 +5077,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -5102,7 +5102,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Sviluppo web",
-          "Description": "DI OR CR\nRicerca e innovazione\nSul mio computer funziona.",
+          "Description": "DI MA CR\nRicerca e innovazione\nSul mio computer funziona.",
           "GMNotes": "ambito 28",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -5128,7 +5128,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -5153,7 +5153,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Consulenza",
-          "Description": "OR AN ST\nRicerca e innovazione\nTi dice che ore sono. Col tuo orologio.",
+          "Description": "CR DI OR\nRicerca e innovazione\nTi dice che ore sono. Col tuo orologio.",
           "GMNotes": "ambito 29",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -5179,7 +5179,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,
@@ -5204,7 +5204,7 @@
             "scaleZ": 1.0
           },
           "Nickname": "Analisi dati",
-          "Description": "DI AN ST\nRicerca e innovazione\nI numeri parlano. A bassa voce.",
+          "Description": "DI RI MA\nRicerca e innovazione\nI numeri parlano. A bassa voce.",
           "GMNotes": "ambito 30",
           "ColorDiffuse": {
             "r": 0.713235259,
@@ -5230,7 +5230,7 @@
           "SidewaysCard": false,
           "CustomDeck": {
             "22": {
-              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.d2130ec8.jpg",
+              "FaceURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_2.eeb21e31.jpg",
               "BackURL": "https://collocamento.cortivo81.workers.dev/tts/ambiti_dorso.8abd5f95.jpg",
               "NumWidth": 5,
               "NumHeight": 3,

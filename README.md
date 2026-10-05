@@ -1,6 +1,6 @@
 # Collocamento
 
-Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazzi, 60 lavoratori e 30 ambiti.
+Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazzi, 60 lavoratori e 30 ambiti, con sei simboli.
 
 - **Tavolo online per provarlo:** <https://collocamento.cortivo81.workers.dev>
 - **Salvataggio per Tabletop Simulator:** [tts/Collocamento.json](tts/Collocamento.json)
@@ -11,13 +11,13 @@ Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazz
 
 | Cartella | Contenuto |
 |---|---|
-| `mazzi/` | Gli elenchi delle carte: `lavoratori.csv` (60) e `ambiti_v4.csv` (30 ambiti in 5 categorie), il mazzo in uso. `lavori_v3.csv` e `lavori_v2.csv` sono i mazzi precedenti da 60 ambiti: li usano ancora le simulazioni. |
+| `mazzi/` | Gli elenchi delle carte in uso, a sei simboli: `lavoratori.csv` (60) e `ambiti.csv` (30, in 5 categorie). In `dieci_simboli/` ci sono le terne stampate sui PDF originali: servono per confronto nelle simulazioni. |
 | `webapp/` | Il tavolo online: un Worker di Cloudflare con un Durable Object per stanza. Non applica regole: le carte si muovono liberamente. |
 | `webapp/public/carte/` | Le carte nella versione leggera che il tavolo mostra. |
 | `webapp/public/tts/` | I fogli di carte che Tabletop Simulator scarica dal tavolo online. |
 | `tts/` | Il salvataggio per Tabletop Simulator. |
 | `strumenti/` | Simulazioni tra bot e prove automatiche del tavolo. |
-| `grafica/` | `da_pdf.py`, che dai PDF di stampa ricava tutte le immagini, e i dati delle carte (`dati/`). Gli altri script sono quelli della prima grafica. |
+| `grafica/` | `da_pdf.py`, che dai PDF della grafica ricava tutte le immagini, e i dati delle carte (`dati/`). In `stampa/` i sorgenti dei PDF da stampare. Gli altri script sono quelli della prima grafica. |
 | `carte/` | Il PDF del primo mazzo a due facce, superato. |
 
 ## Le immagini che non stanno qui
@@ -28,8 +28,9 @@ Le immagini pesanti della grafica sono su Google Drive, non su GitHub:
 
 | Cartella su Drive | Contenuto |
 |---|---|
-| `pdf/` | I due PDF di stampa della grafica in uso: `lavoratori_A4.pdf` e `ambiti_A4.pdf`. Da qui si rifà tutto. |
-| `carte_v2/` | Le carte della grafica in uso, una per file in PNG: `lavoratori/` (60 più il dorso) e `ambiti/` (30 più il dorso). |
+| `pdf/` | I due PDF originali della grafica, con le terne a 10 simboli: `lavoratori_A4.pdf` e `ambiti_A4.pdf`. Da qui si rifà tutto. |
+| `carte_v2/` | Le carte in uso, a sei simboli, una per file in PNG: `lavoratori/` (60 più il dorso) e `ambiti/` (30 più il dorso). |
+| `stampa/` | I PDF da stampare, con le carte in uso: nove per pagina, fronte e retro, con i segni di taglio. |
 | `illustrazioni/` | Le illustrazioni originali della prima grafica: 60 lavoratori e 24 ambiti. |
 | `carte/` | Le carte della prima grafica. |
 | `prove_stile/` | Le prove dei quattro stili fatte prima di scegliere. |
@@ -38,7 +39,7 @@ La cartella è privata: si apre con l'account Google di Vittorio.
 
 ## Ripartire da un altro computer
 
-Servono Git, Node 22 o successivo, Python 3 con PyMuPDF e Pillow, Microsoft Edge e Wrangler (`npm install -g wrangler`).
+Servono Git, Node 22 o successivo, Python 3 con PyMuPDF e Pillow, pdflatex (per i PDF da stampare), Microsoft Edge e Wrangler (`npm install -g wrangler`).
 
 1. **Scaricare il progetto.**
    ```bash
@@ -99,11 +100,11 @@ Tutte accettano anche l'indirizzo del tavolo online. Subito dopo una pubblicazio
 node strumenti/analisi.mjs
 ```
 
-Conti sui mazzi e partite tra bot, con le regole scritte in `strumenti/regole.mjs`. I numeri di [BUCHI.md](BUCHI.md) vengono da qui e riguardano ancora il mazzo da 60 ambiti.
+Conti sui mazzi e partite tra bot, con le regole scritte in `strumenti/regole.mjs`. I numeri di [BUCHI.md](BUCHI.md) vengono da qui. Le proposte di regola non ancora decise ci sono come opzioni, per confrontarle.
 
 ### Grafica
 
-La grafica in uso arriva come due PDF di stampa, con nove carte per pagina. Un comando solo ne ricava tutto il resto:
+Le carte si ricavano da due PDF con nove carte per pagina, e dai due elenchi in `mazzi/`. Un comando solo fa tutto il resto:
 
 ```bash
 py -3 -m pip install pymupdf pillow
@@ -113,11 +114,14 @@ py -3 grafica/da_pdf.py
 Legge `grafica/pdf/lavoratori_A4.pdf` e `grafica/pdf/ambiti_A4.pdf` e scrive:
 
 - `grafica/carte_v2/` — le carte a piena misura, una per file;
-- `webapp/public/carte/` — le carte leggere per il tavolo e `indice.json`, con nomi e battute presi da `grafica/dati/`;
-- `webapp/public/icone/` — le dieci icone, ritagliate dalle carte;
+- `grafica/stampa/` — i PDF da stampare, fatti con pdflatex;
+- `webapp/public/carte/` — le carte leggere per il tavolo, la legenda e `indice.json`, con nomi e battute presi da `grafica/dati/`;
+- `webapp/public/icone/` — le icone, ritagliate dalle carte;
 - `webapp/public/tts/` e `tts/Collocamento.json` — fogli e salvataggio per Tabletop Simulator.
 
-Controlla anche che le icone stampate su ogni carta siano quelle di `mazzi/lavoratori.csv` e `mazzi/ambiti_v4.csv`: se una carta non torna si ferma e dice quale. Poi si pubblica il tavolo, perché Tabletop Simulator scarica i fogli da lì.
+**Le icone di ogni carta le decidono i mazzi, non i PDF.** I PDF portano ancora le terne a 10 simboli: dove `mazzi/lavoratori.csv` o `mazzi/ambiti.csv` vogliono un'icona diversa, lo script la ridisegna copiando icona e sigla da una carta che ha già quel simbolo. Per cambiare le icone di una carta basta correggere il CSV e rilanciare. Poi si pubblica il tavolo, perché Tabletop Simulator scarica i fogli da lì.
+
+In `grafica/dati/` ci sono anche la legenda dei simboli (`legenda.png`) e il dorso dei lavoratori (`dorso_lavoratori.png`), che dice quante sono le attitudini: se cambiano i simboli vanno rifatti.
 
 Se nei PDF cambiano nomi o battute, vanno corretti a mano in `grafica/dati/lavoratori.json` e `grafica/dati/ambiti_v4.json`: nei PDF il testo è disegnato, lo script non lo legge.
 

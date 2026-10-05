@@ -1,18 +1,21 @@
-"""Dai due PDF di stampa della grafica (lavoratori_A4.pdf e ambiti_A4.pdf)
-ricava tutto quello che serve al progetto:
+"""Dai due PDF della grafica (lavoratori_A4.pdf e ambiti_A4.pdf) ricava tutto
+quello che serve al progetto:
 
 - grafica/carte_v2/lavoratori/  e  grafica/carte_v2/ambiti/
       le carte a piena misura (PNG 756 x 1056), una per file, più dorso.png
+- grafica/stampa/          i PDF da stampare, 9 carte per pagina, fronte e retro
 - webapp/public/carte/     le carte leggere per il tavolo online (WebP 378 x 528) e indice.json
-- webapp/public/icone/     le dieci icone, ritagliate dalle carte, con lo sfondo trasparente
+- webapp/public/icone/     le icone, ritagliate dalle carte, con lo sfondo trasparente
 - webapp/public/tts/       i fogli di carte che Tabletop Simulator scarica
 - tts/Collocamento.json    il salvataggio per Tabletop Simulator
 
-Controlla anche che le icone stampate su ogni carta siano quelle di mazzi/*.csv:
-se una carta non torna si ferma e dice quale.
+Le icone di ogni carta devono essere quelle di mazzi/lavoratori.csv e
+mazzi/ambiti.csv. Dove sulla carta del PDF ce n'è un'altra, la ridisegna:
+copia icona e sigla da una carta dello stesso mazzo che ha già quel simbolo.
+Così i simboli si cambiano dai mazzi, senza rifare i PDF.
 
 Uso:    py -3 grafica/da_pdf.py [cartella con i due PDF]      (se manca: grafica/pdf)
-Serve:  py -3 -m pip install pymupdf pillow
+Serve:  py -3 -m pip install pymupdf pillow, e pdflatex per i PDF da stampare
 """
 import collections
 import csv
@@ -21,16 +24,18 @@ import io
 import json
 import os
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
 import fitz  # PyMuPDF
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 QUI = Path(__file__).resolve().parent
 RADICE = QUI.parent
 PDF = Path(sys.argv[1]) if len(sys.argv) > 1 else QUI / "pdf"
 CARTE = QUI / "carte_v2"
+STAMPA = QUI / "stampa"
 PUBBLICA = RADICE / "webapp" / "public"
 # Tabletop Simulator scarica i fogli da qui: è il tavolo online, che li serve come file qualsiasi.
 SITO = os.environ.get("COLLOCAMENTO_SITO", "https://collocamento.cortivo81.workers.dev")
@@ -96,28 +101,79 @@ def icone_di(img):
     return sigle
 
 
+# Un'icona con la sua sigla sta in una fascia alta 150 punti della colonna di
+# sinistra, su fondo piatto: si può copiare tale e quale da una carta all'altra.
+def fascia(posto):
+    return (0, 22 + PASSO * posto, 138, 172 + PASSO * posto)
+
+
+def scrivi_attitudini(dorso, quante):
+    """Sul dorso dei lavoratori c'è scritto quante sono le attitudini: riscrive quella riga."""
+    for nome in ("arial.ttf", "Arial.ttf", "LiberationSans-Regular.ttf", "DejaVuSans.ttf"):
+        try:
+            carattere = ImageFont.truetype(nome, 23)
+            break
+        except OSError:
+            continue
+    else:
+        raise SystemExit("non trovo un carattere senza grazie per riscrivere il dorso dei lavoratori")
+    disegno = ImageDraw.Draw(dorso)
+    disegno.rectangle((150, 634, 606, 670), fill=dorso.getpixel((5, 5)))
+    testo = f"60 CARTE · {quante} ATTITUDINI"
+    larghezze = [carattere.getlength(c) + 0.25 for c in testo]  # lettere appena distanziate, come nell'originale
+    x = dorso.width / 2 - sum(larghezze) / 2
+    for lettera, larga in zip(testo, larghezze):
+        disegno.text((x, 639), lettera, font=carattere, fill=(243, 236, 221))
+        x += larga
+
+
 lavoratori = json.loads((QUI / "dati" / "lavoratori.json").read_text(encoding="utf-8"))
 dati_ambiti = json.loads((QUI / "dati" / "ambiti_v4.json").read_text(encoding="utf-8"))
 ambiti = dati_ambiti["ambiti"]
 attitudini = {r["n"]: [r["a1"], r["a2"], r["a3"]] for r in leggi_csv("lavoratori.csv")}
-mazzo_ambiti = {r["n"]: {"terna": [r["l1"], r["l2"], r["l3"]], "cat": r["cat"]} for r in leggi_csv("ambiti_v4.csv")}
+mazzo_ambiti = {r["n"]: {"terna": [r["l1"], r["l2"], r["l3"]], "cat": r["cat"]} for r in leggi_csv("ambiti.csv")}
+# I simboli in uso, nell'ordine di COLORI.
+IN_USO = [s for s in COLORI if any(s in t for t in attitudini.values()) or any(s in a["terna"] for a in mazzo_ambiti.values())]
 
 immagini = {}
+ridisegnate = 0
 for nome, attese, simboli in (("lavoratori", lavoratori, attitudini), ("ambiti", ambiti, {n: a["terna"] for n, a in mazzo_ambiti.items()})):
     fronti, dorso = estrai(nome)
     if len(fronti) != len(attese) or dorso is None:
         raise SystemExit(f"{nome}_A4.pdf: {len(fronti)} carte, ne aspettavo {len(attese)}")
+    stampate = [icone_di(img) for img in fronti]
+    # per ogni simbolo, una fascia da cui copiarlo: presa prima di toccare le carte
+    modelli = {}
+    for img, lette in zip(fronti, stampate):
+        for posto, sigla in enumerate(lette):
+            modelli.setdefault(sigla, img.crop(fascia(posto)))
     cartella = CARTE / nome
     shutil.rmtree(cartella, ignore_errors=True)
     cartella.mkdir(parents=True)
-    for carta, img in zip(attese, fronti):
-        lette = icone_di(img)
-        if lette != simboli[carta["n"]]:
-            raise SystemExit(f"{nome} {carta['n']} ({carta['nome']}): sulla carta c'è {' '.join(lette)}, nel mazzo {' '.join(simboli[carta['n']])}")
+    for carta, img, lette in zip(attese, fronti, stampate):
+        volute = simboli[carta["n"]]
+        for posto, (stampata, voluta) in enumerate(zip(lette, volute)):
+            if stampata == voluta:
+                continue
+            if voluta not in modelli:
+                raise SystemExit(f"{nome}: nei PDF nessuna carta ha il simbolo {voluta}, non so come disegnarlo")
+            img.paste(modelli[voluta], fascia(posto)[:2])
+        if lette != volute:
+            ridisegnate += 1
+            if icone_di(img) != volute:
+                raise SystemExit(f"{nome} {carta['n']} ({carta['nome']}): le icone ridisegnate non sono {' '.join(volute)}")
         img.save(cartella / f"{carta['n']}.png", optimize=True)
+    # Il dorso: se in grafica/dati ce n'è uno già pronto si usa quello, altrimenti
+    # quello del PDF, con il numero delle attitudini corretto.
+    pronto = QUI / "dati" / f"dorso_{nome}.png"
+    if pronto.exists():
+        dorso = Image.open(pronto).convert("RGB")
+    elif nome == "lavoratori":
+        scrivi_attitudini(dorso, len(IN_USO))
     dorso.save(cartella / "dorso.png", optimize=True)
     immagini[nome] = (fronti, dorso)
-print(f"carte_v2: {len(immagini['lavoratori'][0])} lavoratori e {len(immagini['ambiti'][0])} ambiti, icone uguali ai mazzi")
+print(f"carte_v2: {len(immagini['lavoratori'][0])} lavoratori e {len(immagini['ambiti'][0])} ambiti;",
+      f"{ridisegnate} carte con le icone ridisegnate secondo i mazzi ({' '.join(IN_USO)})")
 
 # ---------------------------------------------------------------------------
 # 2. Carte leggere e indice per il tavolo online
@@ -143,9 +199,13 @@ indice = {
     "ambiti": {a["n"]: {"file": f"ambiti/{a['n']}.webp", "nome": a["nome"], "battuta": a["battuta"],
                         "terna": mazzo_ambiti[a["n"]]["terna"], "categoria": mazzo_ambiti[a["n"]]["cat"]} for a in ambiti},
     "categorie": dati_ambiti["categorie"],
-    "simboli": NOMI_SIMBOLI,
+    "simboli": {s: NOMI_SIMBOLI[s] for s in IN_USO},
     "dorsi": {"lavoratori": "dorso_lavoratori.webp", "ambiti": "dorso_ambiti.webp"},
 }
+# La legenda disegnata dei simboli, se c'è: il tavolo la mostra nell'aiuto.
+if (QUI / "dati" / "legenda.png").exists():
+    Image.open(QUI / "dati" / "legenda.png").convert("RGB").save(WEB / "legenda.webp", quality=88, method=6)
+    indice["legenda"] = "legenda.webp"
 (WEB / "indice.json").write_text(json.dumps(indice, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 peso = sum(p.stat().st_size for p in WEB.glob("**/*.webp")) / 1e6
 print(f"webapp/public/carte: {len(list(WEB.glob('**/*.webp')))} immagini leggere ({peso:.1f} MB) e indice.json")
@@ -187,10 +247,10 @@ def ritaglia_icona(img, posto):
     return tela
 
 
-for sigla in COLORI:
+for sigla in IN_USO:
     n, posto = next((l["n"], attitudini[l["n"]].index(sigla)) for l in lavoratori if sigla in attitudini[l["n"]])
     ritaglia_icona(immagini["lavoratori"][0][int(n) - 1], posto).save(ICONE / f"{sigla}.png", optimize=True)
-print(f"webapp/public/icone: {len(COLORI)} icone")
+print(f"webapp/public/icone: {len(IN_USO)} icone")
 
 # ---------------------------------------------------------------------------
 # 4. Tabletop Simulator: fogli di carte e salvataggio
@@ -318,3 +378,56 @@ salvataggio = {
 (RADICE / "tts" / "Collocamento.json").write_text(json.dumps(salvataggio, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 peso = sum(p.stat().st_size for p in FOGLI.glob("*.jpg")) / 1e6
 print(f"webapp/public/tts: {len(list(FOGLI.glob('*.jpg')))} immagini ({peso:.1f} MB); tts/Collocamento.json scritto")
+
+# ---------------------------------------------------------------------------
+# 5. I PDF da stampare
+# ---------------------------------------------------------------------------
+# A4, nove carte da 63 x 88 mm per pagina con 3 mm tra una e l'altra e i segni
+# di taglio. Dopo ogni pagina di fronti viene quella dei dorsi: stampando
+# fronte e retro (lato lungo) i dorsi cadono dietro le carte.
+LARGA, ALTA, SPAZIO, SINISTRA, SOPRA = 63, 88, 3, 7.5, 13
+
+TESTA = r"""\documentclass{article}
+\usepackage[a4paper,margin=0mm]{geometry}
+\usepackage{graphicx}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\topskip}{0pt}
+\setlength{\unitlength}{1mm}
+\begin{document}
+"""
+
+
+def pagina(intestazione, file):
+    """Una pagina: le carte in griglia, da sinistra a destra e dall'alto in basso."""
+    righe = [r"\noindent\begin{picture}(0,0)", r"\linethickness{0.2pt}",
+             rf"\put({SINISTRA},-7){{\sffamily\fontsize{{7}}{{8}}\selectfont {intestazione}}}"]
+    for k, f in enumerate(file):
+        x = SINISTRA + (k % 3) * (LARGA + SPAZIO)
+        y = SOPRA + (k // 3) * (ALTA + SPAZIO)
+        righe.append(rf"\put({x},{-(y + ALTA)}){{\includegraphics[width={LARGA}mm,height={ALTA}mm]{{{f}}}}}")
+        for cx, verso_x in ((x, -1), (x + LARGA, 1)):  # segni di taglio ai quattro angoli
+            for cy, verso_y in ((y, -1), (y + ALTA, 1)):
+                righe.append(rf"\put({cx + 0.5 * verso_x},{-cy}){{\line({verso_x},0){{2}}}}")
+                righe.append(rf"\put({cx},{-cy - 0.5 * verso_y}){{\line(0,{-verso_y}){{2}}}}")
+    righe += [r"\end{picture}", r"\newpage", ""]
+    return "\n".join(righe)
+
+
+STAMPA.mkdir(exist_ok=True)
+for nome, attese in (("lavoratori", lavoratori), ("ambiti", ambiti)):
+    testo = TESTA
+    for i in range(0, len(attese), 9):
+        fronti = [f"../carte_v2/{nome}/{c['n']}.png" for c in attese[i:i + 9]]
+        testo += pagina(rf"{nome.upper()} / FRONTE / {LARGA} x {ALTA} mm / stampare al 100\%", fronti)
+        testo += pagina(rf"{nome.upper()} / RETRO / {LARGA} x {ALTA} mm / stampare al 100\%", [f"../carte_v2/{nome}/dorso.png"] * len(fronti))
+    testo += "\\end{document}\n"
+    (STAMPA / f"{nome}_A4.tex").write_text(testo, encoding="utf-8")
+    esito = subprocess.run(["pdflatex", "-interaction=nonstopmode", "-halt-on-error", f"{nome}_A4.tex"],
+                           cwd=STAMPA, capture_output=True, text=True, errors="replace")
+    if esito.returncode:
+        raise SystemExit(f"pdflatex non è riuscito su {nome}_A4.tex:\n{esito.stdout[-1500:]}")
+    for avanzo in ("aux", "log"):
+        (STAMPA / f"{nome}_A4.{avanzo}").unlink(missing_ok=True)
+    pagine = len(fitz.open(STAMPA / f"{nome}_A4.pdf"))
+    print(f"grafica/stampa/{nome}_A4.pdf: {pagine} pagine ({(STAMPA / f'{nome}_A4.pdf').stat().st_size / 1e6:.0f} MB)")

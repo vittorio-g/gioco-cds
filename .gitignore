@@ -4,10 +4,11 @@ node_modules/
 
 # Grafica: su GitHub vanno script, dati e tavole d'insieme.
 # Restano fuori le immagini pesanti, che stanno su Google Drive (vedi README):
-# i PDF di stampa, le carte a piena misura, le illustrazioni originali e le
-# prove di stile. Le carte leggere per il tavolo stanno in webapp/public/carte.
+# i PDF originali, le carte a piena misura, i PDF da stampare, le illustrazioni
+# e le prove di stile. Le carte leggere per il tavolo stanno in webapp/public/carte.
 grafica/pdf/
 grafica/carte_v2/
+grafica/stampa/*.pdf
 grafica/illustrazioni/
 grafica/carte/
 grafica/prove_stile/
