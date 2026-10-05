@@ -1,0 +1,14 @@
+{
+  "modello": "gpt-image-2.5-flare",
+  "qualita": "medium",
+  "dimensione": "1024x1024",
+  "formato": "png",
+  "inParallelo": 2,
+  "ritmo": 13000,
+  "stile": "Punk fanzine illustration printed in two-colour risograph: fluorescent pink and deep teal ink on off-white paper, heavy grain, imperfectly overlapping layers, scratchy hand-drawn marker lines mixed with cut-and-paste photocopy collage textures, scribbled stars and arrows around the subject. Anarchic, cheeky energy. No readable text, no letters, no logos, no border.",
+  "dati": "dati/ambiti.json",
+  "chiave": "id",
+  "uscita": "illustrazioni/amb",
+  "prima": "Square scene for a card game showing, with affectionate sarcasm, ",
+  "dopo": ". Centred composition, uncluttered background."
+}

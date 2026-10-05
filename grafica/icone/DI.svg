@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Digitale">
+  <title>Digitale</title>
+  <defs>
+  <filter id="stampa" x="-8%" y="-8%" width="116%" height="116%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="4" result="onda"/>
+    <feDisplacementMap in="SourceGraphic" in2="onda" scale="3.2" xChannelSelector="R" yChannelSelector="G" result="mosso"/>
+    <feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="1" seed="9" result="grana"/>
+    <feColorMatrix in="grana" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 14 -10" result="buchi"/>
+    <feComposite in="mosso" in2="buchi" operator="out"/>
+  </filter>
+  </defs>
+  <g filter="url(#stampa)">
+    <polygon points="11,8 91,12 88,91 8,88" fill="#17474d" transform="translate(3.5 3.5)" opacity="0.9"/>
+    <polygon points="11,8 91,12 88,91 8,88" fill="#ff3d8b"/>
+    <g fill="none">
+    <rect x="21" y="23" width="58" height="41" rx="5" fill="none" stroke="#17474d" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M50 66 L50 77 M35 80 L65 80" stroke="#17474d" stroke-width="8" stroke-linecap="round" fill="none"/>
+    <circle cx="40" cy="39" r="3.8" fill="#17474d"/><circle cx="60" cy="38" r="3.8" fill="#17474d"/>
+    <path d="M40 50 Q51 58 61 49" stroke="#17474d" stroke-width="5" stroke-linecap="round" fill="none"/>
+    </g>
+    
+  </g>
+</svg>

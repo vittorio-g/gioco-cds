@@ -1,3 +1,10 @@
 node_modules/
 .wrangler/
 .dev.vars
+
+# Grafica: su GitHub vanno script, dati, icone e tavole d'insieme.
+# Restano fuori le immagini pesanti: illustrazioni originali, carte montate
+# (quelle per il web stanno in webapp/public/carte) e prove di stile.
+grafica/illustrazioni/
+grafica/carte/
+grafica/prove_stile/
