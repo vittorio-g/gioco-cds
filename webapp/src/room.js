@@ -28,6 +28,8 @@ export class Stanza extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
     this.st = vuota();
+    // il segnale di vita dei telefoni riceve risposta senza svegliare la stanza
+    ctx.setWebSocketAutoResponse(new WebSocketRequestResponsePair('ping', 'pong'));
     ctx.blockConcurrencyWhile(async () => {
       const st = (await ctx.storage.get('st')) ?? vuota();
       this.st = st.v === VERSIONE ? st : { ...vuota(), giocatori: (st.giocatori ?? []).map((g) => ({ nome: g.nome })) };
@@ -41,6 +43,7 @@ export class Stanza extends DurableObject {
   }
 
   async webSocketMessage(ws, dati) {
+    if (dati === 'ping') return ws.send('pong');
     let msg;
     try {
       msg = JSON.parse(dati);

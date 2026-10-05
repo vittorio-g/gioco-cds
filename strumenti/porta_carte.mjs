@@ -1,5 +1,6 @@
 // Porta nella webapp le carte montate dalla grafica: copia grafica/carte/web
-// (immagini leggere e indice.json) e grafica/icone in webapp/public/carte.
+// (immagini leggere e indice.json) in webapp/public/carte. Le icone si
+// portano a parte, con strumenti/icone_png.mjs.
 // Va rilanciato ogni volta che la grafica rifà le carte (py -3 grafica/esporta.py).
 //
 // Uso:  node strumenti/porta_carte.mjs
@@ -12,7 +13,6 @@ const a = `${radice}webapp/public/carte`;
 
 rmSync(a, { recursive: true, force: true });
 cpSync(da, a, { recursive: true });
-cpSync(`${radice}grafica/icone`, `${a}/icone`, { recursive: true });
 
 const indice = JSON.parse(readFileSync(`${a}/indice.json`, 'utf8'));
 const mancanti = [

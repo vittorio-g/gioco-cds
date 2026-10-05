@@ -100,10 +100,13 @@ function collega() {
   ws = mia;
   mia.onopen = () => {
     collegato = true;
+    ultimoSegnale = Date.now();
     mia.send(JSON.stringify({ a: 'entra', nome: sessione.nome, crea: sessione.crea }));
   };
   mia.onmessage = (ev) => {
-    if (ws === mia) ricevi(JSON.parse(ev.data));
+    if (ws !== mia) return;
+    ultimoSegnale = Date.now();
+    if (ev.data !== 'pong') ricevi(JSON.parse(ev.data));
   };
   mia.onclose = () => {
     if (ws !== mia) return;
@@ -112,6 +115,32 @@ function collega() {
     disegna();
   };
 }
+
+// Sul telefono la connessione può morire senza che il browser se ne accorga:
+// quando si cambia app, si blocca lo schermo o cambia la rete. Un segnale
+// periodico la tiene d'occhio, e tornando sulla pagina ci si ricollega.
+let ultimoSegnale = Date.now();
+let nascostaDa = 0;
+function ricollega() {
+  if (!sessione) return;
+  chiudi();
+  collega();
+  disegna();
+}
+setInterval(() => {
+  if (!sessione || document.visibilityState !== 'visible' || ws?.readyState !== WebSocket.OPEN) return;
+  if (Date.now() - ultimoSegnale > 40000) ricollega();
+  else ws.send('ping');
+}, 12000);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    nascostaDa = Date.now();
+    return;
+  }
+  if (sessione && (ws?.readyState !== WebSocket.OPEN || Date.now() - nascostaDa > 5000)) ricollega();
+});
+window.addEventListener('online', ricollega);
+window.addEventListener('pageshow', (e) => { if (e.persisted) ricollega(); });
 
 function ricevi(msg) {
   if (msg.t === 'stato') {
@@ -195,7 +224,7 @@ function mostraAvviso(testo) {
 // --------------------------------------------------------------------------
 const carte = (n) => `${n} ${n === 1 ? 'carta' : 'carte'}`;
 // decoding=sync: le immagini già scaricate compaiono subito, senza sfarfallio.
-const icona = (s) => h('img', { class: 'sim', src: `/carte/icone/${s}.svg`, alt: s, title: s, decoding: 'sync', draggable: 'false' });
+const icona = (s) => h('img', { class: 'sim', src: `/icone/${s}.png`, alt: s, title: s, decoding: 'sync', draggable: 'false' });
 const terna = (simboli, sigle = true) => h('span', { class: 'terna' },
   simboli.map((s) => h('span', { class: 'ic' }, icona(s), sigle && h('small', {}, s))));
 
@@ -253,7 +282,24 @@ const dorsi = (k, n) => h('span', { class: `conta ${k}`, title: k === 'lav' ? 'l
 // --------------------------------------------------------------------------
 // Schermate
 // --------------------------------------------------------------------------
+// Al tavolo la pagina non deve né scorrere né ingrandirsi: lo fa solo il tavolo.
+// Su iPhone, in più, la pagina resta ingrandita dopo aver scritto in un campo:
+// limitando lo zoom si torna alla grandezza giusta.
+const META_VISTA = document.querySelector('meta[name="viewport"]');
+const VISTA = META_VISTA.content;
+function modoTavolo(attivo) {
+  if (document.documentElement.classList.contains('al-tavolo') === attivo) return;
+  document.documentElement.classList.toggle('al-tavolo', attivo);
+  META_VISTA.content = attivo ? `${VISTA}, maximum-scale=1` : VISTA;
+  if (attivo) window.scrollTo(0, 0);
+}
+// Safari ha gesti suoi per ingrandire la pagina con due dita.
+for (const gesto of ['gesturestart', 'gesturechange', 'gestureend']) {
+  document.addEventListener(gesto, (e) => { if (T) e.preventDefault(); });
+}
+
 function disegna() {
+  modoTavolo(!!st?.tavolo);
   if (st?.tavolo) {
     if (!T) montaTavolo();
     return aggiornaTavolo();
@@ -825,6 +871,7 @@ function aggiornaTavolo() {
   const io = t.io;
   const sonoHost = st.host === st.tu;
   T.radice.classList.toggle('con-cronaca', cronacaAperta);
+  T.barra.classList.toggle('menu-aperto', menuAperto);
   if (zoomAutomatico) adattaZoom(vistaIntera);
 
   // --- barra: giocatori, punti, turno

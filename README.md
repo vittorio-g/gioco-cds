@@ -75,7 +75,14 @@ node strumenti/prova_computer.mjs http://localhost:8791
 node strumenti/prova_telefono.mjs http://localhost:8791
 ```
 
-Tutte e tre accettano anche l'indirizzo del tavolo online. Subito dopo una pubblicazione la stanza si riavvia e una prova può fallire: basta rilanciarla.
+C'è anche una prova con WebKit, il motore di Safari, in formato iPhone. Non sostituisce un iPhone vero, ma trova gli errori che dipendono dal motore:
+
+```bash
+npx --prefix strumenti playwright-core install webkit
+node strumenti/prova_iphone.mjs http://localhost:8791
+```
+
+Tutte accettano anche l'indirizzo del tavolo online. Subito dopo una pubblicazione la stanza si riavvia e una prova può fallire: basta rilanciarla.
 
 ### Simulazioni
 
@@ -100,6 +107,8 @@ node strumenti/porta_carte.mjs
 2. `carte.mjs` monta le carte in `grafica/carte/`, con nome, battuta e icone presi da `grafica/dati/`.
 3. `esporta.py` ne ricava la versione leggera in `grafica/carte/web/` e le tavole d'insieme.
 4. `porta_carte.mjs` copia la versione leggera in `webapp/public/carte/`. Poi si pubblica.
+
+Se cambiano le icone dei simboli (`node grafica/icone.mjs`), il tavolo le vuole in PNG: `node strumenti/icone_png.mjs`, con Edge avviato come per le prove nel browser.
 
 Per cambiare un nome o una battuta basta correggere il file in `grafica/dati/` e ripartire dal passo 2: l'illustrazione resta quella.
 

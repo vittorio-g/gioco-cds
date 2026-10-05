@@ -18,6 +18,10 @@
 }
 
 html, body { margin: 0; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+/* al tavolo la pagina è ferma: niente scorrimento né rimbalzo, solo il tavolo si muove */
+html.al-tavolo body { position: fixed; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; overscroll-behavior: none; }
+html.al-tavolo #app { height: 100%; }
 body {
   background: var(--crema);
   color: var(--inch);
@@ -142,8 +146,7 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 /* ---- tavolo ------------------------------------------------------------ */
 .tts {
   display: grid;
-  height: 100vh;
-  height: 100dvh;
+  height: 100%;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
   grid-template-areas: "barra" "scena" "mano";
@@ -155,6 +158,7 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 }
 .tts.con-cronaca { grid-template-columns: minmax(0, 1fr) 250px; grid-template-areas: "barra barra" "scena cronaca" "mano mano"; }
 .tts .marchio { display: none; }
+.tts img { -webkit-user-drag: none; }
 .barra {
   grid-area: barra;
   display: flex;
@@ -300,6 +304,7 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 label { font-weight: 600; font-size: 14px; }
 input {
   font: inherit;
+  font-size: 16px; /* sotto i 16px l'iPhone ingrandisce la pagina quando si scrive */
   padding: 10px 12px;
   border: 1px solid var(--bordo);
   border-radius: 8px;
@@ -336,11 +341,19 @@ input {
 }
 @media (max-width: 760px) {
   .tts.con-cronaca { grid-template-columns: minmax(0, 1fr); grid-template-areas: "barra" "scena" "mano"; }
-  .barra { gap: 6px 8px; padding: 6px 8px; font-size: 14px; }
+  /* Una riga sola: turno, menu e i giocatori che scorrono. Con le barre di
+     Safari lo schermo utile di un telefono è basso, e ogni riga pesa. */
+  .barra { flex-wrap: nowrap; gap: 6px; padding: 6px 8px; font-size: 14px; }
+  .barra.menu-aperto { flex-wrap: wrap; }
+  .barra > button { flex: none; }
   .barra .spazio, .barra .secondario { display: none; }
   .solo-stretto { display: inline-block; }
-  /* i giocatori stanno su una riga che scorre; le voci secondarie dietro "Menu" */
-  .posti { flex-basis: 100%; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; }
+  .posti { order: 2; flex: 1 1 0; min-width: 0; flex-wrap: nowrap; overflow-x: auto; }
+  .barra.menu-aperto .posti { flex-basis: 100%; }
+  /* lo zoom sta nel menu (c'è già il pizzico); i punti si cambiano toccando il numero */
+  .zoom { display: none; }
+  .barra.menu-aperto .zoom { display: inline-flex; flex: none; }
+  .punti .tondo { display: none; }
   /* righe che scorrono col dito: la barra di scorrimento non serve */
   .posti, .azioni, .mano { scrollbar-width: none; }
   .posti::-webkit-scrollbar, .azioni::-webkit-scrollbar, .mano::-webkit-scrollbar { display: none; }
@@ -373,10 +386,15 @@ input {
   .manobar { padding: 5px 8px 6px; }
   .mano { gap: 16px; }
   .mano .tc { --k: .62; }
+  .mano .tc.scelta { transform: none; }
+  .gruppo { gap: 3px; }
   .anteprima, .tts.con-cronaca .anteprima { right: 8px; }
   .qr { width: 160px; height: 160px; }
   .invito { justify-content: center; }
   .anteprima .tc { --k: 1.7; }
+}
+@media (max-width: 760px) and (max-height: 720px) {
+  .mano .tc { --k: .56; }
 }
 /* telefono in orizzontale: barra su una riga, mano bassa, il resto al tavolo */
 @media (max-height: 520px) {
@@ -395,4 +413,18 @@ input {
   .mano { padding: 4px 2px 2px; }
   .mano .tc { --k: .44; }
   .tts.con-cronaca .cronaca { top: 56px; bottom: 8px; }
+}
+
+/* schermi con tacca o bordi arrotondati: barre dentro l'area sicura */
+@supports (padding: max(0px)) {
+  .tts .barra {
+    padding-top: max(4px, env(safe-area-inset-top));
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
+  }
+  .manobar {
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
+  }
 }

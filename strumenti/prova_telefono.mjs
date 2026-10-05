@@ -105,7 +105,7 @@ const stato = () => page.evaluate(() => ({
   tavolo: [...document.querySelectorAll('.carte .tc')].map((e) => ({ x: parseFloat(e.style.left), y: parseFloat(e.style.top), coperta: e.classList.contains('coperta') })),
   scorri: [Math.round(document.querySelector('.scena').scrollLeft), Math.round(document.querySelector('.scena').scrollTop)],
   scorriMano: document.querySelector('.mano').scrollLeft,
-  zoom: parseFloat(document.querySelector('.zoom').innerText.replace(/[^0-9]/g, '')),
+  zoom: parseFloat(document.querySelector('.zoom').textContent.replace(/[^0-9]/g, '')),
   scelte: document.querySelectorAll('.tc.scelta').length,
   anteprima: !!document.querySelector('.anteprima.visibile .tc'),
   scalaPagina: window.visualViewport?.scale ?? 1,
@@ -150,7 +150,9 @@ let s0 = s;
 await tocca(await bottone('Pesca un lavoratore'));
 s = await stato();
 verifica(s.mano === s0.mano + 1, 'il pulsante "Pesca un lavoratore" pesca', `${s0.mano} -> ${s.mano}`);
+await tocca(await bottone('Menu'));
 await tocca(await centro('.zoom .piccolo'));
+await tocca(await bottone('Chiudi menu'));
 s0 = await stato();
 const mazzo = await centro('.pila.mazzo.for');
 verifica(mazzo.x > 0 && mazzo.x < 390 && s0.zoom < 40, 'toccando lo zoom si vede tutto il tavolo, mazzi compresi', `zoom ${s0.zoom}%, mazzo a x=${Math.round(mazzo.x)}`);
@@ -158,7 +160,9 @@ await foto('tel_2_tavolo_intero');
 await tocca(mazzo);
 s = await stato();
 verifica(s.mano === s0.mano + 1, 'toccare un mazzo pesca una carta', `${s0.mano} -> ${s.mano}`);
+await tocca(await bottone('Menu'));
 await tocca(await centro('.zoom .piccolo'));
+await tocca(await bottone('Chiudi menu'));
 s = await stato();
 verifica(s.zoom >= 70, 'ritoccando lo zoom si torna alla propria corsia', `zoom ${s.zoom}%`);
 
