@@ -1,0 +1,13 @@
+{
+  "name": "collocamento",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-07-01",
+  "assets": { "directory": "./public" },
+  "durable_objects": {
+    "bindings": [{ "name": "STANZE", "class_name": "Stanza" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Stanza"] }],
+  // I mazzi sono i CSV in ../mazzi, importati come testo.
+  "rules": [{ "type": "Text", "globs": ["**/*.csv"], "fallthrough": true }],
+  "observability": { "enabled": true }
+}
