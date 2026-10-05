@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "description": "Dipendenze delle prove nel browser (prova_telefono.mjs, prova_computer.mjs)",
+  "devDependencies": {
+    "puppeteer-core": "^25.12.0"
+  }
+}

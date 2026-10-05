@@ -23,6 +23,11 @@ let manoDaRifare = false;
 let zoom = 1;
 let zoomAutomatico = true;
 let cronacaAperta = window.innerWidth >= 1500;
+let menuAperto = false; // sul telefono le voci secondarie stanno dietro "Menu"
+let vistaIntera = false; // sul telefono: tutto il tavolo invece della propria corsia
+// Si sta usando il dito? Decide se l'anteprima grande compare al tocco invece che al passaggio del mouse.
+let colDito = window.matchMedia('(hover: none)').matches;
+window.addEventListener('pointerdown', (e) => { colDito = e.pointerType !== 'mouse'; }, true);
 let T = null; // pezzi fissi della schermata del tavolo
 
 const bozza = {
@@ -322,7 +327,8 @@ function regole() {
         h('li', {}, h('b', {}, 'Giocare. '), 'Trascina una carta dalla mano al tavolo. Oppure toccala e poi tocca il punto del tavolo dove metterla.'),
         h('li', {}, h('b', {}, 'Spostare. '), 'Le carte sul tavolo si trascinano dove vuoi: quella che muovi finisce sopra le altre.'),
         h('li', {}, h('b', {}, 'Scartare e riprendere. '), 'Trascina una carta sugli scarti, su un mazzo o sulla tua mano. Oppure toccala e usa i pulsanti in basso: gira, scarta, in mano, sotto le altre, nel mazzo.'),
-        h('li', {}, h('b', {}, 'Punti e turno. '), 'Si segnano a mano con i pulsanti accanto ai nomi. Tocca il numero per scrivere il totale.')),
+        h('li', {}, h('b', {}, 'Punti e turno. '), 'Si segnano a mano con i pulsanti accanto ai nomi. Tocca il numero per scrivere il totale.'),
+        h('li', {}, h('b', {}, 'Muovere il tavolo. '), 'Trascina lo sfondo per spostarlo. Con due dita, o con Ctrl e la rotella, lo ingrandisci; il pulsante con la percentuale lo riadatta allo schermo. Tenendo una carta vicino al bordo il tavolo scorre.')),
       h('p', { class: 'nota' }, 'Il tavolo non applica nessuna regola: tutti possono fare tutto, come con le carte vere. Ogni azione finisce nella cronaca.'),
       h('h2', {}, 'Le regole in breve'),
       h('ul', {},
@@ -395,6 +401,10 @@ function montaTavolo() {
   // Toccare il tavolo vuoto: mette lì la carta della mano selezionata, altrimenti deseleziona.
   T.scena.addEventListener('click', (e) => {
     if (e.target.closest('.tc, .pila, .sottopila')) return;
+    if (scorso) {
+      scorso = false; // era uno spostamento del tavolo, non un tocco
+      return;
+    }
     if (scelta?.da === 'mano') {
       const p = logico(e.clientX, e.clientY);
       const id = scelta.id;
@@ -406,9 +416,12 @@ function montaTavolo() {
       aggiornaTavolo();
     }
   });
+  tavoloMobile(T.scena);
   T.radice = h('div', { class: 'tts' }, T.barra, T.scena, T.cronaca, T.manobar, T.anteprima, T.strati);
+  T.radice.addEventListener('contextmenu', (e) => e.preventDefault()); // niente menu del browser tenendo premuto
   app.replaceChildren(T.radice);
   T.radice.classList.toggle('con-cronaca', cronacaAperta);
+  T.daCentrare = true;
   adattaZoom();
 }
 
@@ -419,15 +432,100 @@ window.addEventListener('resize', () => {
   }
 });
 
-function adattaZoom() {
+const ZOOM_MIN = 0.22;
+const ZOOM_MAX = 1.8;
+const schermoStretto = () => (T?.scena.clientWidth || window.innerWidth) < 700;
+const corsiaLarga = () => (TAVOLO.l - LATO_PILE) / (st?.tavolo?.giocatori.length || 1);
+
+// Lo zoom di partenza: al computer tutto il tavolo in larghezza; sul telefono
+// la propria corsia, ben leggibile, e il resto si raggiunge scorrendo.
+// Con tutto = true si vede il tavolo intero anche sul telefono.
+function adattaZoom(tutto = false) {
   zoomAutomatico = true;
+  vistaIntera = tutto;
   const largo = T.scena.clientWidth || window.innerWidth;
-  zoom = Math.min(1.1, Math.max(largo < 700 ? 0.5 : 0.4, largo / TAVOLO.l));
+  if (schermoStretto() && !tutto) zoom = Math.min(1, Math.max(0.5, largo / (corsiaLarga() + 16)));
+  else zoom = Math.min(1.1, Math.max(ZOOM_MIN, largo / TAVOLO.l));
+}
+function applicaZoom() {
+  T.tappeto.style.transform = `scale(${zoom})`;
+  T.piano.style.width = `${TAVOLO.l * zoom}px`;
+  T.piano.style.height = `${TAVOLO.a * zoom}px`;
+  if (T.etichettaZoom) T.etichettaZoom.textContent = `${Math.round(zoom * 100)}%`;
+}
+// Cambia lo zoom tenendo fermo sullo schermo, nel punto (sx, sy), il punto del tavolo `punto`.
+function zoomAttorno(nuovo, punto, sx, sy) {
+  zoomAutomatico = false;
+  zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, nuovo));
+  applicaZoom();
+  const r = T.scena.getBoundingClientRect();
+  T.scena.scrollLeft = punto.x * zoom - (sx - r.left);
+  T.scena.scrollTop = punto.y * zoom - (sy - r.top);
 }
 function cambiaZoom(fattore) {
-  zoomAutomatico = false;
-  zoom = Math.min(1.6, Math.max(0.3, zoom * fattore));
-  aggiornaTavolo();
+  const r = T.scena.getBoundingClientRect();
+  const cx = r.left + r.width / 2;
+  const cy = r.top + r.height / 2;
+  zoomAttorno(zoom * fattore, logico(cx, cy), cx, cy);
+}
+function vaiAllaMiaCorsia() {
+  const io = Math.max(0, st.tavolo.io);
+  T.scena.scrollLeft = Math.max(0, (LATO_PILE + io * corsiaLarga()) * zoom - 8);
+  T.scena.scrollTop = 0;
+}
+
+// Il tavolo si sposta trascinando lo sfondo, con il dito o con il mouse, e si
+// ingrandisce con due dita oppure con Ctrl + rotella.
+let scorso = false;
+function tavoloMobile(scena) {
+  const dita = new Map();
+  let pizzico = null;
+  let strada = 0;
+  const sulloSfondo = (e) => !e.target.closest('.tc, .pila, .sottopila');
+  scena.addEventListener('pointerdown', (e) => {
+    if (!sulloSfondo(e) || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    if (!dita.size) {
+      scorso = false;
+      strada = 0;
+    }
+    dita.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    try {
+      scena.setPointerCapture(e.pointerId);
+    } catch {}
+    if (dita.size === 2) {
+      const [a, b] = [...dita.values()];
+      pizzico = { d0: Math.hypot(a.x - b.x, a.y - b.y) || 1, z0: zoom, punto: logico((a.x + b.x) / 2, (a.y + b.y) / 2) };
+      scorso = true;
+    }
+  });
+  scena.addEventListener('pointermove', (e) => {
+    const p = dita.get(e.pointerId);
+    if (!p) return;
+    const dx = e.clientX - p.x;
+    const dy = e.clientY - p.y;
+    p.x = e.clientX;
+    p.y = e.clientY;
+    if (dita.size === 1) {
+      strada += Math.abs(dx) + Math.abs(dy);
+      if (strada > 6) scorso = true;
+      scena.scrollLeft -= dx;
+      scena.scrollTop -= dy;
+    } else if (pizzico && dita.size === 2) {
+      const [a, b] = [...dita.values()];
+      zoomAttorno((pizzico.z0 * Math.hypot(a.x - b.x, a.y - b.y)) / pizzico.d0, pizzico.punto, (a.x + b.x) / 2, (a.y + b.y) / 2);
+    }
+  });
+  const via = (e) => {
+    dita.delete(e.pointerId);
+    if (dita.size < 2) pizzico = null;
+  };
+  scena.addEventListener('pointerup', via);
+  scena.addEventListener('pointercancel', via);
+  scena.addEventListener('wheel', (e) => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    zoomAttorno(zoom * Math.exp(-e.deltaY / 600), logico(e.clientX, e.clientY), e.clientX, e.clientY);
+  }, { passive: false });
 }
 
 // Da un punto dello schermo alle coordinate del tavolo.
@@ -465,6 +563,28 @@ function trascinabile(el, { inizio, clic }) {
     const y0 = e.clientY;
     let sessioneDrag = null;
     let fallita = false;
+    let ultimo = null;
+    let alBordoDa = 0;
+    // Tenendo la carta vicino a un bordo del tavolo, il tavolo scorre da quella parte.
+    const bordo = () => {
+      if (!sessioneDrag || !ultimo || !T) return;
+      const r = T.scena.getBoundingClientRect();
+      const margine = 30;
+      const { clientX: x, clientY: y } = ultimo;
+      const dx = x < r.left || x > r.right ? 0 : x < r.left + margine ? -16 : x > r.right - margine ? 16 : 0;
+      const dy = y < r.top || y > r.bottom ? 0 : y < r.top + margine ? -16 : y > r.bottom - margine ? 16 : 0;
+      if ((!dx && !dy) || y < r.top || y > r.bottom || x < r.left || x > r.right) {
+        alBordoDa = 0;
+        return;
+      }
+      alBordoDa ||= Date.now();
+      if (Date.now() - alBordoDa < 200) return;
+      const prima = T.scena.scrollLeft + T.scena.scrollTop;
+      T.scena.scrollLeft += dx;
+      T.scena.scrollTop += dy;
+      if (prima !== T.scena.scrollLeft + T.scena.scrollTop) sessioneDrag.muovi(ultimo);
+    };
+    const giro = setInterval(bordo, 30);
     const muovi = (ev) => {
       if (!sessioneDrag && !fallita && Math.hypot(ev.clientX - x0, ev.clientY - y0) > 6) {
         sessioneDrag = inizio(e, ev);
@@ -472,10 +592,12 @@ function trascinabile(el, { inizio, clic }) {
       }
       if (sessioneDrag) {
         ev.preventDefault();
+        ultimo = ev;
         sessioneDrag.muovi(ev);
       }
     };
     const stacca = () => {
+      clearInterval(giro);
       el.removeEventListener('pointermove', muovi);
       el.removeEventListener('pointerup', fine);
       el.removeEventListener('pointercancel', annulla);
@@ -624,10 +746,7 @@ function aggiornaTavolo() {
   const io = t.io;
   const sonoHost = st.host === st.tu;
   T.radice.classList.toggle('con-cronaca', cronacaAperta);
-  if (zoomAutomatico) adattaZoom();
-  T.tappeto.style.transform = `scale(${zoom})`;
-  T.piano.style.width = `${TAVOLO.l * zoom}px`;
-  T.piano.style.height = `${TAVOLO.a * zoom}px`;
+  if (zoomAutomatico) adattaZoom(vistaIntera);
 
   // --- barra: giocatori, punti, turno
   const giocatore = (g, i) => {
@@ -655,19 +774,32 @@ function aggiornaTavolo() {
     h('span', { class: 'spazio' }),
     !collegato && h('span', { class: 'ultimo' }, 'Connessione persa, riprovo…'),
     h('span', { class: 'zoom' },
-      h('button', { type: 'button', class: 'tondo', 'aria-label': 'Rimpicciolisci il tavolo', onclick: () => cambiaZoom(1 / 1.2) }, '−'),
-      h('button', { type: 'button', class: 'piccolo', title: 'Adatta il tavolo alla finestra', onclick: () => { adattaZoom(); aggiornaTavolo(); } }, `${Math.round(zoom * 100)}%`),
-      h('button', { type: 'button', class: 'tondo', 'aria-label': 'Ingrandisci il tavolo', onclick: () => cambiaZoom(1.2) }, '+')),
-    h('button', { type: 'button', class: 'piccolo', onclick: () => { cronacaAperta = !cronacaAperta; aggiornaTavolo(); } }, cronacaAperta ? 'Chiudi cronaca' : 'Cronaca'),
-    h('button', { type: 'button', class: 'piccolo', onclick: () => {
-      if (confirm('Rimettere tutte le carte nei mazzi, mescolare e ridistribuire? Punti e tavolo si azzerano.')) fai({ o: 'nuova' });
-    } }, 'Ricomincia'),
-    h('button', { type: 'button', class: 'piccolo', onclick: () => { regoleAperte = true; aggiornaTavolo(); } }, 'Aiuto'),
-    sonoHost && h('button', { type: 'button', class: 'piccolo', onclick: () => {
-      if (confirm('Sparecchiare il tavolo e tornare alla sala d’attesa?')) invia({ a: 'sala' });
-    } }, 'Sala d’attesa'),
+      h('button', { type: 'button', class: 'tondo', 'aria-label': 'Rimpicciolisci il tavolo', onclick: () => cambiaZoom(1 / 1.25) }, '−'),
+      (T.etichettaZoom = h('button', { type: 'button', class: 'piccolo', title: 'Adatta il tavolo allo schermo', onclick: () => {
+        // sul telefono alterna tra la propria corsia e il tavolo intero
+        adattaZoom(schermoStretto() && zoomAutomatico && !vistaIntera);
+        aggiornaTavolo();
+        if (schermoStretto() && !vistaIntera) vaiAllaMiaCorsia();
+        else T.scena.scrollLeft = 0;
+      } }, '')),
+      h('button', { type: 'button', class: 'tondo', 'aria-label': 'Ingrandisci il tavolo', onclick: () => cambiaZoom(1.25) }, '+')),
+    h('button', { type: 'button', class: 'piccolo solo-stretto', 'aria-expanded': String(menuAperto), onclick: () => { menuAperto = !menuAperto; aggiornaTavolo(); } }, menuAperto ? 'Chiudi menu' : 'Menu'),
+    h('span', { class: `voci${menuAperto ? ' aperte' : ''}` },
+      h('button', { type: 'button', class: 'piccolo', onclick: () => { cronacaAperta = !cronacaAperta; menuAperto = false; aggiornaTavolo(); } }, cronacaAperta ? 'Chiudi cronaca' : 'Cronaca'),
+      h('button', { type: 'button', class: 'piccolo', onclick: () => { regoleAperte = true; menuAperto = false; aggiornaTavolo(); } }, 'Aiuto'),
+      ['lav', 'for'].map((m) => h('button', { type: 'button', class: 'piccolo solo-stretto', onclick: () => fai({ o: 'mescola', m }) }, m === 'lav' ? 'Mescola i lavoratori' : 'Mescola gli ambiti')),
+      ['lav', 'for'].map((m) => t.scarti[m].n > 0 && h('button', { type: 'button', class: 'piccolo solo-stretto', onclick: () => fai({ o: 'rimescola', m }) },
+        m === 'lav' ? 'Scarti dei lavoratori nel mazzo' : 'Scarti degli ambiti nel mazzo')),
+      h('button', { type: 'button', class: 'piccolo', onclick: () => {
+        if (confirm('Rimettere tutte le carte nei mazzi, mescolare e ridistribuire? Punti e tavolo si azzerano.')) fai({ o: 'nuova' });
+      } }, 'Ricomincia'),
+      sonoHost && h('button', { type: 'button', class: 'piccolo', onclick: () => {
+        if (confirm('Sparecchiare il tavolo e tornare alla sala d’attesa?')) invia({ a: 'sala' });
+      } }, 'Sala d’attesa')),
     avviso && h('div', { class: 'avviso volante', role: 'alert' }, avviso),
     regoleAperte && regole());
+
+  applicaZoom();
 
   // --- corsie dei giocatori: solo una guida visiva, non un confine
   const larga = (TAVOLO.l - LATO_PILE) / t.giocatori.length;
@@ -742,6 +874,21 @@ function aggiornaTavolo() {
   aggiornaAzioni();
   if (T.strati.querySelector('.fantasma')) manoDaRifare = true;
   else aggiornaMano();
+
+  // Senza mouse non c'è il passaggio sopra la carta: l'anteprima grande è quella della carta toccata.
+  if (colDito) {
+    const c = scelta?.da === 'tavolo' ? t.tavolo.find((x) => x.id === scelta.id) : scelta?.da === 'mano' ? t.mano.find((x) => x.id === scelta.id) : null;
+    const visibile = !!c && !c.coperta && !!(c.att || c.lav);
+    if (visibile) {
+      riempi(T.anteprima, h('div', { class: classeCarta(c) }, faccia(c)));
+      T.anteprima.style.top = `${T.scena.getBoundingClientRect().top + 8}px`;
+    }
+    T.anteprima.classList.toggle('visibile', visibile);
+  }
+  if (T.daCentrare) {
+    T.daCentrare = false;
+    if (schermoStretto()) vaiAllaMiaCorsia();
+  }
 }
 
 function aggiornaAzioni() {
@@ -777,9 +924,13 @@ function aggiornaAzioni() {
       bottone('In fondo al mazzo', { o: 'rimetti', c: id, fondo: true }),
     ];
   } else {
+    const pesca = (m, testo) => h('button', { type: 'button', class: 'azione', disabled: !t.mazzi[m], onclick: () => fai({ o: 'pesca', m }) },
+      h('span', { class: `dorso ${m}` }), testo);
     contenuto = [
       h('span', { class: 'eti' }, `La tua mano (${t.mano.length})`),
-      h('span', { class: 'nota' }, 'Trascina le carte o toccane una. Tocca un mazzo per pescare.'),
+      pesca('lav', 'Pesca un lavoratore'),
+      pesca('for', 'Pesca un ambito'),
+      h('span', { class: 'nota' }, 'Trascina le carte o toccane una.'),
     ];
   }
   riempi(T.azioni, ...contenuto);
@@ -813,15 +964,21 @@ function aggiornaMano() {
 
 // Anteprima grande della carta su cui passa il mouse (solo se scoperta).
 function anteprimaSu(el, quale) {
-  el.addEventListener('pointerenter', (e) => {
-    if (e.pointerType !== 'mouse' || trascino) return;
+  // anche al movimento, non solo all'ingresso: dopo aver trascinato una carta il mouse ci è già sopra
+  const mostra = (e) => {
+    if (e.pointerType !== 'mouse' || e.buttons || trascino || !T || T.anteprima.classList.contains('visibile')) return;
     const c = quale();
     if (!c || c.coperta || (!c.att && !c.lav)) return;
+    T.anteprima.style.top = '';
     riempi(T.anteprima, h('div', { class: classeCarta(c) }, faccia(c)));
     T.anteprima.classList.add('visibile');
-  });
-  el.addEventListener('pointerleave', () => T?.anteprima.classList.remove('visibile'));
-  el.addEventListener('pointerdown', () => T?.anteprima.classList.remove('visibile'));
+  };
+  el.addEventListener('pointerenter', mostra);
+  el.addEventListener('pointermove', mostra);
+  // solo per il mouse: col dito l'anteprima segue la carta toccata (vedi aggiornaTavolo)
+  const nascondi = (e) => { if (e.pointerType === 'mouse') T?.anteprima.classList.remove('visibile'); };
+  el.addEventListener('pointerleave', nascondi);
+  el.addEventListener('pointerdown', nascondi);
 }
 
 for (const s of SIMBOLI) new Image().src = `/img/sim/${s}.png`;

@@ -134,6 +134,9 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
   grid-template-areas: "barra" "scena" "mano";
   user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  /* niente zoom della pagina col pizzico o col doppio tocco: lo zoom è quello del tavolo */
+  touch-action: pan-x pan-y;
 }
 .tts.con-cronaca { grid-template-columns: minmax(0, 1fr) 250px; grid-template-areas: "barra barra" "scena cronaca" "mano mano"; }
 .tts .marchio { display: none; }
@@ -167,8 +170,11 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 .punti { display: inline-flex; align-items: center; gap: 2px; }
 .numero { border: 0; background: none; min-width: 32px; padding: 0 2px; font-size: 17px; font-weight: 700; }
 .zoom { display: inline-flex; align-items: center; gap: 4px; }
+.voci { display: contents; }
+.solo-stretto { display: none; }
+.azione .dorso { margin-right: 6px; vertical-align: -3px; }
 
-.scena { grid-area: scena; overflow: auto; background: #cfdccf; overscroll-behavior: contain; }
+.scena { grid-area: scena; overflow: auto; background: #cfdccf; overscroll-behavior: contain; touch-action: none; cursor: grab; }
 .piano { position: relative; }
 .tappeto {
   position: absolute;
@@ -308,10 +314,30 @@ input {
 }
 @media (max-width: 760px) {
   .tts.con-cronaca { grid-template-columns: minmax(0, 1fr); grid-template-areas: "barra" "scena" "mano"; }
-  .barra { gap: 5px 8px; padding: 5px 8px; font-size: 14px; }
+  .barra { gap: 6px 8px; padding: 6px 8px; font-size: 14px; }
   .barra .spazio, .barra .secondario { display: none; }
-  button.piccolo { padding: 5px 9px; }
+  .solo-stretto { display: inline-block; }
+  /* i giocatori stanno su una riga che scorre; le voci secondarie dietro "Menu" */
+  .posti { flex-basis: 100%; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; }
+  /* righe che scorrono col dito: la barra di scorrimento non serve */
+  .posti, .azioni, .mano { scrollbar-width: none; }
+  .posti::-webkit-scrollbar, .azioni::-webkit-scrollbar, .mano::-webkit-scrollbar { display: none; }
+  .posto { flex: none; }
+  .voci { display: none; }
+  .voci.aperte { display: flex; flex-wrap: wrap; flex-basis: 100%; gap: 6px; }
+  /* misure da dito */
+  button.piccolo { padding: 8px 12px; font-size: 14px; }
+  button.tondo { width: 36px; height: 36px; font-size: 18px; }
+  .numero { min-width: 38px; min-height: 36px; }
+  .posto .nome { padding: 8px 6px; }
+  .azione { padding: 9px 12px; }
+  .sottopila .piccolo { display: none; }
+  /* le azioni stanno su una riga che scorre: la barra non cambia altezza e il tavolo non salta */
+  .azioni { flex-wrap: nowrap; overflow-x: auto; min-height: 44px; }
+  .azioni > * { flex: none; }
+  .azioni .nota, .azioni > .eti { display: none; }
   .tts.con-cronaca .cronaca {
+    display: flex;
     position: fixed;
     left: 8px;
     right: 8px;
@@ -325,5 +351,24 @@ input {
   .manobar { padding: 5px 8px 6px; }
   .mano { gap: 16px; }
   .mano .tc { --k: .62; }
-  .anteprima { display: none !important; }
+  .anteprima, .tts.con-cronaca .anteprima { right: 8px; }
+  .anteprima .tc { --k: 1.3; }
+}
+/* telefono in orizzontale: barra su una riga, mano bassa, il resto al tavolo */
+@media (max-height: 520px) {
+  .barra { flex-wrap: nowrap; overflow-x: auto; padding: 4px 8px; }
+  .barra > * { flex: none; }
+  .barra .secondario, .barra .spazio { display: none; }
+  /* prima i comandi, poi i giocatori: così restano sempre a portata */
+  .posti { order: 2; flex-basis: auto; overflow: visible; padding: 0; }
+  .barra { scrollbar-width: none; }
+  .barra::-webkit-scrollbar { display: none; }
+  .voci.aperte { flex-basis: auto; flex-wrap: nowrap; }
+  .manobar { gap: 2px; padding: 3px 8px 4px; }
+  .azioni { min-height: 0; }
+  .azioni > .eti, .azioni .nota, .gruppo > .eti { display: none; }
+  .azione { padding: 6px 10px; }
+  .mano { padding: 4px 2px 2px; }
+  .mano .tc { --k: .44; }
+  .tts.con-cronaca .cronaca { top: 56px; bottom: 8px; }
 }
