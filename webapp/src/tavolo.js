@@ -50,13 +50,12 @@ function prepara(st, M, rnd) {
     g.mano = [];
     for (const t of TIPI) for (let k = 0; k < st.iniziali[t]; k++) g.mano.push(st.mazzi[t].pop());
   }
-  st.turno = Math.floor(rnd() * st.giocatori.length);
 }
 
 export function nuovoTavolo(M, nomi, iniziali = { lav: 2, for: 2 }, rnd = Math.random) {
   const st = { iniziali, giocatori: nomi.map((nome) => ({ nome, punti: 0, mano: [] })), log: [] };
   prepara(st, M, rnd);
-  nota(st, -1, `Carte distribuite: ${iniziali.lav} lavoratori e ${iniziali.for} ambiti a testa. Comincia ${st.giocatori[st.turno].nome}.`);
+  nota(st, -1, `Carte distribuite: ${iniziali.lav} lavoratori e ${iniziali.for} ambiti a testa.`);
   return st;
 }
 
@@ -209,15 +208,10 @@ export function esegui(st, M, p, op, rnd = Math.random) {
       }
       return false;
     }
-    case 'turno':
-      st.turno = Number.isInteger(op.g) && st.giocatori[op.g] ? op.g : (st.turno + 1) % st.giocatori.length;
-      nota(st, p, `passa il turno a ${st.giocatori[st.turno].nome}.`);
-      return false;
     case 'nuova':
       prepara(st, M, rnd);
       st.log = [];
       nota(st, p, 'rimette tutto nei mazzi, mescola e ridistribuisce le carte.');
-      nota(st, -1, `Comincia ${st.giocatori[st.turno].nome}.`);
       return false;
     default:
       throw new Rifiuto('Azione sconosciuta.');
@@ -234,7 +228,6 @@ export function vista(st, M, p) {
   const pila = (ids) => ({ n: ids.length, cima: ids.length ? faccia(ids.at(-1)) : null });
   return {
     io: p,
-    turno: st.turno,
     giocatori: st.giocatori.map((g) => ({
       nome: g.nome,
       punti: g.punti,

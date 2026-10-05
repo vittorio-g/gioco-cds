@@ -32,6 +32,7 @@ await page.evaluateOnNewDocument(() => {
         try {
           const m = JSON.parse(e.data);
           if (m.t === 'stato' || m.t === 'errore') window.__inAttesa = Math.max(0, window.__inAttesa - 1);
+          if (m.t === 'stato') window.__stati = (window.__stati ?? 0) + 1;
         } catch {}
       });
     }
@@ -84,7 +85,12 @@ const leggiQR = async (selettore) => {
 const lettoInSala = await leggiQR('.sala .qr');
 await page.screenshot({ path: `${dove}/pc_sala.png` });
 verifica(lettoInSala === `${base}/#${codice}`, 'il QR della sala d’attesa porta al link della stanza', `letto: ${lettoInSala}`);
-const finti = ['Bruno', 'Carla'].map((nome) => { const ws = new WebSocket(`${base.replace(/^http/, 'ws')}/ws/${codice}`); ws.onopen = () => ws.send(JSON.stringify({ a: 'entra', nome })); return ws; });
+const finti = ['Bruno', 'Carla'].map((nome) => {
+  const ws = new WebSocket(`${base.replace(/^http/, 'ws')}/ws/${codice}`);
+  ws.onopen = () => ws.send(JSON.stringify({ a: 'entra', nome }));
+  ws.onmessage = (e) => { try { const m = JSON.parse(e.data); if (m.t === 'stato') ws.stato = m; } catch {} };
+  return ws;
+});
 await page.waitForFunction(() => document.querySelectorAll('.elenco li').length === 3);
 b = await bottone('Apparecchia il tavolo');
 await page.mouse.click(b.x, b.y);
@@ -111,6 +117,55 @@ c = await centro('.carte .tc');
 await page.mouse.move(c.x, c.y);
 await attesa(200);
 verifica((await stato()).anteprima, 'passando il mouse su una carta compare l’anteprima grande');
+
+// --- l'anteprima segue quello che c'è sotto il mouse, anche quando il mouse sta fermo
+const finche = async (cond, ms = 6000) => { const t0 = Date.now(); while (Date.now() - t0 < ms) { if (await cond()) return true; await attesa(40); } return false; };
+const bruno = finti[0];
+// un'azione di Bruno, aspettando che il tavolo del computer l'abbia ricevuta
+const faBruno = async (op) => {
+  const n = await page.evaluate(() => window.__stati ?? 0);
+  bruno.send(JSON.stringify({ a: 'op', op }));
+  await finche(() => page.evaluate((k) => (window.__stati ?? 0) > k, n));
+  await attesa(150);
+};
+await finche(() => bruno.stato?.tavolo?.tavolo.length === 1);
+const idCarta = bruno.stato.tavolo.tavolo[0].id;
+await faBruno({ o: 'gira', c: idCarta });
+verifica(!(await stato()).anteprima, 'se un altro copre la carta che ho sotto il mouse, l’anteprima si chiude');
+await faBruno({ o: 'gira', c: idCarta });
+verifica((await stato()).anteprima, 'e ricompare quando la carta torna scoperta');
+await faBruno({ o: 'prendi', c: idCarta });
+s = await stato();
+verifica(s.tavolo.length === 0 && !s.anteprima, 'se un altro prende la carta che ho sotto il mouse, l’anteprima si chiude', JSON.stringify(s));
+
+c = await centro('.mano .tc');
+await page.mouse.move(c.x, c.y);
+await attesa(200);
+const sullaMano = (await stato()).anteprima;
+await faBruno({ o: 'pesca', m: 'for' }); // ogni azione degli altri ridisegna la mia mano
+const dopoRidisegno = (await stato()).anteprima;
+await page.mouse.move(sc.x - 250, sc.alto + 60); // via in un salto solo, senza passare dal bordo della carta
+await attesa(200);
+verifica(sullaMano && dopoRidisegno && !(await stato()).anteprima, 'dopo che la mano è stata ridisegnata, togliendo il mouse l’anteprima si chiude', `sulla mano ${sullaMano}, dopo il ridisegno ${dopoRidisegno}`);
+
+await trascina(await centro('.mano .tc'), { x: sc.x + 150, y: sc.y - 60 });
+c = await centro('.carte .tc');
+const scarti = await centro('.pila.scarti.lav');
+await page.mouse.move(c.x, c.y);
+await page.mouse.down();
+for (let i = 1; i <= 10; i++) { await page.mouse.move(c.x + ((scarti.x - c.x) * i) / 10, c.y + ((scarti.y - c.y) * i) / 10); await attesa(12); }
+await page.mouse.up();
+await page.mouse.move(scarti.x + 3, scarti.y + 2); // la mano trema appena lasciata la carta
+await quiete();
+s = await stato();
+verifica(s.tavolo.length === 0 && !s.anteprima, 'scartando una carta col mouse l’anteprima non resta aperta', JSON.stringify(s));
+
+await trascina(await centro('.mano .tc'), { x: sc.x + 150, y: sc.y - 60 });
+const lasciata = (await stato()).anteprima;
+await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+verifica(lasciata && !(await stato()).anteprima, 'la carta appena posata si vede in grande, e l’anteprima si chiude quando la finestra perde il mouse', `appena posata ${lasciata}`);
+await page.mouse.move(sc.x + 152, sc.y - 58);
+await attesa(200);
 s0 = await stato();
 await trascina({ x: sc.x - 250, y: sc.alto + 60 }, { x: sc.x - 250, y: sc.alto - 60 + 0 });
 s = await stato();

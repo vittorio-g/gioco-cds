@@ -27,7 +27,9 @@ let menuAperto = false; // sul telefono le voci secondarie stanno dietro "Menu"
 let vistaIntera = false; // sul telefono: tutto il tavolo invece della propria corsia
 // Si sta usando il dito? Decide se l'anteprima grande compare al tocco invece che al passaggio del mouse.
 let colDito = window.matchMedia('(hover: none)').matches;
-window.addEventListener('pointerdown', (e) => { colDito = e.pointerType !== 'mouse'; }, true);
+let mouse = null; // dov'è il mouse: { x, y, premuto }; null se è fuori dalla finestra
+let anteprimaChiusa = null; // col dito: la carta scelta di cui l'anteprima è già stata chiusa
+let anteprimaDi = ''; // la carta che l'anteprima mostra adesso
 let T = null; // pezzi fissi della schermata del tavolo
 
 const bozza = {
@@ -450,7 +452,7 @@ function regole() {
         h('li', {}, h('b', {}, 'Giocare. '), 'Trascina una carta dalla mano al tavolo. Oppure toccala e poi tocca il punto del tavolo dove metterla.'),
         h('li', {}, h('b', {}, 'Spostare. '), 'Le carte sul tavolo si trascinano dove vuoi: quella che muovi finisce sopra le altre.'),
         h('li', {}, h('b', {}, 'Scartare e riprendere. '), 'Trascina una carta sugli scarti, su un mazzo o sulla tua mano. Oppure toccala e usa i pulsanti in basso: gira, scarta, in mano, sotto le altre, nel mazzo.'),
-        h('li', {}, h('b', {}, 'Punti e turno. '), 'Si segnano a mano con i pulsanti accanto ai nomi. Tocca il numero per scrivere il totale.'),
+        h('li', {}, h('b', {}, 'Punti. '), 'Si segnano a mano con i pulsanti accanto ai nomi. Tocca il numero per scrivere il totale.'),
         h('li', {}, h('b', {}, 'Muovere il tavolo. '), 'Trascina lo sfondo per spostarlo. Con due dita, o con Ctrl e la rotella, lo ingrandisci; il pulsante con la percentuale lo riadatta allo schermo. Tenendo una carta vicino al bordo il tavolo scorre.')),
       h('p', { class: 'nota' }, 'Il tavolo non applica nessuna regola: tutti possono fare tutto, come con le carte vere. Ogni azione finisce nella cronaca.'),
       h('h2', {}, 'I simboli'),
@@ -544,6 +546,13 @@ function montaTavolo() {
   tavoloMobile(T.scena);
   T.radice = h('div', { class: 'tts' }, T.barra, T.scena, T.cronaca, T.manobar, T.anteprima, T.strati);
   T.radice.addEventListener('contextmenu', (e) => e.preventDefault()); // niente menu del browser tenendo premuto
+  anteprimaDi = '';
+  T.anteprima.addEventListener('click', () => {
+    anteprimaChiusa = scelta?.id ?? null;
+    aggiornaAnteprima();
+  });
+  // se il tavolo o la mano scorrono, sotto il mouse fermo può esserci un'altra carta
+  T.radice.addEventListener('scroll', () => aggiornaAnteprima(), true);
   app.replaceChildren(T.radice);
   T.radice.classList.toggle('con-cronaca', cronacaAperta);
   T.daCentrare = true;
@@ -586,6 +595,7 @@ function zoomAttorno(nuovo, punto, sx, sy) {
   const r = T.scena.getBoundingClientRect();
   T.scena.scrollLeft = punto.x * zoom - (sx - r.left);
   T.scena.scrollTop = punto.y * zoom - (sy - r.top);
+  aggiornaAnteprima();
 }
 function cambiaZoom(fattore) {
   const r = T.scena.getBoundingClientRect();
@@ -776,6 +786,7 @@ function finitoTrascinamento() {
   if (manoDaRifare) {
     manoDaRifare = false;
     aggiornaMano();
+    aggiornaAnteprima();
   }
 }
 
@@ -820,6 +831,8 @@ function cartaSulTavolo(el, id) {
         fine: (ev) => {
           const b = bersaglio(ev.clientX, ev.clientY);
           molla();
+          // la carta che lascia il tavolo sparisce subito, senza aspettare la risposta del server
+          if (b && b.dove !== 'tavolo') el.classList.add('uscita');
           if (b?.dove === 'mano') fai({ o: 'prendi', c: id });
           else if (b?.dove === 'scarti') fai({ o: 'scarta', c: id });
           else if (b?.dove === 'mazzo') fai({ o: 'rimetti', c: id });
@@ -850,6 +863,7 @@ function carteAltrui({ id, x, y }) {
   el.style.left = `${x}px`;
   el.style.top = `${y}px`;
   el.style.zIndex = 500;
+  aggiornaAnteprima();
 }
 
 // Un posto libero nella corsia di chi gioca, per il pulsante "Sul tavolo".
@@ -874,12 +888,11 @@ function aggiornaTavolo() {
   T.barra.classList.toggle('menu-aperto', menuAperto);
   if (zoomAutomatico) adattaZoom(vistaIntera);
 
-  // --- barra: giocatori, punti, turno
+  // --- barra: giocatori e punti
   const giocatore = (g, i) => {
     const presente = st.giocatori.find((x) => x.nome === g.nome)?.collegato ?? true;
-    return h('span', { class: `posto${i === t.turno ? ' turno' : ''}${i === io ? ' io' : ''}${presente ? '' : ' assente'}` },
-      h('button', { type: 'button', class: 'nome', title: 'Dai il turno a questo giocatore', onclick: () => fai({ o: 'turno', g: i }) },
-        g.nome, i === io && ' (tu)'),
+    return h('span', { class: `posto${i === io ? ' io' : ''}${presente ? '' : ' assente'}` },
+      h('span', { class: 'nome' }, g.nome, i === io && ' (tu)'),
       dorsi('lav', g.lav), dorsi('for', g.for),
       h('span', { class: 'punti' },
         h('button', { type: 'button', class: 'tondo', 'aria-label': `Togli un punto a ${g.nome}`, onclick: () => fai({ o: 'punti', g: i, d: -1 }) }, '−'),
@@ -896,7 +909,6 @@ function aggiornaTavolo() {
     h('strong', { class: 'marchio' }, 'Collocamento'),
     h('span', { class: 'secondario' }, 'Stanza ', h('b', {}, sessione.codice)),
     h('span', { class: 'posti' }, t.giocatori.map(giocatore)),
-    h('button', { type: 'button', class: 'piccolo', onclick: () => fai({ o: 'turno' }) }, 'Passa il turno'),
     h('span', { class: 'spazio' }),
     !collegato && h('span', { class: 'ultimo' }, 'Connessione persa, riprovo…'),
     h('span', { class: 'zoom' },
@@ -937,9 +949,9 @@ function aggiornaTavolo() {
   riempi(T.corsie,
     h('div', { class: 'centro-tavolo', style: `width:${LATO_PILE}px` }),
     t.giocatori.map((g, i) => h('div', {
-      class: `corsia${i === io ? ' mia' : ''}${i === t.turno ? ' turno' : ''}`,
+      class: `corsia${i === io ? ' mia' : ''}`,
       style: `left:${LATO_PILE + i * larga}px; width:${larga}px`,
-    }, h('span', { class: 'cartello' }, g.nome, i === io && ' (tu)', i === t.turno && ' · di turno'))));
+    }, h('span', { class: 'cartello' }, g.nome, i === io && ' (tu)'))));
 
   // --- mazzi e scarti
   for (const p of T.pile) {
@@ -967,11 +979,10 @@ function aggiornaTavolo() {
     viste.add(c.id);
     let el = T.els.get(c.id);
     if (!el) {
-      el = h('div', {});
+      el = h('div', { 'data-carta': c.id, 'data-da': 'tavolo' });
       T.els.set(c.id, el);
       T.carte.append(el);
       cartaSulTavolo(el, c.id);
-      anteprimaSu(el, () => st.tavolo.tavolo.find((x) => x.id === c.id));
     }
     const chiave = chiaveCarta(c);
     if (el.dataset.chiave !== chiave) {
@@ -1006,16 +1017,7 @@ function aggiornaTavolo() {
   if (T.strati.querySelector('.fantasma')) manoDaRifare = true;
   else aggiornaMano();
 
-  // Senza mouse non c'è il passaggio sopra la carta: l'anteprima grande è quella della carta toccata.
-  if (colDito) {
-    const c = scelta?.da === 'tavolo' ? t.tavolo.find((x) => x.id === scelta.id) : scelta?.da === 'mano' ? t.mano.find((x) => x.id === scelta.id) : null;
-    const visibile = !!c && !c.coperta && !!(c.att || c.lav);
-    if (visibile) {
-      riempi(T.anteprima, h('div', { class: classeCarta(c) }, faccia(c)));
-      T.anteprima.style.top = `${T.scena.getBoundingClientRect().top + 8}px`;
-    }
-    T.anteprima.classList.toggle('visibile', visibile);
-  }
+  aggiornaAnteprima();
   if (T.daCentrare) {
     T.daCentrare = false;
     if (schermoStretto()) vaiAllaMiaCorsia();
@@ -1071,7 +1073,7 @@ function aggiornaMano() {
   const t = st.tavolo;
   const una = (c) => {
     const sel = scelta?.da === 'mano' && scelta.id === c.id;
-    const el = h('div', { class: `${classeCarta(c)}${sel ? ' scelta' : ''}` }, faccia(c));
+    const el = h('div', { class: `${classeCarta(c)}${sel ? ' scelta' : ''}`, 'data-carta': c.id, 'data-da': 'mano' }, faccia(c));
     trascinabile(el, {
       clic: () => {
         scelta = sel ? null : { da: 'mano', id: c.id };
@@ -1083,7 +1085,6 @@ function aggiornaMano() {
         else if (b?.dove === 'mazzo') fai({ o: 'rimetti', c: c.id });
       }),
     });
-    anteprimaSu(el, () => c);
     return el;
   };
   const gruppo = (k, titolo) => {
@@ -1093,24 +1094,69 @@ function aggiornaMano() {
   riempi(T.mano, gruppo('lav', 'Lavoratori'), gruppo('for', 'Ambiti'));
 }
 
-// Anteprima grande della carta su cui passa il mouse (solo se scoperta).
-function anteprimaSu(el, quale) {
-  // anche al movimento, non solo all'ingresso: dopo aver trascinato una carta il mouse ci è già sopra
-  const mostra = (e) => {
-    if (e.pointerType !== 'mouse' || e.buttons || trascino || !T || T.anteprima.classList.contains('visibile')) return;
-    const c = quale();
-    if (!c || c.coperta || (!c.att && !c.lav)) return;
-    T.anteprima.style.top = '';
-    riempi(T.anteprima, h('div', { class: classeCarta(c) }, faccia(c)));
-    T.anteprima.classList.add('visibile');
-  };
-  el.addEventListener('pointerenter', mostra);
-  el.addEventListener('pointermove', mostra);
-  // solo per il mouse: col dito l'anteprima segue la carta toccata (vedi aggiornaTavolo)
-  const nascondi = (e) => { if (e.pointerType === 'mouse') T?.anteprima.classList.remove('visibile'); };
-  el.addEventListener('pointerleave', nascondi);
-  el.addEventListener('pointerdown', nascondi);
+// --------------------------------------------------------------------------
+// Anteprima grande di una carta scoperta
+// --------------------------------------------------------------------------
+// Col mouse è la carta sotto il puntatore. Col dito è la carta appena toccata,
+// e si chiude toccando l'anteprima o qualsiasi altra cosa.
+// Non si apre e si chiude a eventi: ogni volta si guarda da capo dov'è il
+// puntatore e che carta c'è lì adesso. Così non resta aperta quando la carta le
+// sparisce da sotto (giocata, scartata, presa da un altro) o la mano si ridisegna.
+function cartaIn(el) {
+  const k = el?.closest?.('[data-carta]');
+  if (!k) return null;
+  const id = Number(k.dataset.carta);
+  return (k.dataset.da === 'mano' ? st.tavolo.mano : st.tavolo.tavolo).find((c) => c.id === id) ?? null;
 }
+
+// `sotto` è l'elemento sotto il mouse, quando chi chiama lo sa già.
+function aggiornaAnteprima(sotto) {
+  if (!T || !st?.tavolo) return;
+  let c = null;
+  if (colDito) {
+    if (scelta && scelta.id !== anteprimaChiusa) c = (scelta.da === 'mano' ? st.tavolo.mano : st.tavolo.tavolo).find((x) => x.id === scelta.id);
+  } else if (mouse && !mouse.premuto) {
+    c = cartaIn(sotto ?? document.elementFromPoint(mouse.x, mouse.y));
+  }
+  if (c && eCoperta(c)) c = null;
+  const chiave = c ? `${colDito ? 'dito' : 'mouse'} ${c.id} ${chiaveCarta(c)}` : '';
+  if (chiave === anteprimaDi) return;
+  anteprimaDi = chiave;
+  if (c) {
+    riempi(T.anteprima, h('div', { class: classeCarta(c) }, faccia(c)));
+    T.anteprima.style.top = colDito ? `${T.scena.getBoundingClientRect().top + 8}px` : '';
+  }
+  T.anteprima.classList.toggle('visibile', !!c);
+  T.anteprima.classList.toggle('tocco', !!c && colDito);
+}
+
+window.addEventListener('pointerdown', (e) => {
+  colDito = e.pointerType !== 'mouse';
+  if (colDito) {
+    mouse = null;
+    // un tocco nuovo chiude l'anteprima di prima; se è proprio sull'anteprima ci pensa il suo clic
+    if (!T?.anteprima.contains(e.target)) anteprimaChiusa = scelta?.id ?? null;
+  } else {
+    mouse = { x: e.clientX, y: e.clientY, premuto: true };
+  }
+  aggiornaAnteprima();
+}, true);
+window.addEventListener('pointermove', (e) => {
+  if (e.pointerType !== 'mouse') return;
+  colDito = false;
+  mouse = { x: e.clientX, y: e.clientY, premuto: e.buttons !== 0 };
+  aggiornaAnteprima(e.target);
+}, true);
+// Al rilascio non si riapre subito: lo fa il ridisegno che segue il clic o il trascinamento.
+window.addEventListener('pointerup', (e) => {
+  if (e.pointerType === 'mouse') mouse = { x: e.clientX, y: e.clientY, premuto: e.buttons !== 0 };
+}, true);
+const mouseVia = () => {
+  mouse = null;
+  aggiornaAnteprima();
+};
+document.documentElement.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') mouseVia(); });
+window.addEventListener('blur', mouseVia);
 
 riprendi();
 disegna();

@@ -123,9 +123,7 @@ await op(anna, { o: 'punti', g: 0, d: 5 });
 await op(anna, { o: 'punti', g: 0, d: 7 });
 await op(bruno, { o: 'punti', g: 0, v: 17 });
 verifica(t(bruno).giocatori[0].punti === 17, 'i punti si segnano a mano, anche scrivendo il totale');
-const diTurno = t(anna).turno;
-await op(bruno, { o: 'turno' });
-verifica(t(anna).turno === (diTurno + 1) % 2, 'il turno passa quando qualcuno lo passa');
+verifica(!('turno' in t(anna)) && !t(anna).log.some((r) => /turno|Comincia/.test(r.testo)), 'il tavolo non tiene il turno: ce lo si dice a voce');
 
 const carla = giocatore('Carla');
 await finche(() => carla.stato?.tavolo && anna.stato.giocatori.length === 3, 'Carla arriva dopo');

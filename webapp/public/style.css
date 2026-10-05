@@ -97,6 +97,7 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 .lente .terna { gap: calc(6px * var(--k)); }
 .lente .sim { width: calc(30px * var(--k)); height: calc(30px * var(--k)); border-radius: 0; }
 .anteprima .lente { display: none; }
+.tc.uscita { visibility: hidden; }
 .tc.trascinata { transition: none; z-index: 1000 !important; cursor: grabbing; box-shadow: 0 12px 26px rgba(31, 58, 68, .38); }
 .tc.scelta { outline: calc(4px * var(--k)) solid var(--evidenza); outline-offset: 1px; }
 .tc .titolo {
@@ -182,9 +183,8 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
   border-radius: 99px;
   padding: 2px 5px 2px 4px;
 }
-.posto.turno { border-color: var(--evidenza); background: #ffe3ee; }
 .posto.assente { opacity: .55; }
-.posto .nome { border: 0; background: none; padding: 2px 6px; font-weight: 700; }
+.posto .nome { padding: 2px 6px; font-weight: 700; white-space: nowrap; }
 .posto.io .nome { color: var(--verde-scuro); }
 .conta { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; font-weight: 600; }
 .punti { display: inline-flex; align-items: center; gap: 2px; }
@@ -207,7 +207,6 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 .corsia { position: absolute; top: 0; bottom: 0; border-left: 2px dashed rgba(31, 58, 68, .2); }
 .corsia.mia { background: rgba(255, 255, 255, .22); }
 .cartello { position: absolute; left: 14px; top: 8px; font-size: 20px; font-weight: 700; color: rgba(31, 58, 68, .5); }
-.corsia.turno .cartello { color: var(--verde-scuro); }
 
 .pila { position: absolute; width: 126px; height: 176px; border-radius: 10px; touch-action: none; }
 .pila .tc { position: relative; pointer-events: none; }
@@ -283,6 +282,8 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 .tts.con-cronaca .anteprima { right: 266px; }
 .anteprima { position: fixed; right: 16px; top: 62px; z-index: 40; display: none; pointer-events: none; }
 .anteprima.visibile { display: block; }
+/* col dito l'anteprima si chiude toccandola: deve prendersi il tocco, non passarlo al tavolo */
+.anteprima.tocco { pointer-events: auto; }
 .anteprima .tc { --k: 2.5; position: relative; box-shadow: 0 14px 34px rgba(31, 58, 68, .4); }
 .strati { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
 .fantasma { position: fixed; transform-origin: 0 0; opacity: .93; transition: none; box-shadow: 0 12px 26px rgba(31, 58, 68, .38); }
@@ -341,7 +342,7 @@ input {
 }
 @media (max-width: 760px) {
   .tts.con-cronaca { grid-template-columns: minmax(0, 1fr); grid-template-areas: "barra" "scena" "mano"; }
-  /* Una riga sola: turno, menu e i giocatori che scorrono. Con le barre di
+  /* Una riga sola: il menu e i giocatori che scorrono. Con le barre di
      Safari lo schermo utile di un telefono è basso, e ogni riga pesa. */
   .barra { flex-wrap: nowrap; gap: 6px; padding: 6px 8px; font-size: 14px; }
   .barra.menu-aperto { flex-wrap: wrap; }

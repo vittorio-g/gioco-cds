@@ -86,6 +86,10 @@ await tocca('.mano .tc', 0);
 s = await stato();
 verifica(s.scelte === 1 && s.anteprima, 'toccare una carta della mano la seleziona e la mostra in grande', JSON.stringify(s));
 await page.screenshot({ path: `${dove}/ios_2_carta_scelta.png` });
+// la carta in grande copre un pezzo di tavolo: toccarla la chiude, senza giocare la carta lì sotto
+await tocca('.anteprima .tc', 0);
+s = await stato();
+verifica(!s.anteprima && s.scelte === 1 && s.tavolo === 0 && s.mano === s0.mano, 'toccare la carta in grande la chiude e non gioca niente', JSON.stringify(s));
 const sc = await page.locator('.scena').boundingBox();
 await page.touchscreen.tap(sc.x + sc.width / 2, sc.y + sc.height / 2);
 await attesa(600);
