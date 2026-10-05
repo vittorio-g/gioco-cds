@@ -2,7 +2,8 @@
 // I numeri di BUCHI.md vengono da qui.
 //
 // Uso:  node strumenti/analisi.mjs                 tutto, qualche minuto
-//       node strumenti/analisi.mjs base valore     solo alcune parti: carte, base, poteri, uno, valore, bilancia, stili, varianti
+//       node strumenti/analisi.mjs base valore     solo alcune parti: carte, base, poteri, uno, valore, bilancia, varianti,
+//                                                  e sugli stili di gioco: stili, risposta, selettivi, adattivi, regole
 import { readFileSync } from 'node:fs';
 import { PUNTI, nuovaPartita, gioca, ambito, puoPescare, lavoratoriPer, turniRimasti, classifica, poterePer } from './regole.mjs';
 
@@ -61,17 +62,32 @@ function minimo(carte, serve) {
 // Cerca il set che rende di più per i turni che costa: una pila (anche ancora da
 // aprire), un lavoratore del mercato o prenotato, e un lavoro che ha in mano.
 // Poi fa il primo passo. Se non vede niente che valga la pena, pesca.
-//   stile.costo   quanti punti vale per lui un turno: alto = fa in fretta, basso = aspetta l'abbinamento buono
-//   stile.atteso  quanto pensa di ricavare da un lavoratore inserito senza avere ancora il lavoro
+// Lo stile di gioco:
+//   costo          quanti punti deve rendere, per lui, ogni azione spesa su un set. Basso: parte col
+//                  primo set che gli riesce. Alto: è esigente, e finché non ne vede uno che rende pesca.
+//                  Non è la fretta: chi ha il costo alto pesca di più e chiude set migliori.
+//   minPunti       non comincia un set che vale meno di così (5 = li prende tutti, 10, 16)
+//   minIcone       lo stesso, detto in ambizioni che combaciano: 3 = solo set perfetti, con qualunque tabella dei punti
+//   maxFormazioni  non mette più di tante formazioni in una pila
+//   manoMinima     sotto questo numero di carte in mano prima pesca, poi costruisce
+//   volata         { set, costo }: quando un avversario arriva a quel numero di set cambia passo e
+//                  prende quello che c'è
+//   atteso         quanto pensa di ricavare da un lavoratore inserito senza avere ancora il lavoro
 const STIMA_POTERE = [0, 3, 1.2, 0.5, 0.7]; // quanti punti vale per lui ogni potere: dalle misure della parte "valore"
 
 function bot(stile = {}) {
-  const costo = stile.costo ?? 2;
   const atteso = stile.atteso ?? 8;
+  const maxFormazioni = stile.maxFormazioni ?? 99;
+  const manoMinima = stile.manoMinima ?? 0;
+  // In volata, o quando la fine è scattata, si prende quello che c'è.
+  const inVolata = (s, p) => !!stile.volata && s.giocatori.some((g, i) => i !== p && g.set.length >= stile.volata.set);
+  const manoMinimaOra = (s, p) => (inVolata(s, p) ? 0 : Math.min(manoMinima, s.o.limiteMano - 1)); // mai oltre quello che il limite permette
+  const costoOra = (s, p) => (inVolata(s, p) ? stile.volata.costo : stile.costo ?? 2);
+  const minPuntiOra = (s, p) => (s.fine || inVolata(s, p) ? 0 : stile.minIcone != null ? (s.o.punti ?? PUNTI)[stile.minIcone] : stile.minPunti ?? 0);
 
   function valore(s, g, w, j) {
     const a = ambito(M, j);
-    let v = PUNTI[inComune(VW[w], va(j))];
+    let v = (s.o.punti ?? PUNTI)[inComune(VW[w], va(j))];
     const perCat = {};
     for (const x of g.set) perCat[x.cat] = (perCat[x.cat] ?? 0) + 1;
     if (!g.gettoni.uguali && s.gettoni.uguali.length) {
@@ -98,13 +114,19 @@ function bot(stile = {}) {
     const mano = g.mano;
     const lavoratori = conLavoratore != null ? [conLavoratore] : lavoratoriPer(s, p);
     const rimasti = turniRimasti(s);
+    const costo = costoOra(s, p);
+    const minPunti = minPuntiOra(s, p);
     let top = null;
-    const prova = (v, turni, azione, usate) => {
+    // puntiSet: quanto vale il set, senza gettoni né poteri (null = non si sa ancora: manca il lavoro)
+    const prova = (v, turni, azione, usate, puntiSet, formazioni) => {
       if (turni > rimasti) return;
       if (soloFormazioni && azione.t !== 'apri' && azione.t !== 'migliora') return;
+      if (formazioni > maxFormazioni) return;
+      if (puntiSet == null ? minPunti > (s.o.punti ?? PUNTI)[0] : puntiSet < minPunti) return;
       const netto = v - costo * turni;
       if (!top || netto > top.netto) top = { netto, azione, usate };
     };
+    const punti = (w, j) => (s.o.punti ?? PUNTI)[inComune(VW[w], va(j))];
     const senza = (j) => mano.filter((c) => c !== j);
     const colPotere = (w) => STIMA_POTERE[poterePer(s, p, w)]; // prendendolo con l'azione normale
 
@@ -117,8 +139,10 @@ function bot(stile = {}) {
           const serve = manca(va(j), ho);
           const carte = minimo(senza(j), serve);
           if (!carte) continue;
+          // il lavoratore c'è già: sul punteggio non si fa più gli schizzinosi
           prova(valore(s, g, pila.lav, j), carte.length + 1,
-            carte.length ? { t: 'migliora', c: migliore(carte, serve, serve), k } : { t: 'completa', c: j, k }, [j, ...carte]);
+            carte.length ? { t: 'migliora', c: migliore(carte, serve, serve), k } : { t: 'completa', c: j, k }, [j, ...carte],
+            99, pila.form.length + carte.length);
         }
         return;
       }
@@ -129,13 +153,15 @@ function bot(stile = {}) {
           const carte = minimo(senza(j), serve);
           if (!carte) continue;
           prova(valore(s, g, w, j) + colPotere(w), carte.length + 2,
-            somma(perLui) ? { t: 'migliora', c: migliore(carte, perLui, serve), k } : { t: 'inserisci', w, k }, [j, ...carte]);
+            somma(perLui) ? { t: 'migliora', c: migliore(carte, perLui, serve), k } : { t: 'inserisci', w, k }, [j, ...carte],
+            punti(w, j), pila.form.length + carte.length);
         }
         // intanto il lavoratore: il lavoro si cercherà dopo
         const carte = minimo(mano, perLui);
         if (carte) {
           prova(atteso + colPotere(w), carte.length + 4,
-            carte.length ? { t: 'migliora', c: migliore(carte, perLui, perLui), k } : { t: 'inserisci', w, k }, carte);
+            carte.length ? { t: 'migliora', c: migliore(carte, perLui, perLui), k } : { t: 'inserisci', w, k }, carte,
+            null, pila.form.length + carte.length);
         }
       }
     });
@@ -145,10 +171,10 @@ function bot(stile = {}) {
       for (const j of mano) {
         const serve = massimo(VW[w], va(j));
         const carte = minimo(senza(j), serve);
-        if (carte) prova(valore(s, g, w, j) + colPotere(w), carte.length + 2, { t: 'apri', c: migliore(carte, VW[w], serve) }, [j, ...carte]);
+        if (carte) prova(valore(s, g, w, j) + colPotere(w), carte.length + 2, { t: 'apri', c: migliore(carte, VW[w], serve) }, [j, ...carte], punti(w, j), carte.length);
       }
       const carte = minimo(mano, VW[w]);
-      if (carte) prova(atteso + colPotere(w), carte.length + 4, { t: 'apri', c: migliore(carte, VW[w], VW[w]) }, carte);
+      if (carte) prova(atteso + colPotere(w), carte.length + 4, { t: 'apri', c: migliore(carte, VW[w], VW[w]) }, carte, null, carte.length);
     }
     return top;
   }
@@ -165,6 +191,8 @@ function bot(stile = {}) {
         const adatta = g.mano.filter((c) => !top.usate.includes(c)).find((c) => altri.some((w) => somma(manca(VW[w], va(c))) <= 1));
         if (adatta != null) return { t: 'apri', c: adatta };
       }
+      // chi vuole una mano ricca prima pesca, a meno che non possa chiudere un set
+      if (g.mano.length < manoMinimaOra(s, p) && puoPescare(s) && top?.azione.t !== 'completa' && !s.fine) return { t: 'pesca' };
       if (top && top.netto >= 0) return top.azione;
       // con la mano quasi piena conviene usare le carte invece di scartarle
       if (top && g.mano.length >= s.o.limiteMano - 1) return top.azione;
@@ -195,10 +223,11 @@ function bot(stile = {}) {
         const ho = competenze(pila);
         for (const w of lavoratoriPer(s, p)) {
           if (somma(manca(VW[w], ho)) > 1) continue;
+          const costo = costoOra(s, p);
           let v = atteso - costo * 3;
           for (const j of g.mano) {
             const carte = minimo(g.mano.filter((c) => c !== j), manca(va(j), ho));
-            if (carte) v = Math.max(v, valore(s, g, w, j) - costo * (carte.length + 1));
+            if (carte) v = Math.max(v, valore(s, g, w, j) - costoOra(s, p) * (carte.length + 1));
           }
           if (!top || v > top.v) top = { v, w, k };
         }
@@ -238,6 +267,7 @@ function partita(n, opzioni, stili, rnd) {
   const s = nuovaPartita(M, n, opzioni, rnd);
   const chi = stili.map(bot);
   const azioni = { apri: 0, migliora: 0, inserisci: 0, completa: 0, pesca: 0, passa: 0 };
+  const azioniDi = stili.map(() => ({ apri: 0, migliora: 0, inserisci: 0, completa: 0, pesca: 0, passa: 0 }));
   let fermi = 0; // turni con una formazione libera e nessun lavoratore che ci possa salire
   let turni = 0;
   let aVuoto = 0; // turni di fila in cui tutti pescano o passano
@@ -257,11 +287,59 @@ function partita(n, opzioni, stili, rnd) {
     })) fermi++;
     const m = chi[p].scegli(s, M, p);
     azioni[m.t]++;
+    azioniDi[p][m.t]++;
     aVuoto = m.t === 'pesca' || m.t === 'passa' ? aVuoto + 1 : 0;
     gioca(s, M, m, chi[p], rnd);
     verifica(s);
   }
-  return { s, azioni, fermi, turni };
+  return { s, azioni, azioniDi, fermi, turni };
+}
+
+// Stili diversi allo stesso tavolo. A ogni partita i posti ruotano, così il posto non conta.
+// Due giocatori con lo stesso nome fanno media insieme.
+function confronto(titolo, stili, opzioni = {}, T = 3000, seme = 23) {
+  const rnd = mulberry32(seme);
+  const n = stili.length;
+  const r = new Map();
+  const giri = [];
+  let perSet = 0;
+  for (let k = 0; k < T; k++) {
+    const seduti = stili.map((_, i) => stili[(i + k) % n]);
+    const { s, azioniDi } = partita(n, opzioni, seduti, rnd);
+    giri.push(s.giro);
+    if (s.fine.motivo === 'set') perSet++;
+    const cl = classifica(s);
+    const primi = cl.filter((x) => x.punti === cl[0].punti).map((x) => x.i);
+    s.giocatori.forEach((g, i) => {
+      const nome = seduti[i].nome;
+      const x = r.get(nome) ?? { partite: 0, vittorie: 0, punti: 0, set: 0, icone: [0, 0, 0, 0], formazioni: 0, gettoni: 0, turni: 0, pesca: 0, passa: 0, aMeta: 0, conLavoratore: 0, inMano: 0, chiude: 0 };
+      x.partite++;
+      if (primi.includes(i)) x.vittorie += 1 / primi.length;
+      x.punti += g.punti;
+      x.set += g.set.length;
+      for (const q of g.set) { x.icone[q.icone]++; x.formazioni += q.form.length; }
+      x.gettoni += (g.gettoni.uguali ?? 0) + (g.gettoni.diverse ?? 0);
+      for (const a in azioniDi[i]) x.turni += azioniDi[i][a];
+      x.pesca += azioniDi[i].pesca;
+      x.passa += azioniDi[i].passa;
+      x.aMeta += g.pile.length;
+      x.conLavoratore += g.pile.filter((q) => q.lav != null).length;
+      x.inMano += g.mano.length;
+      if (s.fine.motivo === 'set' && s.fine.da === i) x.chiude++;
+      r.set(nome, x);
+    });
+  }
+  console.log(`\n${titolo}   [${f1(media(giri))} giri, finisce al quinto set ${pct(perSet, T)}]`);
+  const esito = {};
+  for (const [nome, x] of r) {
+    const quanti = stili.filter((q) => q.nome === nome).length;
+    esito[nome] = { vittorie: (x.vittorie / T) / quanti, punti: x.punti / x.partite, set: x.set / x.partite };
+    console.log(`  ${nome.padEnd(22)} vince ${pct(x.vittorie / quanti, T).padStart(4)}  punti ${f1(x.punti / x.partite).padStart(5)}  set ${(x.set / x.partite).toFixed(2)}`,
+      ` punti per set ${f1((x.punti - x.gettoni) / Math.max(1, x.set))}  da 16: ${pct(x.icone[3], x.set).padStart(4)}  da 10: ${pct(x.icone[2], x.set).padStart(4)}  da 5-7: ${pct(x.icone[0] + x.icone[1], x.set).padStart(4)}`,
+      ` formazioni per set ${(x.formazioni / Math.max(1, x.set)).toFixed(2)}  gettoni ${f1(x.gettoni / x.partite)}`,
+      ` turni a pescare ${pct(x.pesca, x.turni)}  chiude lui la partita ${pct(x.chiude, x.partite)}  resta con ${f1(x.aMeta / x.partite)} pile a metà (${f1(x.conLavoratore / x.partite)} col lavoratore) e ${f1(x.inMano / x.partite)} carte`);
+  }
+  return esito;
 }
 
 function esperimento(titolo, n, opzioni = {}, stili = null, T = 3000, seme = 11) {
@@ -380,9 +458,10 @@ const PER_DIFFICOLTA = (ordine) => {
   return poteri;
 };
 const RIMESSE = { formazioniNegliScarti: true };
-const RAPIDO = { nome: 'rapido', costo: 3.5 };
-const NORMALE = { nome: 'normale', costo: 2 };
-const PAZIENTE = { nome: 'paziente', costo: 1 };
+// Tre stili lungo la stessa manopola: quanto deve rendere un set perché valga la pena cominciarlo.
+const IMPULSIVO = { nome: 'impulsivo (1)', costo: 1 }; // parte col primo set che gli riesce
+const NORMALE = { nome: 'normale (2)', costo: 2 };
+const ESIGENTE = { nome: 'esigente (3,5)', costo: 3.5 }; // pesca finché non vede un set che rende
 
 const PARTI = {
   carte() {
@@ -433,10 +512,89 @@ const PARTI = {
     esperimento('Il potere più forte ai 15 lavoratori più difficili: pesca, prenota, piazza, formazioni', 3, { poteri: PER_DIFFICOLTA([1, 2, 4, 3]) });
     esperimento('Il contrario: pesca ai 15 più facili', 3, { poteri: PER_DIFFICOLTA([3, 4, 2, 1]) });
   },
+  // ---- Gli stili di gioco. Dove non è detto: 3 giocatori, poteri 15 per tipo.
   stili() {
-    console.log('\n=== Chi fa in fretta e chi aspetta l\u2019abbinamento buono (3 giocatori, poteri 15 per tipo) ===');
-    esperimento('Uno rapido, uno normale, uno paziente', 3, { poteri: A_ROTAZIONE }, [RAPIDO, NORMALE, PAZIENTE]);
-    esperimento('Gli stessi, in ordine inverso', 3, { poteri: A_ROTAZIONE }, [PAZIENTE, NORMALE, RAPIDO]);
+    const P = { poteri: A_ROTAZIONE };
+    const altro = (nome) => ({ ...NORMALE, nome });
+    console.log('\n=== I tre stili di partenza, allo stesso tavolo ===');
+    confronto('Impulsivo, normale, esigente', [IMPULSIVO, NORMALE, ESIGENTE], P);
+
+    console.log('\n=== Ognuno contro se stesso: cosa fa uno stile quando tutti giocano così ===');
+    for (const c of [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5]) confronto(`Tutti con costo ${c}`, [1, 2, 3].map(() => ({ nome: `costo ${c}`, costo: c })), P, 2000);
+
+    console.log('\n=== La curva: uno cambia stile, gli altri due restano normali (costo 2) ===');
+    for (const c of [0.25, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 7]) confronto(`Lui: costo ${c}`, [{ nome: `lui (${c})`, costo: c }, altro('gli altri (2)'), altro('gli altri (2)')], P);
+  },
+  risposta() {
+    const P = { poteri: A_ROTAZIONE };
+    console.log('\n=== La risposta migliore a ogni tavolo: vittorie di chi devia, contro due avversari uguali ===');
+    const campo = [1, 2, 3, 4, 5, 6];
+    const lui = [1, 2, 3, 4, 5, 6, 7];
+    const tabella = [];
+    for (const c of campo) {
+      const riga = [];
+      for (const d of lui) {
+        const e = confronto(`Tavolo a costo ${c}, lui a costo ${d}`, [{ nome: 'lui', costo: d }, { nome: 'tavolo', costo: c }, { nome: 'tavolo', costo: c }], P, 2000);
+        riga.push(e.lui.vittorie);
+      }
+      tabella.push(riga);
+    }
+    console.log(`\nVittorie di chi devia (alla pari 33%). Righe: lo stile del tavolo. Colonne: lo stile di chi devia: ${lui.join('  ')}`);
+    tabella.forEach((riga, i) => console.log(`  tavolo ${String(campo[i]).padEnd(4)} ${riga.map((v) => `${(100 * v).toFixed(0)}%`.padStart(5)).join(' ')}   migliore: ${lui[riga.indexOf(Math.max(...riga))]}`));
+  },
+  selettivi() {
+    const P = { poteri: A_ROTAZIONE };
+    const altro = { ...NORMALE, nome: 'gli altri (normali)' };
+    console.log('\n=== Selettivi sul punteggio: non comincia un set che vale meno di tanto (contro due normali) ===');
+    for (const m of [5, 7, 10, 16]) confronto(`Lui: almeno ${m} punti`, [{ nome: `lui (min ${m})`, costo: 2, minPunti: m }, altro, altro], P);
+    for (const m of [10, 16]) confronto(`Lui: almeno ${m} punti, ed esigente (costo 3,5)`, [{ nome: `lui (min ${m}, esigente)`, costo: 3.5, minPunti: m }, altro, altro], P);
+    confronto('Tutti e tre: almeno 16 punti', [1, 2, 3].map(() => ({ nome: 'min 16', costo: 2, minPunti: 16 })), P);
+
+    console.log('\n=== Quante formazioni è disposto a mettere in una pila (contro due normali) ===');
+    for (const f of [1, 2, 3]) confronto(`Lui: al massimo ${f}`, [{ nome: `lui (max ${f})`, costo: 2, maxFormazioni: f }, altro, altro], P);
+
+    console.log('\n=== Prima riempie la mano, poi costruisce (contro due normali) ===');
+    for (const h of [3, 4, 5, 6]) confronto(`Lui: pesca finché non ha ${h} carte`, [{ nome: `lui (mano ${h})`, costo: 2, manoMinima: h }, altro, altro], P);
+    confronto('Tutti e tre: pescano finché non hanno 5 carte', [1, 2, 3].map(() => ({ nome: 'mano 5', costo: 2, manoMinima: 5 })), P);
+    confronto('Lui: mano 5 ed esigente (costo 4)', [{ nome: 'lui (mano 5, esigente)', costo: 4, manoMinima: 5 }, altro, altro], P);
+  },
+  adattivi() {
+    const P = { poteri: A_ROTAZIONE };
+    const altro = { ...NORMALE, nome: 'gli altri (normali)' };
+    const esigenti = { nome: 'gli altri (esigenti)', costo: 4 };
+    console.log('\n=== Cambiare passo a partita in corso: selettivo all\u2019inizio, poi prende quello che c\u2019\u00e8 (contro due normali) ===');
+    for (const k of [2, 3, 4]) confronto(`Solo set da 16, finché un avversario non ha ${k} set`, [{ nome: `lui (16, poi tutto a ${k})`, costo: 2, minPunti: 16, volata: { set: k, costo: 1 } }, altro, altro], P);
+    for (const k of [3, 4]) confronto(`Mano da 5 carte, finché un avversario non ha ${k} set`, [{ nome: `lui (mano 5, poi tutto a ${k})`, costo: 2, manoMinima: 5, volata: { set: k, costo: 1 } }, altro, altro], P);
+    for (const k of [3, 4]) confronto(`Esigente (4), finché un avversario non ha ${k} set`, [{ nome: `lui (esigente, poi tutto a ${k})`, costo: 4, volata: { set: k, costo: 1 } }, altro, altro], P);
+    console.log('\n=== Il contrario: impulsivo all\u2019inizio, esigente alla fine ===');
+    for (const k of [2, 3]) confronto(`Impulsivo (1), esigente da quando un avversario ha ${k} set`, [{ nome: `lui (impulsivo, poi esigente a ${k})`, costo: 1, volata: { set: k, costo: 4 } }, altro, altro], P);
+    console.log('\n=== Contro un tavolo di esigenti (costo 4) ===');
+    for (const [nome, stile] of [['impulsivo', { costo: 1 }], ['normale', { costo: 2 }], ['esigente', { costo: 4 }], ['mano 5', { costo: 2, manoMinima: 5 }], ['solo 16', { costo: 2, minPunti: 16 }]]) {
+      confronto(`Lui: ${nome}`, [{ nome: `lui (${nome})`, ...stile }, esigenti, esigenti], P);
+    }
+  },
+  regole() {
+    const A = { poteri: A_ROTAZIONE };
+    const normali = (n) => Array.from({ length: n }, () => ({ ...NORMALE, nome: 'gli altri (normali)' }));
+    const TIPI = [['impulsivo', { costo: 1 }], ['esigente', { costo: 4 }], ['mano piena', { costo: 2, manoMinima: 5 }], ['solo set perfetti', { costo: 2, minIcone: 3 }]];
+    const prova = (titolo, opzioni, n = 3) => {
+      console.log(`\n--- ${titolo}`);
+      const riga = [];
+      for (const [nome, stile] of TIPI) riga.push(`${nome} ${pct(confronto(`${titolo}: ${nome}`, [{ nome: `lui (${nome})`, ...stile }, ...normali(n - 1)], opzioni, 2000)[`lui (${nome})`].vittorie, 1)}`);
+      console.log(`  IN BREVE (alla pari ${pct(1, n)}): ${riga.join('   ')}`);
+    };
+    console.log('\n=== Dipende dalle regole? Uno stile diverso contro avversari normali ===');
+    prova('Regole di adesso, in 3', A);
+    prova('Senza poteri', {});
+    prova('In 2', A, 2);
+    prova('In 4', A, 4);
+    prova('Si chiude al terzo set', { ...A, setPerFinire: 3 });
+    prova('Si chiude al settimo set, con le formazioni che tornano negli scarti', { ...A, setPerFinire: 7, ...RIMESSE });
+    prova('Tre ambizioni che combaciano valgono 20 invece di 16', { ...A, punti: [5, 7, 10, 20] });
+    prova('Tre ambizioni che combaciano valgono 25', { ...A, punti: [5, 7, 10, 25] });
+    prova('Scala più piatta: 5, 7, 9, 12', { ...A, punti: [5, 7, 9, 12] });
+    prova('Limite di mano 4', { ...A, limiteMano: 4 });
+    prova('Si pesca 1 carta invece di 2', { ...A, pescata: 1 });
   },
   varianti() {
     console.log('\n=== Varianti (poteri 15 per tipo) ===');

@@ -100,7 +100,7 @@ Tutte accettano anche l'indirizzo del tavolo online. Subito dopo una pubblicazio
 node strumenti/analisi.mjs
 ```
 
-Partite tra bot con le regole di [REGOLAMENTO.md](REGOLAMENTO.md), scritte in `strumenti/regole.mjs`. I numeri di [BUCHI.md](BUCHI.md) vengono da qui. Le varianti da provare (formazioni negli scarti, una copia sola degli ambiti, ricambio del mercato, chi ha quale potere) ci sono come opzioni. Tutto insieme ci mette qualche minuto; `node strumenti/analisi.mjs valore bilancia` lancia solo alcune parti.
+Partite tra bot con le regole di [REGOLAMENTO.md](REGOLAMENTO.md), scritte in `strumenti/regole.mjs`. I numeri di [BUCHI.md](BUCHI.md) vengono da qui. Le varianti da provare (formazioni negli scarti, una copia sola degli ambiti, ricambio del mercato, chi ha quale potere) ci sono come opzioni. Tutto insieme ci mette qualche minuto; `node strumenti/analisi.mjs valore bilancia` lancia solo alcune parti. Le parti sugli stili di gioco sono `stili`, `risposta`, `selettivi`, `adattivi` e `regole`.
 
 ### Grafica
 

@@ -32,6 +32,8 @@ export const OPZIONI = {
   poteriDi: null, // per misurare quanto vale un potere: funziona solo per questo giocatore (null = per tutti)
   // Varianti, non nel regolamento:
   pescaDelPotere: 2, // quante carte fa pescare il potere 1
+  punti: null, // un'altra tabella dei punti al posto di 5, 7, 10, 16
+  giroInPiu: true, // false: scattata la fine si chiude il giro in corso e basta
   formazioniNegliScarti: false, // chiuso un set, le sue formazioni vanno negli scarti invece di restare sul tavolo
   ricambioMercato: 0, // dopo quanti giri un lavoratore che nessuno prende viene sostituito; 0 = mai
 };
@@ -256,8 +258,9 @@ export function gioca(s, M, m, chi, rnd = Math.random) {
     togli(g.mano, m.c, 'Quella carta non è nella tua mano.');
     g.pile.splice(m.k, 1);
     const icone = comuni(M.lav[pila.lav].att, lavoro.lav);
-    g.set.push({ form: pila.form, lav: pila.lav, lavoro: m.c, icone, punti: PUNTI[icone], cat: lavoro.cat });
-    g.punti += PUNTI[icone];
+    const punti = (o.punti ?? PUNTI)[icone];
+    g.set.push({ form: pila.form, lav: pila.lav, lavoro: m.c, icone, punti, cat: lavoro.cat });
+    g.punti += punti;
     if (o.formazioniNegliScarti) s.scartiAmb.push(...pila.form);
     controllaGettoni(s, g);
     if (g.set.length >= o.setPerFinire) scatta(s, 'set');
@@ -281,7 +284,7 @@ export function gioca(s, M, m, chi, rnd = Math.random) {
 
   s.turno = (s.turno + 1) % s.n;
   if (s.turno === 0) {
-    if (s.fine && s.giro >= s.fine.giro + 1) {
+    if (s.fine && s.giro >= s.fine.giro + (o.giroInPiu ? 1 : 0)) {
       s.finita = true;
       return;
     }
@@ -301,7 +304,7 @@ export function gioca(s, M, m, chi, rnd = Math.random) {
 
 // Quanti turni ha ancora il giocatore di turno, compreso quello in corso, da quando la fine è scattata.
 export function turniRimasti(s) {
-  return s.fine ? s.fine.giro + 1 - s.giro + 1 : Infinity;
+  return s.fine ? s.fine.giro + (s.o.giroInPiu ? 1 : 0) - s.giro + 1 : Infinity;
 }
 
 export function classifica(s) {
