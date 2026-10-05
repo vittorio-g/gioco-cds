@@ -78,26 +78,28 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 .tc.img { padding: 0; border: 0; background: var(--crema); }
 
 .tc .intera { display: block; width: 100%; height: 100%; pointer-events: none; }
-/* fascia delle icone ingrandita, sopra quella disegnata */
+/* colonna delle icone ingrandita, sopra quella disegnata: si ferma prima del nome */
 .lente {
   position: absolute;
   left: 0;
-  right: 0;
-  bottom: 0;
-  height: 22%;
+  top: 0;
+  width: calc(37px * var(--k));
+  padding: calc(5px * var(--k)) 0 calc(6px * var(--k));
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: var(--crema);
-  border-top: calc(2px * var(--k)) solid var(--inch);
+  background: #e5daca;
+  border-right: calc(2px * var(--k)) solid var(--inch);
+  border-bottom: calc(2px * var(--k)) solid var(--inch);
+  border-bottom-right-radius: calc(8px * var(--k));
   pointer-events: none;
 }
-.tc.for .lente { background: var(--inch); border-top: 0; }
-.tc.for .lente .terna { background: var(--crema); border-radius: calc(3px * var(--k)); padding: calc(2px * var(--k)) calc(6px * var(--k)); }
-.lente .terna { gap: calc(6px * var(--k)); }
-.lente .sim { width: calc(30px * var(--k)); height: calc(30px * var(--k)); border-radius: 0; }
+.tc.for .lente { background: var(--inch); border-color: var(--evidenza); }
+.lente .terna { flex-direction: column; gap: calc(4px * var(--k)); }
+.lente .sim { width: calc(30px * var(--k)); height: calc(30px * var(--k)); }
 .anteprima .lente { display: none; }
 .tc.uscita { visibility: hidden; }
+/* il riquadro con cui si prendono più carte insieme */
+.laccio { position: absolute; z-index: 2000; border: 2px dashed var(--evidenza); background: rgba(255, 61, 139, .12); pointer-events: none; }
 .tc.trascinata { transition: none; z-index: 1000 !important; cursor: grabbing; box-shadow: 0 12px 26px rgba(31, 58, 68, .38); }
 .tc.scelta { outline: calc(4px * var(--k)) solid var(--evidenza); outline-offset: 1px; }
 .tc .titolo {
@@ -116,7 +118,7 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 .tc .eti { align-self: flex-start; font-size: calc(8px * var(--k)); }
 .tc .terna { display: flex; gap: calc(7px * var(--k)); }
 .tc .ic { display: flex; flex-direction: column; align-items: center; gap: calc(1.5px * var(--k)); }
-.tc .sim { display: block; width: calc(28px * var(--k)); height: calc(28px * var(--k)); border-radius: 22%; pointer-events: none; }
+.tc .sim { display: block; width: calc(28px * var(--k)); height: calc(28px * var(--k)); pointer-events: none; }
 .tc .ic small { font-size: calc(8px * var(--k)); font-weight: 700; line-height: 1; }
 
 .tc.coperta {
@@ -272,6 +274,7 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 .azione { background: var(--carta); font-size: 14px; font-weight: 600; padding: 5px 12px; }
 .azione.forte { background: var(--verde); border-color: var(--verde); color: #fff; }
 .azione.forte:hover:not(:disabled) { background: var(--verde-scuro); }
+.azioni .guida { font-size: 14px; font-weight: 600; }
 .mano { display: flex; gap: 26px; overflow-x: auto; padding: 8px 4px 4px; }
 .gruppo { display: flex; flex-direction: column; gap: 5px; }
 .gruppo > .eti { color: var(--tenue); }
@@ -333,7 +336,10 @@ input {
 
 .velo { position: fixed; inset: 0; z-index: 70; background: rgba(31, 58, 68, .45); display: grid; place-items: center; padding: 16px; }
 .foglio { max-width: 660px; max-height: 90vh; overflow: auto; font-weight: 400; user-select: text; -webkit-user-select: text; }
-.legenda { align-self: center; width: min(100%, 320px); border-radius: 10px; border: 1px solid var(--bordo); }
+.foglio .legenda { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px 14px; }
+.legenda li { display: flex; align-items: center; gap: 8px; }
+.legenda .sim { width: 34px; height: 34px; flex: none; }
+.legenda b { min-width: 24px; }
 .foglio ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
 
 /* ---- schermi bassi e telefono ------------------------------------------ */

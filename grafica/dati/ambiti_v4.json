@@ -1,0 +1,41 @@
+{
+ "categorie": {
+  "01": "Tecnica e produzione",
+  "02": "Servizi e relazioni",
+  "03": "Organizzazione e gestione",
+  "04": "Creatività e comunicazione",
+  "05": "Ricerca e innovazione"
+ },
+ "ambiti": [
+  {"n": "01", "nome": "Assistenza tecnica", "battuta": "Era il cavo. È sempre il cavo."},
+  {"n": "02", "nome": "Controllo qualità", "battuta": "È perfetto. Rifallo."},
+  {"n": "03", "nome": "Artigianato", "battuta": "Fatto a mano. Si vede."},
+  {"n": "04", "nome": "Agricoltura", "battuta": "Doveva piovere. Ha grandinato."},
+  {"n": "05", "nome": "Produzione", "battuta": "La catena non si ferma. La pausa sì."},
+  {"n": "06", "nome": "Manutenzione", "battuta": "Andava cambiato ieri."},
+  {"n": "07", "nome": "Assistenza clienti", "battuta": "Ha provato a spegnere e riaccendere?"},
+  {"n": "08", "nome": "Ristorazione", "battuta": "Il cliente ha sempre ragione. Purtroppo."},
+  {"n": "09", "nome": "Educazione", "battuta": "Oggi lavoretto. Domani colla ovunque."},
+  {"n": "10", "nome": "Risorse umane", "battuta": "La tua opinione conta. Compila il modulo."},
+  {"n": "11", "nome": "Turismo", "battuta": "Tutto incluso. Quasi."},
+  {"n": "12", "nome": "Sanità", "battuta": "Il prossimo, prego."},
+  {"n": "13", "nome": "Logistica", "battuta": "Il pacco è in consegna. Da martedì."},
+  {"n": "14", "nome": "Segreteria", "battuta": "Le faremo sapere."},
+  {"n": "15", "nome": "Contabilità", "battuta": "Mancano tre centesimi. Nessuno va a casa."},
+  {"n": "16", "nome": "Gestione progetti", "battuta": "Siamo in ritardo. Facciamo una riunione."},
+  {"n": "17", "nome": "Direzione", "battuta": "La porta è sempre aperta. L'ufficio è vuoto."},
+  {"n": "18", "nome": "Torre di controllo", "battuta": "Tutti fermi. Tu no. Anzi sì."},
+  {"n": "19", "nome": "Giornalismo", "battuta": "Fonti attendibili. Cioè mio cugino."},
+  {"n": "20", "nome": "Pubblicità", "battuta": "Il cliente vuole il logo più grande."},
+  {"n": "21", "nome": "Spettacolo", "battuta": "Chi è di scena? Il fondale no."},
+  {"n": "22", "nome": "Marketing", "battuta": "Diventerà virale. Fidati."},
+  {"n": "23", "nome": "Architettura", "battuta": "Bellissimo. E il bagno dove va?"},
+  {"n": "24", "nome": "Grafica", "battuta": "Solo una piccola modifica."},
+  {"n": "25", "nome": "Ricerca", "battuta": "I fondi sono finiti. Le ipotesi no."},
+  {"n": "26", "nome": "Prototipazione", "battuta": "Versione 47. Questa è quella buona."},
+  {"n": "27", "nome": "Archivio", "battuta": "È tutto qui. Da qualche parte."},
+  {"n": "28", "nome": "Sviluppo web", "battuta": "Sul mio computer funziona."},
+  {"n": "29", "nome": "Consulenza", "battuta": "Ti dice che ore sono. Col tuo orologio."},
+  {"n": "30", "nome": "Analisi dati", "battuta": "I numeri parlano. A bassa voce."}
+ ]
+}

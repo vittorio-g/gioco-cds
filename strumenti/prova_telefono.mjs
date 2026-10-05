@@ -41,7 +41,8 @@ await page.evaluateOnNewDocument(() => {
     send(d) {
       try {
         const m = JSON.parse(d);
-        if (m.a !== 'op' || m.op?.o !== 'trascina') window.__inAttesa++;
+        const mosse = m.op?.o === 'molte' ? m.op.ops : [m.op];
+        if (m.a !== 'op' || !mosse.every((x) => x?.o === 'trascina')) window.__inAttesa++;
       } catch {}
       return super.send(d);
     }
@@ -241,6 +242,34 @@ verifica(!s.anteprima && s.scelte === 1 && s.mano === s0.mano, 'toccando altro l
 await tocca({ x: sc.x - 60, y: sc.alto + sc.a - 70 });
 s = await stato();
 verifica(s.mano === s0.mano - 1 && s.tavolo.length === s0.tavolo.length + 1, 'poi toccare il tavolo la mette lì', `mano ${s0.mano} -> ${s.mano}`);
+
+// --- scegliere più carte col dito
+await tocca(await centro('.mano .tc', 4));
+await tocca({ x: sc.x + 110, y: sc.alto + sc.a - 70 });
+await tocca(await bottone('Scegli più carte'));
+let quante = (await stato()).tavolo.length;
+let k1 = await centro('.carte .tc', quante - 2);
+let k2 = await centro('.carte .tc', quante - 1);
+await tocca(k1);
+await tocca(k2);
+s0 = await stato();
+verifica(s0.scelte === 2 && !!(await bottone('Deseleziona')), 'con "Scegli più carte" ogni tocco aggiunge una carta alla scelta', `scelte ${s0.scelte}`);
+await trascina(k2, { x: k2.x + 20, y: k2.y - 160 });
+s = await stato();
+const spinta = (i) => [Math.round(s.tavolo[i].x - s0.tavolo[i].x), Math.round(s.tavolo[i].y - s0.tavolo[i].y)];
+verifica(spinta(quante - 1)[1] < -80 && spinta(quante - 1).join() === spinta(quante - 2).join(), 'trascinandone una si spostano tutte insieme', `${spinta(quante - 2)} / ${spinta(quante - 1)}`);
+await tocca(await bottone('Deseleziona'));
+await tocca(await bottone('Scegli più carte'));
+k1 = await centro('.carte .tc', quante - 2);
+k2 = await centro('.carte .tc', quante - 1);
+s0 = await stato();
+await trascina({ x: Math.min(k1.x, k2.x) - 85, y: Math.min(k1.y, k2.y) - 110 }, { x: Math.max(k1.x, k2.x) + 85, y: Math.max(k1.y, k2.y) + 110 });
+s = await stato();
+verifica(s.scelte >= 2 && s.scorri.join() === s0.scorri.join(), 'trascinando sul tavolo si prendono le carte dentro il riquadro, e il tavolo resta fermo', `scelte ${s.scelte}, ${s0.scorri} -> ${s.scorri}`);
+const coperte = s.tavolo.filter((c) => c.coperta).length;
+await tocca(await bottone('Copri'));
+s = await stato();
+verifica(s.tavolo.filter((c) => c.coperta).length === coperte + 2 && s.scelte === 0, 'i pulsanti valgono per tutte le carte scelte');
 
 // --- tenere una carta al bordo fa scorrere il tavolo
 // (prima porto l'ultima carta giocata in vista, a sinistra)

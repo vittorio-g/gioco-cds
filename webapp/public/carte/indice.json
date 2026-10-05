@@ -602,30 +602,8 @@
   }
  },
  "ambiti": {
-  "logistica": {
-   "file": "ambiti/logistica.webp",
-   "nome": "Logistica",
-   "battuta": "Il pacco è in consegna. Da martedì.",
-   "terna": [
-    "MA",
-    "DI",
-    "OR"
-   ],
-   "copie": 5
-  },
-  "segreteria": {
-   "file": "ambiti/segreteria.webp",
-   "nome": "Segreteria",
-   "battuta": "Le faremo sapere.",
-   "terna": [
-    "CO",
-    "OR",
-    "CL"
-   ],
-   "copie": 5
-  },
-  "assistenza-tecnica": {
-   "file": "ambiti/assistenza-tecnica.webp",
+  "01": {
+   "file": "ambiti/01.webp",
    "nome": "Assistenza tecnica",
    "battuta": "Era il cavo. È sempre il cavo.",
    "terna": [
@@ -633,43 +611,10 @@
     "DI",
     "CL"
    ],
-   "copie": 4
+   "categoria": "01"
   },
-  "assistenza-clienti": {
-   "file": "ambiti/assistenza-clienti.webp",
-   "nome": "Assistenza clienti",
-   "battuta": "Ha provato a spegnere e riaccendere?",
-   "terna": [
-    "DI",
-    "CO",
-    "OR"
-   ],
-   "copie": 4
-  },
-  "ristorazione": {
-   "file": "ambiti/ristorazione.webp",
-   "nome": "Ristorazione",
-   "battuta": "Il cliente ha sempre ragione. Purtroppo.",
-   "terna": [
-    "MA",
-    "CO",
-    "CL"
-   ],
-   "copie": 4
-  },
-  "contabilita": {
-   "file": "ambiti/contabilita.webp",
-   "nome": "Contabilità",
-   "battuta": "Mancano tre centesimi. Nessuno va a casa.",
-   "terna": [
-    "DI",
-    "OR",
-    "AN"
-   ],
-   "copie": 3
-  },
-  "controllo-qualita": {
-   "file": "ambiti/controllo-qualita.webp",
+  "02": {
+   "file": "ambiti/02.webp",
    "nome": "Controllo qualità",
    "battuta": "È perfetto. Rifallo.",
    "terna": [
@@ -677,10 +622,10 @@
     "DI",
     "AN"
    ],
-   "copie": 3
+   "categoria": "01"
   },
-  "artigianato": {
-   "file": "ambiti/artigianato.webp",
+  "03": {
+   "file": "ambiti/03.webp",
    "nome": "Artigianato",
    "battuta": "Fatto a mano. Si vede.",
    "terna": [
@@ -688,76 +633,10 @@
     "CL",
     "CR"
    ],
-   "copie": 3
+   "categoria": "01"
   },
-  "educazione": {
-   "file": "ambiti/educazione.webp",
-   "nome": "Educazione",
-   "battuta": "Oggi lavoretto. Domani colla ovunque.",
-   "terna": [
-    "OR",
-    "CL",
-    "CR"
-   ],
-   "copie": 3
-  },
-  "risorse-umane": {
-   "file": "ambiti/risorse-umane.webp",
-   "nome": "Risorse umane",
-   "battuta": "La tua opinione conta. Compila il modulo.",
-   "terna": [
-    "CO",
-    "CL",
-    "CD"
-   ],
-   "copie": 3
-  },
-  "gestione-progetti": {
-   "file": "ambiti/gestione-progetti.webp",
-   "nome": "Gestione progetti",
-   "battuta": "Siamo in ritardo. Facciamo una riunione.",
-   "terna": [
-    "DI",
-    "CO",
-    "CD"
-   ],
-   "copie": 3
-  },
-  "giornalismo": {
-   "file": "ambiti/giornalismo.webp",
-   "nome": "Giornalismo",
-   "battuta": "Fonti attendibili. Cioè mio cugino.",
-   "terna": [
-    "CO",
-    "CR",
-    "RI"
-   ],
-   "copie": 2
-  },
-  "ricerca": {
-   "file": "ambiti/ricerca.webp",
-   "nome": "Ricerca",
-   "battuta": "I fondi sono finiti. Le ipotesi no.",
-   "terna": [
-    "OR",
-    "CD",
-    "RI"
-   ],
-   "copie": 2
-  },
-  "prototipazione": {
-   "file": "ambiti/prototipazione.webp",
-   "nome": "Prototipazione",
-   "battuta": "Versione 47. Questa è quella buona.",
-   "terna": [
-    "MA",
-    "DI",
-    "RI"
-   ],
-   "copie": 2
-  },
-  "agricoltura": {
-   "file": "ambiti/agricoltura.webp",
+  "04": {
+   "file": "ambiti/04.webp",
    "nome": "Agricoltura",
    "battuta": "Doveva piovere. Ha grandinato.",
    "terna": [
@@ -765,65 +644,142 @@
     "AN",
     "ST"
    ],
-   "copie": 2
+   "categoria": "01"
   },
-  "consulenza": {
-   "file": "ambiti/consulenza.webp",
-   "nome": "Consulenza",
-   "battuta": "Ti dice che ore sono. Col tuo orologio.",
-   "terna": [
-    "OR",
-    "AN",
-    "ST"
-   ],
-   "copie": 2
-  },
-  "pubblicita": {
-   "file": "ambiti/pubblicita.webp",
-   "nome": "Pubblicità",
-   "battuta": "Il cliente vuole il logo più grande.",
-   "terna": [
-    "CL",
-    "CR",
-    "ST"
-   ],
-   "copie": 2
-  },
-  "spettacolo": {
-   "file": "ambiti/spettacolo.webp",
-   "nome": "Spettacolo",
-   "battuta": "Chi è di scena? Il fondale no.",
+  "05": {
+   "file": "ambiti/05.webp",
+   "nome": "Produzione",
+   "battuta": "La catena non si ferma. La pausa sì.",
    "terna": [
     "MA",
-    "CR",
-    "CD"
-   ],
-   "copie": 2
-  },
-  "archivio": {
-   "file": "ambiti/archivio.webp",
-   "nome": "Archivio",
-   "battuta": "È tutto qui. Da qualche parte.",
-   "terna": [
     "OR",
-    "RI",
-    "RI"
+    "CL"
    ],
-   "copie": 1
+   "categoria": "01"
   },
-  "marketing": {
-   "file": "ambiti/marketing.webp",
-   "nome": "Marketing",
-   "battuta": "Diventerà virale. Fidati.",
+  "06": {
+   "file": "ambiti/06.webp",
+   "nome": "Manutenzione",
+   "battuta": "Andava cambiato ieri.",
+   "terna": [
+    "MA",
+    "MA",
+    "DI"
+   ],
+   "categoria": "01"
+  },
+  "07": {
+   "file": "ambiti/07.webp",
+   "nome": "Assistenza clienti",
+   "battuta": "Ha provato a spegnere e riaccendere?",
    "terna": [
     "DI",
     "CO",
-    "ST"
+    "OR"
    ],
-   "copie": 1
+   "categoria": "02"
   },
-  "direzione": {
-   "file": "ambiti/direzione.webp",
+  "08": {
+   "file": "ambiti/08.webp",
+   "nome": "Ristorazione",
+   "battuta": "Il cliente ha sempre ragione. Purtroppo.",
+   "terna": [
+    "MA",
+    "CO",
+    "CL"
+   ],
+   "categoria": "02"
+  },
+  "09": {
+   "file": "ambiti/09.webp",
+   "nome": "Educazione",
+   "battuta": "Oggi lavoretto. Domani colla ovunque.",
+   "terna": [
+    "OR",
+    "CL",
+    "CR"
+   ],
+   "categoria": "02"
+  },
+  "10": {
+   "file": "ambiti/10.webp",
+   "nome": "Risorse umane",
+   "battuta": "La tua opinione conta. Compila il modulo.",
+   "terna": [
+    "CO",
+    "CL",
+    "CD"
+   ],
+   "categoria": "02"
+  },
+  "11": {
+   "file": "ambiti/11.webp",
+   "nome": "Turismo",
+   "battuta": "Tutto incluso. Quasi.",
+   "terna": [
+    "CO",
+    "CL",
+    "OR"
+   ],
+   "categoria": "02"
+  },
+  "12": {
+   "file": "ambiti/12.webp",
+   "nome": "Sanità",
+   "battuta": "Il prossimo, prego.",
+   "terna": [
+    "CL",
+    "AN",
+    "RI"
+   ],
+   "categoria": "02"
+  },
+  "13": {
+   "file": "ambiti/13.webp",
+   "nome": "Logistica",
+   "battuta": "Il pacco è in consegna. Da martedì.",
+   "terna": [
+    "MA",
+    "DI",
+    "OR"
+   ],
+   "categoria": "03"
+  },
+  "14": {
+   "file": "ambiti/14.webp",
+   "nome": "Segreteria",
+   "battuta": "Le faremo sapere.",
+   "terna": [
+    "CO",
+    "OR",
+    "CL"
+   ],
+   "categoria": "03"
+  },
+  "15": {
+   "file": "ambiti/15.webp",
+   "nome": "Contabilità",
+   "battuta": "Mancano tre centesimi. Nessuno va a casa.",
+   "terna": [
+    "DI",
+    "OR",
+    "AN"
+   ],
+   "categoria": "03"
+  },
+  "16": {
+   "file": "ambiti/16.webp",
+   "nome": "Gestione progetti",
+   "battuta": "Siamo in ritardo. Facciamo una riunione.",
+   "terna": [
+    "DI",
+    "CO",
+    "CD"
+   ],
+   "categoria": "03"
+  },
+  "17": {
+   "file": "ambiti/17.webp",
    "nome": "Direzione",
    "battuta": "La porta è sempre aperta. L'ufficio è vuoto.",
    "terna": [
@@ -831,10 +787,10 @@
     "CD",
     "ST"
    ],
-   "copie": 1
+   "categoria": "03"
   },
-  "torre-di-controllo": {
-   "file": "ambiti/torre-di-controllo.webp",
+  "18": {
+   "file": "ambiti/18.webp",
    "nome": "Torre di controllo",
    "battuta": "Tutti fermi. Tu no. Anzi sì.",
    "terna": [
@@ -842,10 +798,54 @@
     "CD",
     "CD"
    ],
-   "copie": 1
+   "categoria": "03"
   },
-  "architettura": {
-   "file": "ambiti/architettura.webp",
+  "19": {
+   "file": "ambiti/19.webp",
+   "nome": "Giornalismo",
+   "battuta": "Fonti attendibili. Cioè mio cugino.",
+   "terna": [
+    "CO",
+    "CR",
+    "RI"
+   ],
+   "categoria": "04"
+  },
+  "20": {
+   "file": "ambiti/20.webp",
+   "nome": "Pubblicità",
+   "battuta": "Il cliente vuole il logo più grande.",
+   "terna": [
+    "CL",
+    "CR",
+    "ST"
+   ],
+   "categoria": "04"
+  },
+  "21": {
+   "file": "ambiti/21.webp",
+   "nome": "Spettacolo",
+   "battuta": "Chi è di scena? Il fondale no.",
+   "terna": [
+    "MA",
+    "CR",
+    "CD"
+   ],
+   "categoria": "04"
+  },
+  "22": {
+   "file": "ambiti/22.webp",
+   "nome": "Marketing",
+   "battuta": "Diventerà virale. Fidati.",
+   "terna": [
+    "DI",
+    "CO",
+    "ST"
+   ],
+   "categoria": "04"
+  },
+  "23": {
+   "file": "ambiti/23.webp",
    "nome": "Architettura",
    "battuta": "Bellissimo. E il bagno dove va?",
    "terna": [
@@ -853,10 +853,54 @@
     "AN",
     "CR"
    ],
-   "copie": 1
+   "categoria": "04"
   },
-  "sviluppo-web": {
-   "file": "ambiti/sviluppo-web.webp",
+  "24": {
+   "file": "ambiti/24.webp",
+   "nome": "Grafica",
+   "battuta": "Solo una piccola modifica.",
+   "terna": [
+    "DI",
+    "CR",
+    "CO"
+   ],
+   "categoria": "04"
+  },
+  "25": {
+   "file": "ambiti/25.webp",
+   "nome": "Ricerca",
+   "battuta": "I fondi sono finiti. Le ipotesi no.",
+   "terna": [
+    "OR",
+    "CD",
+    "RI"
+   ],
+   "categoria": "05"
+  },
+  "26": {
+   "file": "ambiti/26.webp",
+   "nome": "Prototipazione",
+   "battuta": "Versione 47. Questa è quella buona.",
+   "terna": [
+    "MA",
+    "DI",
+    "RI"
+   ],
+   "categoria": "05"
+  },
+  "27": {
+   "file": "ambiti/27.webp",
+   "nome": "Archivio",
+   "battuta": "È tutto qui. Da qualche parte.",
+   "terna": [
+    "OR",
+    "RI",
+    "RI"
+   ],
+   "categoria": "05"
+  },
+  "28": {
+   "file": "ambiti/28.webp",
    "nome": "Sviluppo web",
    "battuta": "Sul mio computer funziona.",
    "terna": [
@@ -864,74 +908,52 @@
     "OR",
     "CR"
    ],
-   "copie": 1
+   "categoria": "05"
+  },
+  "29": {
+   "file": "ambiti/29.webp",
+   "nome": "Consulenza",
+   "battuta": "Ti dice che ore sono. Col tuo orologio.",
+   "terna": [
+    "OR",
+    "AN",
+    "ST"
+   ],
+   "categoria": "05"
+  },
+  "30": {
+   "file": "ambiti/30.webp",
+   "nome": "Analisi dati",
+   "battuta": "I numeri parlano. A bassa voce.",
+   "terna": [
+    "DI",
+    "AN",
+    "ST"
+   ],
+   "categoria": "05"
   }
  },
- "carteAmbito": {
-  "01": "logistica",
-  "02": "logistica",
-  "03": "logistica",
-  "04": "logistica",
-  "05": "logistica",
-  "06": "segreteria",
-  "07": "segreteria",
-  "08": "segreteria",
-  "09": "segreteria",
-  "10": "segreteria",
-  "11": "assistenza-tecnica",
-  "12": "assistenza-tecnica",
-  "13": "assistenza-tecnica",
-  "14": "assistenza-tecnica",
-  "15": "assistenza-clienti",
-  "16": "assistenza-clienti",
-  "17": "assistenza-clienti",
-  "18": "assistenza-clienti",
-  "19": "ristorazione",
-  "20": "ristorazione",
-  "21": "ristorazione",
-  "22": "ristorazione",
-  "23": "contabilita",
-  "24": "contabilita",
-  "25": "contabilita",
-  "26": "controllo-qualita",
-  "27": "controllo-qualita",
-  "28": "controllo-qualita",
-  "29": "artigianato",
-  "30": "artigianato",
-  "31": "artigianato",
-  "32": "educazione",
-  "33": "educazione",
-  "34": "educazione",
-  "35": "risorse-umane",
-  "36": "risorse-umane",
-  "37": "risorse-umane",
-  "38": "gestione-progetti",
-  "39": "gestione-progetti",
-  "40": "gestione-progetti",
-  "41": "giornalismo",
-  "42": "giornalismo",
-  "43": "ricerca",
-  "44": "ricerca",
-  "45": "prototipazione",
-  "46": "prototipazione",
-  "47": "agricoltura",
-  "48": "agricoltura",
-  "49": "consulenza",
-  "50": "consulenza",
-  "51": "pubblicita",
-  "52": "pubblicita",
-  "53": "spettacolo",
-  "54": "spettacolo",
-  "55": "archivio",
-  "56": "marketing",
-  "57": "direzione",
-  "58": "torre-di-controllo",
-  "59": "architettura",
-  "60": "sviluppo-web"
+ "categorie": {
+  "01": "Tecnica e produzione",
+  "02": "Servizi e relazioni",
+  "03": "Organizzazione e gestione",
+  "04": "Creatività e comunicazione",
+  "05": "Ricerca e innovazione"
+ },
+ "simboli": {
+  "MA": "Manualità",
+  "DI": "Digitale",
+  "CO": "Comunicazione",
+  "OR": "Organizzazione",
+  "CL": "Collaborazione",
+  "AN": "Analisi",
+  "CR": "Creatività",
+  "CD": "Coordinamento",
+  "RI": "Ricerca",
+  "ST": "Strategia"
  },
  "dorsi": {
   "lavoratori": "dorso_lavoratori.webp",
   "ambiti": "dorso_ambiti.webp"
- },
- "legenda": "legenda.webp"
+ }
 }

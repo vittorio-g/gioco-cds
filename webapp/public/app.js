@@ -17,8 +17,15 @@ let ritenta = null;
 let regoleAperte = false;
 let invitoAperto = false;
 
-let scelta = null; // carta selezionata: { da: 'mano' | 'tavolo', id }
-let trascino = null; // carta del tavolo che sto trascinando: { id }
+// La carta scelta: { da: 'mano', id } oppure, sul tavolo, { da: 'tavolo', id, ids }.
+// Sul tavolo se ne possono scegliere più d'una: ids le elenca tutte, id è l'ultima toccata.
+let scelta = null;
+let piuCarte = false; // si stanno scegliendo più carte: ogni tocco su una carta del tavolo la aggiunge o la toglie
+let trascino = null; // le carte del tavolo che sto trascinando: { ids: Set }
+const scelteSulTavolo = () => (scelta?.da === 'tavolo' ? scelta.ids : []);
+function scegliSulTavolo(ids) {
+  scelta = ids.length ? { da: 'tavolo', id: ids.at(-1), ids } : null;
+}
 let manoDaRifare = false;
 let zoom = 1;
 let zoomAutomatico = true;
@@ -180,6 +187,7 @@ function esci(messaggio = '') {
   sessione = null;
   st = null;
   scelta = null;
+  piuCarte = false;
   chiudi();
   ricordaScheda(null);
   avviso = messaggio;
@@ -231,17 +239,13 @@ const terna = (simboli, sigle = true) => h('span', { class: 'terna' },
   simboli.map((s) => h('span', { class: 'ic' }, icona(s), sigle && h('small', {}, s))));
 
 // Le carte disegnate: per ogni lavoratore e per ogni ambito c'è un'immagine
-// intera (illustrazione, nome, battuta e fascia delle icone). L'elenco arriva
-// da /carte/indice.json; finché non è arrivato, o per le terne che non hanno
-// una carta (il mazzo con gli ambiti tutti diversi), si disegna una carta semplice.
+// intera (illustrazione, nome, battuta e colonna delle icone). L'elenco arriva
+// da /carte/indice.json; finché non è arrivato si disegna una carta semplice.
 let INDICE = null;
-// Sullo schermo le carte sono più piccole di quelle vere: la fascia delle icone
+// Sullo schermo le carte sono più piccole di quelle vere: la colonna delle icone
 // si può ridisegnare ingrandita sopra l'immagine. L'anteprima mostra sempre la carta com'è.
 let iconeGrandi = leggi('collocamento.icone') !== 'piccole';
-const ambitoPerTerna = new Map();
-const chiaveTerna = (t) => [...t].sort().join(' ');
 fetch('/carte/indice.json').then((r) => r.json()).then((dati) => {
-  for (const a of Object.values(dati.ambiti)) ambitoPerTerna.set(chiaveTerna(a.terna), a);
   INDICE = dati;
   disegna();
 }).catch(() => {});
@@ -250,8 +254,7 @@ const eCoperta = (c) => c.coperta || (!c.att && !c.lav);
 function disegnata(c) {
   if (!INDICE) return null;
   if (eCoperta(c)) return { file: INDICE.dorsi[c.t === 'lav' ? 'lavoratori' : 'ambiti'], nome: c.t === 'lav' ? 'Lavoratore coperto' : 'Ambito coperto' };
-  if (c.t === 'lav') return INDICE.lavoratori[c.n] ?? null;
-  return ambitoPerTerna.get(chiaveTerna(c.lav)) ?? null;
+  return (c.t === 'lav' ? INDICE.lavoratori : INDICE.ambiti)[c.n] ?? null;
 }
 
 // Il contenuto di una carta: scoperta mostra la faccia, coperta il dorso del suo mazzo.
@@ -277,7 +280,7 @@ function faccia(c) {
   ];
 }
 const classeCarta = (c) => `tc ${c.t}${eCoperta(c) ? ' coperta' : ''}${disegnata(c) ? ' img' : ''}`;
-const chiaveCarta = (c) => `${disegnata(c) ? (iconeGrandi ? 'g' : 'i') : 's'}${eCoperta(c) ? `d${c.t}` : c.t === 'lav' ? `l${c.n}` : `f${c.lav.join('')}`}`;
+const chiaveCarta = (c) => `${disegnata(c) ? (iconeGrandi ? 'g' : 'i') : 's'}${eCoperta(c) ? `d${c.t}` : `${c.t}${c.n}`}`;
 const dorsi = (k, n) => h('span', { class: `conta ${k}`, title: k === 'lav' ? 'lavoratori in mano' : 'ambiti in mano' },
   h('span', { class: `dorso ${k}` }), n);
 
@@ -308,6 +311,7 @@ function disegna() {
   }
   T = null;
   scelta = null;
+  piuCarte = false;
   const fuoco = document.activeElement?.id;
   app.replaceChildren(!st ? ingresso() : sala());
   if (fuoco) document.getElementById(fuoco)?.focus();
@@ -340,7 +344,6 @@ function ingresso() {
 
 const QUANTE = [0, 1, 2, 3, 4, 5].map((n) => [n, String(n)]);
 const SCELTE = [
-  ['mazzo', 'Mazzo degli ambiti', [['v3', 'Con ambiti ripetuti'], ['v2', 'Tutti diversi']]],
   ['lavoratori', 'Lavoratori in mano all’inizio', QUANTE],
   ['carte', 'Ambiti in mano all’inizio', QUANTE],
 ];
@@ -452,14 +455,16 @@ function regole() {
         h('li', {}, h('b', {}, 'Giocare. '), 'Trascina una carta dalla mano al tavolo. Oppure toccala e poi tocca il punto del tavolo dove metterla.'),
         h('li', {}, h('b', {}, 'Spostare. '), 'Le carte sul tavolo si trascinano dove vuoi: quella che muovi finisce sopra le altre.'),
         h('li', {}, h('b', {}, 'Scartare e riprendere. '), 'Trascina una carta sugli scarti, su un mazzo o sulla tua mano. Oppure toccala e usa i pulsanti in basso: gira, scarta, in mano, sotto le altre, nel mazzo.'),
+        h('li', {}, h('b', {}, 'Più carte insieme. '), 'Premi "Scegli più carte" e tocca quelle che vuoi, oppure trascina sul tavolo per prenderne un gruppo. Al computer bastano Maiusc + clic e Maiusc + trascinamento. Trascinandone una si spostano tutte; i pulsanti in basso valgono per tutte.'),
         h('li', {}, h('b', {}, 'Punti. '), 'Si segnano a mano con i pulsanti accanto ai nomi. Tocca il numero per scrivere il totale.'),
         h('li', {}, h('b', {}, 'Muovere il tavolo. '), 'Trascina lo sfondo per spostarlo. Con due dita, o con Ctrl e la rotella, lo ingrandisci; il pulsante con la percentuale lo riadatta allo schermo. Tenendo una carta vicino al bordo il tavolo scorre.')),
       h('p', { class: 'nota' }, 'Il tavolo non applica nessuna regola: tutti possono fare tutto, come con le carte vere. Ogni azione finisce nella cronaca.'),
       h('h2', {}, 'I simboli'),
-      h('img', { class: 'legenda', src: '/carte/legenda.webp', alt: 'I dieci simboli: Manualità, Digitale, Comunicazione, Organizzazione, Collaborazione, Analisi, Creatività, Coordinamento, Ricerca, Strategia. Rosa: si trovano spesso. Petrolio: meno. Con la stellina: rari.' }),
+      h('ul', { class: 'legenda' }, Object.entries(INDICE?.simboli ?? {}).map(([sigla, nome]) => h('li', {}, icona(sigla), h('b', {}, sigla), nome))),
+      h('p', { class: 'nota' }, 'La stellina segna i due simboli più rari.'),
       h('h2', {}, 'Le regole in breve'),
       h('ul', {},
-        h('li', {}, 'Ci sono due mazzi: i lavoratori e gli ambiti. Un ambito si gioca come formazione oppure come lavoro.'),
+        h('li', {}, 'Ci sono due mazzi: 60 lavoratori e 30 ambiti. Un ambito si gioca come formazione oppure come lavoro.'),
         h('li', {}, 'Si parte con 2 lavoratori e 2 ambiti. Nel tuo turno giochi una carta e ne peschi una.'),
         h('li', {}, 'Prima si apre una formazione, poi ci si mette sopra un lavoratore, poi altre formazioni se servono, infine il lavoro.'),
         h('li', {}, 'Puoi mettere il tuo lavoratore sulla formazione di un altro: resta lì ma è tuo, e chi ha aperto la formazione pesca 1 carta per ogni attitudine che combacia.'),
@@ -538,7 +543,7 @@ function montaTavolo() {
       scelta = null;
       return fai({ o: 'gioca', c: id, x: p.x - CARTA.l / 2, y: p.y - CARTA.a / 2 });
     }
-    if (scelta) {
+    if (scelta && !piuCarte) {
       scelta = null;
       aggiornaTavolo();
     }
@@ -616,6 +621,27 @@ function tavoloMobile(scena) {
   const dita = new Map();
   let pizzico = null;
   let strada = 0;
+  // Il riquadro che prende più carte insieme: con Maiusc, oppure mentre si scelgono più carte.
+  let laccio = null;
+  const disegnaLaccio = () => {
+    const { x0, y0, x1, y1, el } = laccio;
+    el.style.left = `${Math.min(x0, x1)}px`;
+    el.style.top = `${Math.min(y0, y1)}px`;
+    el.style.width = `${Math.abs(x1 - x0)}px`;
+    el.style.height = `${Math.abs(y1 - y0)}px`;
+  };
+  const chiudiLaccio = (prendi) => {
+    if (!laccio) return;
+    const { x0, y0, x1, y1, el } = laccio;
+    laccio = null;
+    el.remove();
+    if (!prendi) return;
+    const dentro = st.tavolo.tavolo.filter((c) => c.x < Math.max(x0, x1) && c.x + CARTA.l > Math.min(x0, x1)
+      && c.y < Math.max(y0, y1) && c.y + CARTA.a > Math.min(y0, y1)).map((c) => c.id);
+    const prima = scelteSulTavolo();
+    scegliSulTavolo([...prima, ...dentro.filter((id) => !prima.includes(id))]);
+    aggiornaTavolo();
+  };
   const sulloSfondo = (e) => !e.target.closest('.tc, .pila, .sottopila');
   scena.addEventListener('pointerdown', (e) => {
     if (!sulloSfondo(e) || (e.pointerType === 'mouse' && e.button !== 0)) return;
@@ -627,7 +653,14 @@ function tavoloMobile(scena) {
     try {
       scena.setPointerCapture(e.pointerId);
     } catch {}
+    if (dita.size === 1 && st?.tavolo?.io >= 0 && (piuCarte || (e.pointerType === 'mouse' && e.shiftKey))) {
+      const p = logico(e.clientX, e.clientY);
+      laccio = { x0: p.x, y0: p.y, x1: p.x, y1: p.y, el: h('div', { class: 'laccio' }) };
+      T.tappeto.append(laccio.el);
+      disegnaLaccio();
+    }
     if (dita.size === 2) {
+      chiudiLaccio(false);
       const [a, b] = [...dita.values()];
       pizzico = { d0: Math.hypot(a.x - b.x, a.y - b.y) || 1, z0: zoom, punto: logico((a.x + b.x) / 2, (a.y + b.y) / 2) };
       scorso = true;
@@ -643,6 +676,12 @@ function tavoloMobile(scena) {
     if (dita.size === 1) {
       strada += Math.abs(dx) + Math.abs(dy);
       if (strada > 6) scorso = true;
+      if (laccio) {
+        const q = logico(e.clientX, e.clientY);
+        laccio.x1 = q.x;
+        laccio.y1 = q.y;
+        return disegnaLaccio();
+      }
       scena.scrollLeft -= dx;
       scena.scrollTop -= dy;
     } else if (pizzico && dita.size === 2) {
@@ -653,6 +692,7 @@ function tavoloMobile(scena) {
   const via = (e) => {
     dita.delete(e.pointerId);
     if (dita.size < 2) pizzico = null;
+    chiudiLaccio(e.type === 'pointerup' && scorso);
   };
   scena.addEventListener('pointerup', via);
   scena.addEventListener('pointercancel', via);
@@ -791,56 +831,65 @@ function finitoTrascinamento() {
 }
 
 // Una carta del tavolo: si sposta lei stessa, e gli altri la vedono muoversi.
+// Se è scelta insieme ad altre, si porta dietro tutto il gruppo.
 function cartaSulTavolo(el, id) {
   let ultimoInvio = 0;
   trascinabile(el, {
-    clic: () => {
-      scelta = scelta?.da === 'tavolo' && scelta.id === id ? null : { da: 'tavolo', id };
+    clic: (e) => {
+      const ids = scelteSulTavolo();
+      if (piuCarte || e?.shiftKey || e?.ctrlKey || e?.metaKey) scegliSulTavolo(ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id]);
+      else scegliSulTavolo(ids.length === 1 && ids[0] === id ? [] : [id]);
       aggiornaTavolo();
     },
     inizio: (e) => {
-      const c = st.tavolo.tavolo.find((x) => x.id === id);
-      if (!c) return null;
+      const sulTavolo = st.tavolo.tavolo;
+      if (!sulTavolo.some((c) => c.id === id)) return null;
+      const scelte = scelteSulTavolo();
+      // nell'ordine in cui sono impilate, così restano una sopra l'altra come prima
+      const gruppo = sulTavolo.filter((c) => (scelte.includes(id) ? scelte.includes(c.id) : c.id === id));
       const presa = logico(e.clientX, e.clientY);
-      const dx = presa.x - c.x;
-      const dy = presa.y - c.y;
-      trascino = { id };
-      el.classList.add('trascinata');
-      const posizione = (ev) => {
+      const parti = gruppo.map((c) => ({ c, el: T.els.get(c.id), dx: presa.x - c.x, dy: presa.y - c.y }));
+      trascino = { ids: new Set(gruppo.map((c) => c.id)) };
+      for (const p of parti) p.el.classList.add('trascinata');
+      // Dove finisce ogni carta: il gruppo resta dentro il tavolo senza cambiare forma.
+      const posizioni = (ev) => {
         const p = logico(ev.clientX, ev.clientY);
-        return {
-          x: Math.min(TAVOLO.l - CARTA.l, Math.max(0, p.x - dx)),
-          y: Math.min(TAVOLO.a - CARTA.a, Math.max(0, p.y - dy)),
-        };
+        const grezze = parti.map(({ dx, dy }) => ({ x: p.x - dx, y: p.y - dy }));
+        const rientro = (valori, max) => Math.max(0, -Math.min(...valori)) + Math.min(0, max - Math.max(...valori));
+        const rx = rientro(grezze.map((g) => g.x), TAVOLO.l - CARTA.l);
+        const ry = rientro(grezze.map((g) => g.y), TAVOLO.a - CARTA.a);
+        return grezze.map((g) => ({ x: g.x + rx, y: g.y + ry }));
       };
+      const manda = (ops) => fai(ops.length === 1 ? ops[0] : { o: 'molte', ops });
       const molla = () => {
         trascino = null;
-        el.classList.remove('trascinata');
+        for (const p of parti) p.el.classList.remove('trascinata');
       };
       return {
         muovi: (ev) => {
-          const p = posizione(ev);
-          el.style.left = `${p.x}px`;
-          el.style.top = `${p.y}px`;
+          const pos = posizioni(ev);
+          parti.forEach((p, i) => {
+            p.el.style.left = `${pos[i].x}px`;
+            p.el.style.top = `${pos[i].y}px`;
+          });
           illumina(bersaglio(ev.clientX, ev.clientY));
           if (Date.now() - ultimoInvio > 70) {
             ultimoInvio = Date.now();
-            fai({ o: 'trascina', c: id, x: p.x, y: p.y });
+            manda(parti.map((p, i) => ({ o: 'trascina', c: p.c.id, ...pos[i] })));
           }
         },
         fine: (ev) => {
           const b = bersaglio(ev.clientX, ev.clientY);
           molla();
-          // la carta che lascia il tavolo sparisce subito, senza aspettare la risposta del server
-          if (b && b.dove !== 'tavolo') el.classList.add('uscita');
-          if (b?.dove === 'mano') fai({ o: 'prendi', c: id });
-          else if (b?.dove === 'scarti') fai({ o: 'scarta', c: id });
-          else if (b?.dove === 'mazzo') fai({ o: 'rimetti', c: id });
-          else {
-            const p = posizione(ev);
-            c.x = p.x;
-            c.y = p.y;
-            fai({ o: 'sposta', c: id, x: p.x, y: p.y });
+          const via = { mano: 'prendi', scarti: 'scarta', mazzo: 'rimetti' }[b?.dove];
+          if (via) {
+            // le carte che lasciano il tavolo spariscono subito, senza aspettare la risposta del server
+            for (const p of parti) p.el.classList.add('uscita');
+            manda(parti.map((p) => ({ o: via, c: p.c.id })));
+          } else {
+            const pos = posizioni(ev);
+            parti.forEach((p, i) => Object.assign(p.c, pos[i]));
+            manda(parti.map((p, i) => ({ o: 'sposta', c: p.c.id, ...pos[i] })));
           }
         },
         annulla: () => {
@@ -857,7 +906,7 @@ function carteAltrui({ id, x, y }) {
   if (!T || !st?.tavolo) return;
   const c = st.tavolo.tavolo.find((k) => k.id === id);
   const el = T.els.get(id);
-  if (!c || !el || trascino?.id === id) return;
+  if (!c || !el || trascino?.ids.has(id)) return;
   c.x = x;
   c.y = y;
   el.style.left = `${x}px`;
@@ -989,8 +1038,8 @@ function aggiornaTavolo() {
       el.dataset.chiave = chiave;
       riempi(el, ...faccia(c));
     }
-    const trascinata = trascino?.id === c.id;
-    el.className = `${classeCarta(c)}${scelta?.da === 'tavolo' && scelta.id === c.id ? ' scelta' : ''}${trascinata ? ' trascinata' : ''}`;
+    const trascinata = !!trascino?.ids.has(c.id);
+    el.className = `${classeCarta(c)}${scelteSulTavolo().includes(c.id) ? ' scelta' : ''}${trascinata ? ' trascinata' : ''}`;
     el.style.zIndex = i + 1;
     if (!trascinata) {
       el.style.left = `${c.x}px`;
@@ -1001,9 +1050,9 @@ function aggiornaTavolo() {
     if (viste.has(id)) continue;
     el.remove();
     T.els.delete(id);
-    if (trascino?.id === id) trascino = null;
-    if (scelta?.da === 'tavolo' && scelta.id === id) scelta = null;
+    if (trascino?.ids.delete(id) && !trascino.ids.size) trascino = null;
   }
+  if (scelta?.da === 'tavolo' && scelta.ids.some((id) => !viste.has(id))) scegliSulTavolo(scelta.ids.filter((id) => viste.has(id)));
   if (scelta?.da === 'mano' && !t.mano.some((c) => c.id === scelta.id)) scelta = null;
 
   // --- cronaca
@@ -1028,8 +1077,10 @@ function aggiornaAzioni() {
   const t = st.tavolo;
   const bottone = (testo, op, extra = {}) => h('button', { type: 'button', class: `azione${extra.forte ? ' forte' : ''}`, onclick: () => {
     scelta = null;
+    piuCarte = false;
     fai(op);
   } }, testo);
+  const scelte = scelteSulTavolo();
   let contenuto;
   if (t.io < 0) {
     contenuto = [h('span', { class: 'nota' }, 'Stai guardando il tavolo. Per giocare entra con un nome dalla sala d’attesa.')];
@@ -1044,6 +1095,29 @@ function aggiornaAzioni() {
       bottone('In fondo al mazzo', { o: 'rimetti', c: id, fondo: true }),
       h('span', { class: 'nota' }, 'oppure tocca il tavolo dove vuoi metterla'),
     ];
+  } else if (piuCarte || scelte.length > 1) {
+    // più carte insieme: le azioni valgono per tutte
+    const gruppo = t.tavolo.filter((c) => scelte.includes(c.id));
+    const tutte = (o, extra = {}, elenco = gruppo) => ({ o: 'molte', ops: elenco.map((c) => ({ o, c: c.id, ...extra })) });
+    const daCoprire = gruppo.some((c) => !c.coperta);
+    contenuto = [
+      gruppo.length
+        ? h('span', { class: 'eti' }, `${carte(gruppo.length)} ${gruppo.length === 1 ? 'scelta' : 'scelte'}:`)
+        : h('span', { class: 'guida' }, 'Tocca le carte da scegliere'),
+      gruppo.length > 0 && bottone(daCoprire ? 'Copri' : 'Scopri', tutte('gira', { coperta: daCoprire }), { forte: true }),
+      gruppo.length > 0 && bottone('In mano', tutte('prendi')),
+      gruppo.length > 0 && bottone('Scarta', tutte('scarta')),
+      // dall'ultima alla prima: così sotto le altre restano impilate come adesso
+      gruppo.length > 0 && bottone('Sotto le altre', tutte('sotto', {}, [...gruppo].reverse())),
+      h('button', { type: 'button', class: 'azione', onclick: () => {
+        scelta = null;
+        piuCarte = false;
+        aggiornaTavolo();
+      } }, gruppo.length ? 'Deseleziona' : 'Fine'),
+      h('span', { class: 'nota' }, piuCarte
+        ? 'Tocca le carte per aggiungerle o toglierle, o trascina sul tavolo per prenderne un gruppo. Trascinandone una si spostano tutte.'
+        : 'Trascinandone una si spostano tutte.'),
+    ];
   } else if (scelta?.da === 'tavolo') {
     const id = scelta.id;
     const c = t.tavolo.find((x) => x.id === id);
@@ -1055,6 +1129,10 @@ function aggiornaAzioni() {
       bottone('Sotto le altre', { o: 'sotto', c: id }),
       bottone('In cima al mazzo', { o: 'rimetti', c: id }),
       bottone('In fondo al mazzo', { o: 'rimetti', c: id, fondo: true }),
+      h('button', { type: 'button', class: 'azione', onclick: () => {
+        piuCarte = true;
+        aggiornaTavolo();
+      } }, 'Scegline altre'),
     ];
   } else {
     const pesca = (m, testo) => h('button', { type: 'button', class: 'azione', disabled: !t.mazzi[m], onclick: () => fai({ o: 'pesca', m }) },
@@ -1063,6 +1141,10 @@ function aggiornaAzioni() {
       h('span', { class: 'eti' }, `La tua mano (${t.mano.length})`),
       pesca('lav', 'Pesca un lavoratore'),
       pesca('for', 'Pesca un ambito'),
+      h('button', { type: 'button', class: 'azione', onclick: () => {
+        piuCarte = true;
+        aggiornaTavolo();
+      } }, 'Scegli più carte'),
       h('span', { class: 'nota' }, 'Trascina le carte o toccane una.'),
     ];
   }
@@ -1077,6 +1159,7 @@ function aggiornaMano() {
     trascinabile(el, {
       clic: () => {
         scelta = sel ? null : { da: 'mano', id: c.id };
+        piuCarte = false;
         aggiornaTavolo();
       },
       inizio: (e) => fantasma(c, e, (b) => {
@@ -1157,6 +1240,14 @@ const mouseVia = () => {
 };
 document.documentElement.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') mouseVia(); });
 window.addEventListener('blur', mouseVia);
+
+// Esc lascia andare le carte scelte.
+window.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape' || !T || regoleAperte || invitoAperto || (!scelta && !piuCarte)) return;
+  scelta = null;
+  piuCarte = false;
+  aggiornaTavolo();
+});
 
 riprendi();
 disegna();

@@ -167,9 +167,11 @@ export function esegui(st, M, p, op, rnd = Math.random) {
       return false;
     }
     case 'gira': {
+      // senza altro la carta si gira; con op.coperta si dice da che parte deve finire
       const c = sulTavolo(st, op.c);
-      c.coperta = !c.coperta;
-      nota(st, p, c.coperta ? 'copre una carta sul tavolo.' : `scopre ${descrivi(st, M, op.c)}.`);
+      const prima = c.coperta;
+      c.coperta = typeof op.coperta === 'boolean' ? op.coperta : !c.coperta;
+      if (c.coperta !== prima) nota(st, p, c.coperta ? 'copre una carta sul tavolo.' : `scopre ${descrivi(st, M, op.c)}.`);
       return false;
     }
     case 'prendi': {
@@ -208,6 +210,14 @@ export function esegui(st, M, p, op, rnd = Math.random) {
       }
       return false;
     }
+    case 'molte': {
+      // più azioni in un colpo solo, per un gruppo di carte scelte insieme
+      const ops = Array.isArray(op.ops) ? op.ops : [];
+      if (!ops.length || ops.length > 120 || ops.some((x) => !x || x.o === 'molte' || x.o === 'nuova')) throw new Rifiuto('Azione sconosciuta.');
+      let soloTrascinate = true;
+      for (const una of ops) soloTrascinate = esegui(st, M, p, una, rnd) && soloTrascinate;
+      return soloTrascinate;
+    }
     case 'nuova':
       prepara(st, M, rnd);
       st.log = [];
@@ -223,7 +233,7 @@ export function esegui(st, M, p, op, rnd = Math.random) {
 export function vista(st, M, p) {
   const faccia = (id) => {
     const c = st.carte[id];
-    return c.t === 'lav' ? { id, t: 'lav', n: M.lav[c.i].n, att: M.lav[c.i].att } : { id, t: 'for', lav: M.form[c.i].lav };
+    return c.t === 'lav' ? { id, t: 'lav', n: M.lav[c.i].n, att: M.lav[c.i].att } : { id, t: 'for', n: M.form[c.i].n, lav: M.form[c.i].lav };
   };
   const pila = (ids) => ({ n: ids.length, cima: ids.length ? faccia(ids.at(-1)) : null });
   return {

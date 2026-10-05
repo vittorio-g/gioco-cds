@@ -1,5 +1,5 @@
 import { DurableObject } from 'cloudflare:workers';
-import { MAZZI } from './decks.js';
+import { MAZZO } from './decks.js';
 import { Rifiuto, nuovoTavolo, aggiungiGiocatore, esegui, vista } from './tavolo.js';
 
 const MAX_GIOCATORI = 5;
@@ -7,16 +7,15 @@ const SCADENZA = 7 * 24 * 3600 * 1000; // una stanza ferma da una settimana si c
 
 // Cambia quando cambia la forma dello stato salvato: una stanza rimasta
 // aperta con una versione vecchia torna in sala d'attesa invece di rompersi.
-const VERSIONE = 3;
+const VERSIONE = 4;
 
-const OPZIONI = { mazzo: 'v3', lavoratori: 2, carte: 2 };
+const OPZIONI = { lavoratori: 2, carte: 2 };
 const vuota = () => ({ v: VERSIONE, giocatori: [], opzioni: { ...OPZIONI }, tavolo: null });
 const uguale = (a, b) => a.toLowerCase() === b.toLowerCase();
 
 function pulisci(o = {}) {
   const tra = (v, ammessi, base) => (ammessi.includes(v) ? v : base);
   return {
-    mazzo: Object.hasOwn(MAZZI, o.mazzo) ? o.mazzo : OPZIONI.mazzo,
     lavoratori: tra(o.lavoratori, [0, 1, 2, 3, 4, 5], OPZIONI.lavoratori),
     carte: tra(o.carte, [0, 1, 2, 3, 4, 5], OPZIONI.carte),
   };
@@ -73,10 +72,6 @@ export class Stanza extends DurableObject {
     this.st = vuota();
   }
 
-  mazzo() {
-    return MAZZI[this.st.opzioni.mazzo];
-  }
-
   async gestisci(ws, msg) {
     if (msg.a === 'entra') return this.entra(ws, msg);
     const chi = ws.deserializeAttachment();
@@ -89,19 +84,23 @@ export class Stanza extends DurableObject {
       const p = tavolo.giocatori.findIndex((g) => g.nome === chi.nome);
       if (p < 0) throw new Rifiuto('Stai guardando il tavolo senza essere seduto.');
       const op = msg.op ?? {};
-      if (op.o === 'trascina') {
-        // movimento in corso: aggiorna la posizione in memoria e avvisa solo gli altri
+      // movimento in corso, di una carta o di un gruppo: aggiorna le posizioni in memoria e avvisa solo gli altri
+      const mosse = op.o === 'trascina' ? [op]
+        : op.o === 'molte' && Array.isArray(op.ops) && op.ops.length && op.ops.every((x) => x?.o === 'trascina') ? op.ops : null;
+      if (mosse) {
         try {
-          esegui(tavolo, this.mazzo(), p, op);
+          esegui(tavolo, MAZZO, p, op);
         } catch {
           return; // la carta nel frattempo è stata presa da un altro
         }
-        const c = tavolo.tavolo.at(-1);
-        this.aTutti({ t: 'trascina', id: c.id, x: c.x, y: c.y }, ws);
+        for (const m of mosse) {
+          const c = tavolo.tavolo.find((x) => x.id === m.c);
+          if (c) this.aTutti({ t: 'trascina', id: c.id, x: c.x, y: c.y }, ws);
+        }
         return;
       }
       const st = structuredClone(this.st);
-      esegui(st.tavolo, this.mazzo(), p, op);
+      esegui(st.tavolo, MAZZO, p, op);
       await this.salva(st);
       return this.diffondi();
     }
@@ -128,7 +127,7 @@ export class Stanza extends DurableObject {
       soloHost();
       if (st.tavolo) throw new Rifiuto('Il tavolo è già apparecchiato.');
       if (!st.giocatori.length) throw new Rifiuto('Non c’è nessuno al tavolo.');
-      st.tavolo = nuovoTavolo(MAZZI[st.opzioni.mazzo], st.giocatori.map((g) => g.nome),
+      st.tavolo = nuovoTavolo(MAZZO, st.giocatori.map((g) => g.nome),
         { lav: st.opzioni.lavoratori, for: st.opzioni.carte });
     } else if (msg.a === 'sala') {
       soloHost();
@@ -200,7 +199,7 @@ export class Stanza extends DurableObject {
         host: st.giocatori[0]?.nome ?? null,
         giocatori: st.giocatori.map((g) => ({ nome: g.nome, collegato: collegati.includes(g.nome) })),
         opzioni: st.opzioni,
-        tavolo: st.tavolo ? vista(st.tavolo, this.mazzo(), p) : null,
+        tavolo: st.tavolo ? vista(st.tavolo, MAZZO, p) : null,
       };
       try {
         ws.send(JSON.stringify(stato));

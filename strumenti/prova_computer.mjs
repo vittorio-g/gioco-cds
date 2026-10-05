@@ -39,7 +39,8 @@ await page.evaluateOnNewDocument(() => {
     send(d) {
       try {
         const m = JSON.parse(d);
-        if (m.a !== 'op' || m.op?.o !== 'trascina') window.__inAttesa++;
+        const mosse = m.op?.o === 'molte' ? m.op.ops : [m.op];
+        if (m.a !== 'op' || !mosse.every((x) => x?.o === 'trascina')) window.__inAttesa++;
       } catch {}
       return super.send(d);
     }
@@ -61,6 +62,8 @@ const stato = () => page.evaluate(() => ({
   scorri: [Math.round(document.querySelector('.scena').scrollLeft), Math.round(document.querySelector('.scena').scrollTop)],
   zoom: parseFloat(document.querySelector('.zoom').innerText.replace(/[^0-9]/g, '')),
   anteprima: !!document.querySelector('.anteprima.visibile .tc'),
+  scelte: document.querySelectorAll('.carte .tc.scelta').length,
+  coperte: document.querySelectorAll('.carte .tc.coperta').length,
 }));
 async function trascina(a, b) {
   await page.mouse.move(a.x, a.y);
@@ -166,6 +169,38 @@ await page.evaluate(() => window.dispatchEvent(new Event('blur')));
 verifica(lasciata && !(await stato()).anteprima, 'la carta appena posata si vede in grande, e l’anteprima si chiude quando la finestra perde il mouse', `appena posata ${lasciata}`);
 await page.mouse.move(sc.x + 152, sc.y - 58);
 await attesa(200);
+
+// --- più carte insieme: Maiusc + clic, trascinamento del gruppo, riquadro
+await trascina(await centro('.mano .tc'), { x: sc.x + 330, y: sc.y - 60 });
+let k1 = await centro('.carte .tc', 0);
+let k2 = await centro('.carte .tc', 1);
+await page.mouse.click(k1.x, k1.y);
+await page.keyboard.down('Shift');
+await page.mouse.click(k2.x, k2.y);
+await page.keyboard.up('Shift');
+await attesa(200);
+s0 = await stato();
+verifica(s0.scelte === 2 && (await bottone('Deseleziona')), 'Maiusc + clic sceglie una seconda carta', `scelte ${s0.scelte}`);
+await trascina(k1, { x: k1.x - 110, y: k1.y + 90 });
+s = await stato();
+const spinta = (i) => [Math.round(s.tavolo[i].x - s0.tavolo[i].x), Math.round(s.tavolo[i].y - s0.tavolo[i].y)];
+verifica(spinta(0)[0] < -80 && spinta(0)[1] > 60 && spinta(0).join() === spinta(1).join() && s.scelte === 2,
+  'trascinando una delle carte scelte si spostano tutte insieme', `${spinta(0)} / ${spinta(1)}`);
+await page.keyboard.press('Escape');
+await attesa(200);
+verifica((await stato()).scelte === 0, 'Esc lascia andare le carte scelte');
+k1 = await centro('.carte .tc', 0);
+k2 = await centro('.carte .tc', 1);
+await page.keyboard.down('Shift');
+await trascina({ x: Math.min(k1.x, k2.x) - 90, y: Math.min(k1.y, k2.y) - 100 }, { x: Math.max(k1.x, k2.x) + 90, y: Math.max(k1.y, k2.y) + 100 });
+await page.keyboard.up('Shift');
+s = await stato();
+verifica(s.scelte === 2 && !(await page.$('.laccio')), 'Maiusc + trascinamento sul tavolo prende le carte dentro il riquadro', `scelte ${s.scelte}`);
+b = await bottone('Copri');
+await page.mouse.click(b.x, b.y);
+await quiete();
+s = await stato();
+verifica(s.coperte === 2 && s.scelte === 0, 'i pulsanti valgono per tutte le carte scelte', JSON.stringify(s));
 s0 = await stato();
 await trascina({ x: sc.x - 250, y: sc.alto + 60 }, { x: sc.x - 250, y: sc.alto - 60 + 0 });
 s = await stato();
