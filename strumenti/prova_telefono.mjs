@@ -23,12 +23,45 @@ const errori = [];
 page.on('pageerror', (e) => { if (!String(e.stack).includes('chrome-extension://')) errori.push(String(e)); });
 page.on('dialog', (d) => d.accept());
 
+// Le azioni passano dal server: invece di aspettare un tempo fisso si aspetta
+// che ogni richiesta partita abbia avuto la sua risposta.
+await page.evaluateOnNewDocument(() => {
+  window.__inAttesa = 0;
+  const Vero = window.WebSocket;
+  window.WebSocket = class extends Vero {
+    constructor(...a) {
+      super(...a);
+      this.addEventListener('message', (e) => {
+        try {
+          const m = JSON.parse(e.data);
+          if (m.t === 'stato' || m.t === 'errore') window.__inAttesa = Math.max(0, window.__inAttesa - 1);
+        } catch {}
+      });
+    }
+    send(d) {
+      try {
+        const m = JSON.parse(d);
+        if (m.a !== 'op' || m.op?.o !== 'trascina') window.__inAttesa++;
+      } catch {}
+      return super.send(d);
+    }
+  };
+});
+let piuLenta = 0;
+async function quiete() {
+  const t0 = Date.now();
+  await attesa(150);
+  while (Date.now() - t0 < 8000 && (await page.evaluate(() => window.__inAttesa > 0))) await attesa(30);
+  piuLenta = Math.max(piuLenta, Date.now() - t0);
+  await attesa(120);
+}
+
 const tocco = (tipo, punti) => cdp.send('Input.dispatchTouchEvent', { type: tipo, touchPoints: punti.map((p, i) => ({ x: p.x, y: p.y, id: i })) });
 async function tocca(p) {
   await tocco('touchStart', [p]);
   await attesa(50);
   await tocco('touchEnd', []);
-  await attesa(380);
+  await quiete();
 }
 async function trascina(a, b, { passi = 14, fermo = 60 } = {}) {
   await tocco('touchStart', [a]);
@@ -39,7 +72,7 @@ async function trascina(a, b, { passi = 14, fermo = 60 } = {}) {
   }
   await attesa(fermo);
   await tocco('touchEnd', []);
-  await attesa(450);
+  await quiete();
 }
 async function pizzico(c, da, a, passi = 12) {
   const punti = (d) => [{ x: c.x - d, y: c.y }, { x: c.x + d, y: c.y }];
@@ -63,6 +96,7 @@ const centro = (sel, i = 0) => page.evaluate((s, k) => {
 const bottone = (testo) => page.evaluate((t) => {
   const e = [...document.querySelectorAll('button')].find((b) => b.offsetParent && b.innerText.trim().startsWith(t));
   if (!e) return null;
+  e.scrollIntoView({ block: 'nearest' }); // nella sala d'attesa il pulsante può stare sotto lo schermo
   const r = e.getBoundingClientRect();
   return { x: r.left + r.width / 2, y: r.top + r.height / 2, l: r.width, a: r.height };
 }, testo);
@@ -236,6 +270,7 @@ verifica(m.scena.a >= 190, `in orizzontale il tavolo ha spazio (${m.scena.a}px s
 verifica(m.larga <= 844, 'in orizzontale la pagina non scorre di lato', m.larga);
 
 verifica(errori.length === 0, 'nessun errore nella pagina', errori.join(' | '));
+console.log(`  (risposta più lenta del server: ${piuLenta} ms)`);
 for (const ws of finti) ws.close();
 await page.close();
 await browser.disconnect();

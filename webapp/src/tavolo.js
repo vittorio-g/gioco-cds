@@ -4,7 +4,7 @@
 // Chiunque può pescare, giocare, spostare, girare e scartare quando vuole,
 // come attorno a un tavolo vero. Nessun I/O: lo usano il Worker e le prove.
 //
-// Un mazzo M è { lav: [{n, att}], form: [{n, lav}] }.
+// Un mazzo M è { lav: [{n, att, nome}], form: [{n, lav, nome}] }; il nome può mancare.
 
 export const TAVOLO = { l: 1600, a: 900 };
 export const CARTA = { l: 126, a: 176 };
@@ -69,8 +69,12 @@ const terna = (t) => t.join(' ');
 
 function descrivi(st, M, id) {
   const c = st.carte[id];
-  if (c.t === 'lav') return `il lavoratore ${M.lav[c.i].n} (${terna(M.lav[c.i].att)})`;
-  return `l’ambito ${terna(M.form[c.i].lav)}`;
+  if (c.t === 'lav') {
+    const l = M.lav[c.i];
+    return `${l.nome ?? `il lavoratore ${l.n}`} (${terna(l.att)})`;
+  }
+  const a = M.form[c.i];
+  return a.nome ? `l’ambito ${a.nome} (${terna(a.lav)})` : `l’ambito ${terna(a.lav)}`;
 }
 
 function posto(x, y) {

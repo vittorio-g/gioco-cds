@@ -2,7 +2,6 @@
 // si pescano, si trascinano, si girano e si scartano liberamente, e il server
 // si limita a tenere allineati i tavoli di tutti.
 
-const SIMBOLI = ['MA', 'DI', 'CO', 'OR', 'CL', 'AN', 'CR', 'CD', 'RI', 'ST'];
 const TAVOLO = { l: 1600, a: 900 };
 const CARTA = { l: 126, a: 176 };
 const LATO_PILE = 330; // a sinistra sul tavolo: mazzi e scarti
@@ -16,6 +15,7 @@ let avviso = '';
 let collegato = false;
 let ritenta = null;
 let regoleAperte = false;
+let invitoAperto = false;
 
 let scelta = null; // carta selezionata: { da: 'mano' | 'tavolo', id }
 let trascino = null; // carta del tavolo che sto trascinando: { id }
@@ -195,30 +195,58 @@ function mostraAvviso(testo) {
 // --------------------------------------------------------------------------
 const carte = (n) => `${n} ${n === 1 ? 'carta' : 'carte'}`;
 // decoding=sync: le immagini già scaricate compaiono subito, senza sfarfallio.
-const icona = (s) => h('img', { class: 'sim', src: `/img/sim/${s}.png`, alt: s, title: s, decoding: 'sync', draggable: 'false' });
+const icona = (s) => h('img', { class: 'sim', src: `/carte/icone/${s}.svg`, alt: s, title: s, decoding: 'sync', draggable: 'false' });
 const terna = (simboli, sigle = true) => h('span', { class: 'terna' },
   simboli.map((s) => h('span', { class: 'ic' }, icona(s), sigle && h('small', {}, s))));
 
+// Le carte disegnate: per ogni lavoratore e per ogni ambito c'è un'immagine
+// intera (illustrazione, nome, battuta e fascia delle icone). L'elenco arriva
+// da /carte/indice.json; finché non è arrivato, o per le terne che non hanno
+// una carta (il mazzo con gli ambiti tutti diversi), si disegna una carta semplice.
+let INDICE = null;
+// Sullo schermo le carte sono più piccole di quelle vere: la fascia delle icone
+// si può ridisegnare ingrandita sopra l'immagine. L'anteprima mostra sempre la carta com'è.
+let iconeGrandi = leggi('collocamento.icone') !== 'piccole';
+const ambitoPerTerna = new Map();
+const chiaveTerna = (t) => [...t].sort().join(' ');
+fetch('/carte/indice.json').then((r) => r.json()).then((dati) => {
+  for (const a of Object.values(dati.ambiti)) ambitoPerTerna.set(chiaveTerna(a.terna), a);
+  INDICE = dati;
+  disegna();
+}).catch(() => {});
+
+const eCoperta = (c) => c.coperta || (!c.att && !c.lav);
+function disegnata(c) {
+  if (!INDICE) return null;
+  if (eCoperta(c)) return { file: INDICE.dorsi[c.t === 'lav' ? 'lavoratori' : 'ambiti'], nome: c.t === 'lav' ? 'Lavoratore coperto' : 'Ambito coperto' };
+  if (c.t === 'lav') return INDICE.lavoratori[c.n] ?? null;
+  return ambitoPerTerna.get(chiaveTerna(c.lav)) ?? null;
+}
+
 // Il contenuto di una carta: scoperta mostra la faccia, coperta il dorso del suo mazzo.
 function faccia(c) {
-  if (c.coperta || (!c.att && !c.lav)) {
-    return [h('span', { class: 'retro' }, c.t === 'lav' ? 'Lavoratore' : 'Ambito')];
+  const d = disegnata(c);
+  if (d) {
+    const icone = eCoperta(c) ? '' : ` (${(c.att ?? c.lav).join(' ')})`;
+    return [
+      h('img', { class: 'intera', src: `/carte/${d.file}`, alt: `${d.nome}${icone}`, decoding: 'sync', draggable: 'false' }),
+      iconeGrandi && !eCoperta(c) && h('span', { class: 'lente' }, terna(c.att ?? c.lav, false)),
+    ];
   }
+  if (eCoperta(c)) return [h('span', { class: 'retro' }, c.t === 'lav' ? 'Lavoratore' : 'Ambito')];
   if (c.t === 'lav') {
     return [
       h('span', { class: 'titolo' }, 'Lavoratore', h('b', {}, c.n)),
-      h('img', { class: 'fig', src: `/img/lav/${c.n}.png`, alt: '', decoding: 'sync', draggable: 'false' }),
       h('span', { class: 'fascia' }, h('span', { class: 'eti' }, 'Attitudini'), terna(c.att)),
     ];
   }
   return [
     h('span', { class: 'titolo' }, 'Ambito'),
-    h('img', { class: 'fig', src: '/img/lavoro.png', alt: '', decoding: 'sync', draggable: 'false' }),
-    h('span', { class: 'fascia' }, terna(c.lav)),
+    h('span', { class: 'fascia' }, h('span', { class: 'eti' }, 'Competenze'), terna(c.lav)),
   ];
 }
-const classeCarta = (c) => `tc ${c.t}${c.coperta || (!c.att && !c.lav) ? ' coperta' : ''}`;
-const chiaveCarta = (c) => (c.coperta || (!c.att && !c.lav) ? `d${c.t}` : c.t === 'lav' ? `l${c.n}` : `f${c.lav.join('')}`);
+const classeCarta = (c) => `tc ${c.t}${eCoperta(c) ? ' coperta' : ''}${disegnata(c) ? ' img' : ''}`;
+const chiaveCarta = (c) => `${disegnata(c) ? (iconeGrandi ? 'g' : 'i') : 's'}${eCoperta(c) ? `d${c.t}` : c.t === 'lav' ? `l${c.n}` : `f${c.lav.join('')}`}`;
 const dorsi = (k, n) => h('span', { class: `conta ${k}`, title: k === 'lav' ? 'lavoratori in mano' : 'ambiti in mano' },
   h('span', { class: `dorso ${k}` }), n);
 
@@ -272,7 +300,6 @@ const SCELTE = [
 function sala() {
   const sonoHost = st.host === st.tu;
   const seduto = st.giocatori.some((g) => g.nome === st.tu);
-  const indirizzo = `${location.origin}/#${sessione.codice}`;
   return h('main', { class: 'sala' },
     h('header', { class: 'barra' },
       h('strong', { class: 'marchio' }, 'Collocamento'),
@@ -280,16 +307,7 @@ function sala() {
       avviso && h('div', { class: 'avviso volante', role: 'alert' }, avviso)),
     h('div', { class: 'scheda' },
       h('h2', {}, 'Sala d’attesa'),
-      h('p', { class: 'invito' }, 'Codice della stanza ', h('strong', { class: 'codice' }, sessione.codice)),
-      h('p', { class: 'nota' }, indirizzo, ' ',
-        h('button', { type: 'button', class: 'piccolo', onclick: async (e) => {
-          try {
-            await navigator.clipboard.writeText(indirizzo);
-            e.target.textContent = 'Copiato';
-          } catch {
-            mostraAvviso('Non riesco a copiare: seleziona il link a mano.');
-          }
-        } }, 'Copia il link')),
+      invito(),
       h('h3', {}, `Giocatori (${st.giocatori.length})`),
       h('ul', { class: 'elenco' }, st.giocatori.map((g) => h('li', {},
         h('span', { class: `stato ${g.collegato ? 'su' : 'giu'}` }),
@@ -317,6 +335,65 @@ function sala() {
         h('button', { type: 'button', onclick: () => { if (seduto) invia({ a: 'esci' }); esci(); } }, 'Esci dalla stanza'))));
 }
 
+// Il generatore di codici QR si carica a parte: se non arriva, l'invito resta
+// utilizzabile con codice e link.
+let qrcode = null;
+import('/vendor/qrcode.mjs').then((m) => {
+  qrcode = m.default;
+  if (st) disegna();
+}).catch(() => {});
+
+// Il codice QR di un indirizzo, disegnato in SVG.
+function codiceQR(testo) {
+  if (!qrcode) return null;
+  const q = qrcode(0, 'M');
+  q.addData(testo);
+  q.make();
+  const n = q.getModuleCount();
+  const margine = 4; // la zona bianca attorno serve a chi lo inquadra
+  let tratti = '';
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) tratti += `M${c + margine} ${r + margine}h1v1h-1z`;
+  const lato = n + 2 * margine;
+  const el = h('div', { class: 'qr', role: 'img', 'aria-label': `Codice QR dell’invito: ${testo}` });
+  el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${lato} ${lato}" shape-rendering="crispEdges">`
+    + `<rect width="${lato}" height="${lato}" fill="#fff"/><path d="${tratti}" fill="#17474d"/></svg>`;
+  return el;
+}
+
+// Tutto quello che serve per far entrare qualcuno: QR, codice e link.
+function invito() {
+  const indirizzo = `${location.origin}/#${sessione.codice}`;
+  return h('div', { class: 'invito' },
+    codiceQR(indirizzo),
+    h('div', { class: 'invito-testi' },
+      h('span', { class: 'eti' }, 'Codice della stanza'),
+      h('strong', { class: 'codice' }, sessione.codice),
+      h('p', { class: 'nota' }, 'Inquadra il riquadro con il telefono, oppure apri il link: poi basta scrivere il proprio nome.'),
+      h('p', { class: 'nota indirizzo' }, indirizzo),
+      h('div', { class: 'bottoni' },
+        h('button', { type: 'button', class: 'piccolo', onclick: async (e) => {
+          try {
+            await navigator.clipboard.writeText(indirizzo);
+            e.target.textContent = 'Copiato';
+          } catch {
+            mostraAvviso('Non riesco a copiare: seleziona il link a mano.');
+          }
+        } }, 'Copia il link'),
+        typeof navigator.share === 'function' && h('button', { type: 'button', class: 'piccolo', onclick: () => {
+          navigator.share({ title: 'Collocamento', text: `Entra al tavolo di Collocamento: stanza ${sessione.codice}`, url: indirizzo }).catch(() => {});
+        } }, 'Condividi'))));
+}
+
+function finestraInvito() {
+  const chiudiInvito = () => { invitoAperto = false; aggiornaTavolo(); };
+  return h('div', { class: 'velo', onclick: (e) => { if (e.target.classList.contains('velo')) chiudiInvito(); } },
+    h('div', { class: 'scheda foglio' },
+      h('h2', {}, 'Invita al tavolo'),
+      invito(),
+      h('p', { class: 'nota' }, 'Chi arriva adesso si siede a tavolo già apparecchiato, con la mano vuota.'),
+      h('div', { class: 'bottoni' }, h('button', { type: 'button', class: 'primario', onclick: chiudiInvito }, 'Chiudi'))));
+}
+
 function regole() {
   const chiudiRegole = () => { regoleAperte = false; aggiornaTavolo(); };
   return h('div', { class: 'velo', onclick: (e) => { if (e.target.classList.contains('velo')) chiudiRegole(); } },
@@ -330,6 +407,8 @@ function regole() {
         h('li', {}, h('b', {}, 'Punti e turno. '), 'Si segnano a mano con i pulsanti accanto ai nomi. Tocca il numero per scrivere il totale.'),
         h('li', {}, h('b', {}, 'Muovere il tavolo. '), 'Trascina lo sfondo per spostarlo. Con due dita, o con Ctrl e la rotella, lo ingrandisci; il pulsante con la percentuale lo riadatta allo schermo. Tenendo una carta vicino al bordo il tavolo scorre.')),
       h('p', { class: 'nota' }, 'Il tavolo non applica nessuna regola: tutti possono fare tutto, come con le carte vere. Ogni azione finisce nella cronaca.'),
+      h('h2', {}, 'I simboli'),
+      h('img', { class: 'legenda', src: '/carte/legenda.webp', alt: 'I dieci simboli: Manualità, Digitale, Comunicazione, Organizzazione, Collaborazione, Analisi, Creatività, Coordinamento, Ricerca, Strategia. Rosa: si trovano spesso. Petrolio: meno. Con la stellina: rari.' }),
       h('h2', {}, 'Le regole in breve'),
       h('ul', {},
         h('li', {}, 'Ci sono due mazzi: i lavoratori e gli ambiti. Un ambito si gioca come formazione oppure come lavoro.'),
@@ -786,6 +865,10 @@ function aggiornaTavolo() {
     h('button', { type: 'button', class: 'piccolo solo-stretto', 'aria-expanded': String(menuAperto), onclick: () => { menuAperto = !menuAperto; aggiornaTavolo(); } }, menuAperto ? 'Chiudi menu' : 'Menu'),
     h('span', { class: `voci${menuAperto ? ' aperte' : ''}` },
       h('button', { type: 'button', class: 'piccolo', onclick: () => { cronacaAperta = !cronacaAperta; menuAperto = false; aggiornaTavolo(); } }, cronacaAperta ? 'Chiudi cronaca' : 'Cronaca'),
+      h('button', { type: 'button', class: 'piccolo', 'aria-pressed': String(iconeGrandi), title: 'Ingrandisce le icone in fondo alle carte',
+        onclick: () => { iconeGrandi = !iconeGrandi; ricorda('collocamento.icone', iconeGrandi ? 'grandi' : 'piccole'); aggiornaTavolo(); } },
+      iconeGrandi ? 'Icone come sulla carta' : 'Icone grandi'),
+      h('button', { type: 'button', class: 'piccolo', onclick: () => { invitoAperto = true; menuAperto = false; aggiornaTavolo(); } }, 'Invita'),
       h('button', { type: 'button', class: 'piccolo', onclick: () => { regoleAperte = true; menuAperto = false; aggiornaTavolo(); } }, 'Aiuto'),
       ['lav', 'for'].map((m) => h('button', { type: 'button', class: 'piccolo solo-stretto', onclick: () => fai({ o: 'mescola', m }) }, m === 'lav' ? 'Mescola i lavoratori' : 'Mescola gli ambiti')),
       ['lav', 'for'].map((m) => t.scarti[m].n > 0 && h('button', { type: 'button', class: 'piccolo solo-stretto', onclick: () => fai({ o: 'rimescola', m }) },
@@ -797,7 +880,8 @@ function aggiornaTavolo() {
         if (confirm('Sparecchiare il tavolo e tornare alla sala d’attesa?')) invia({ a: 'sala' });
       } }, 'Sala d’attesa')),
     avviso && h('div', { class: 'avviso volante', role: 'alert' }, avviso),
-    regoleAperte && regole());
+    regoleAperte && regole(),
+    invitoAperto && finestraInvito());
 
   applicaZoom();
 
@@ -981,6 +1065,5 @@ function anteprimaSu(el, quale) {
   el.addEventListener('pointerdown', nascondi);
 }
 
-for (const s of SIMBOLI) new Image().src = `/img/sim/${s}.png`;
 riprendi();
 disegna();

@@ -105,9 +105,12 @@ Nel regolamento sono marcate **[P]**.
 
 ### 2.7 Le carte
 
-1. **Il PDF in [carte/](carte/) è il vecchio mazzo a due facce.** Non corrisponde più al gioco: ora servono 60 lavoratori e 60 ambiti con il dorso coperto.
-2. **Manca una legenda dei 10 simboli.** Sulle carte ci sono solo le sigle.
-3. **I due dorsi devono distinguersi**, altrimenti i mazzi non si separano e non si vede quanti lavoratori ha in mano un avversario. Nella webapp sono verde e ocra.
+Le carte nuove (stile fanzine, rosa e petrolio) sono in `grafica/` e il tavolo online le usa.
+
+1. **I nomi dei 10 simboli e dei 24 ambiti non sono ancora confermati.** Sono sulla carta della legenda e sugli ambiti; cambiarli vuol dire correggere un testo e rimontare la carta, senza rifare l'illustrazione.
+2. **Sulle carte la fascia delle icone è piccola.** Occupa meno di un quinto della carta: stampata a 63 × 88 mm le icone vengono di circa 8 mm, a schermo molto meno. Nel tavolo online c'è una fascia ingrandita, che si può togliere; sulla carta vera conviene provare una stampa prima di decidere.
+3. **Manca il PDF di stampa.** Le carte montate non hanno abbondanza. Il PDF in [carte/](carte/) è il vecchio mazzo a due facce e non corrisponde più al gioco.
+4. **Sugli ambiti la fascia è intitolata "Competenze".** Vale quando l'ambito è giocato come formazione; come lavoro le stesse icone sono il requisito.
 
 ## 3. Cosa guardare nel playtest
 

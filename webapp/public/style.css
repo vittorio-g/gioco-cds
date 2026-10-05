@@ -1,20 +1,20 @@
 * { box-sizing: border-box; }
 
+/* I colori sono quelli delle carte: rosa fluo e petrolio su carta. */
 :root {
-  --crema: #f6f2e9;
-  --carta: #fffdf8;
-  --banda: #f5e8c9;
-  --pannello: #e8efe7;
-  --inch: #1f3a44;
-  --tenue: #5f7279;
-  --bordo: #ddd5c3;
-  --verde: #2f7d6f;
-  --verde-scuro: #23635a;
-  --ocra: #9a6a1c;
-  --rosa: #a94665;
-  --evidenza: #e2a93b;
-  --dorso-lav: #348579;
-  --dorso-for: #b37b26;
+  --crema: #f1ebdd;
+  --carta: #fbf7ee;
+  --banda: #e9e0cc;
+  --pannello: #e3ddcf;
+  --inch: #17474d;
+  --tenue: #56716f;
+  --bordo: #d5cbb6;
+  --verde: #17474d;
+  --verde-scuro: #0e3338;
+  --rosa: #d81b6a;
+  --evidenza: #ff3d8b;
+  --dorso-lav: #ff3d8b;
+  --dorso-for: #17474d;
 }
 
 html, body { margin: 0; }
@@ -45,10 +45,10 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 
 .eti { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; line-height: 1.15; }
 .nota { color: var(--tenue); font-size: 13.5px; overflow-wrap: anywhere; }
-.avviso { background: #f8e1e6; color: #7a2b40; border-radius: 8px; padding: 8px 12px; }
+.avviso { background: #ffe3ee; color: #8a1245; border-radius: 8px; padding: 8px 12px; }
 .avviso.volante { position: fixed; top: 56px; left: 50%; transform: translateX(-50%); z-index: 80; box-shadow: 0 4px 16px rgba(0, 0, 0, .18); }
 .etichetta { font-size: 12px; background: var(--pannello); border-radius: 99px; padding: 1px 9px; }
-.etichetta.spenta { background: #f3d9de; color: #7a2b40; }
+.etichetta.spenta { background: #ffe3ee; color: #8a1245; }
 .ultimo { color: var(--rosa); font-weight: 700; }
 
 /* ---- carte ------------------------------------------------------------- */
@@ -71,6 +71,28 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
   touch-action: none;
   transition: left .12s, top .12s;
 }
+.tc.img { padding: 0; border: 0; background: var(--crema); }
+
+.tc .intera { display: block; width: 100%; height: 100%; pointer-events: none; }
+/* fascia delle icone ingrandita, sopra quella disegnata */
+.lente {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--crema);
+  border-top: calc(2px * var(--k)) solid var(--inch);
+  pointer-events: none;
+}
+.tc.for .lente { background: var(--inch); border-top: 0; }
+.tc.for .lente .terna { background: var(--crema); border-radius: calc(3px * var(--k)); padding: calc(2px * var(--k)) calc(6px * var(--k)); }
+.lente .terna { gap: calc(6px * var(--k)); }
+.lente .sim { width: calc(30px * var(--k)); height: calc(30px * var(--k)); border-radius: 0; }
+.anteprima .lente { display: none; }
 .tc.trascinata { transition: none; z-index: 1000 !important; cursor: grabbing; box-shadow: 0 12px 26px rgba(31, 58, 68, .38); }
 .tc.scelta { outline: calc(4px * var(--k)) solid var(--evidenza); outline-offset: 1px; }
 .tc .titolo {
@@ -83,17 +105,9 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
   line-height: 1.2;
 }
 .tc .titolo b { font-weight: 400; color: var(--tenue); }
-.tc .fig {
-  width: 100%;
-  flex: 1;
-  min-height: 0;
-  object-fit: cover;
-  object-position: center 25%;
-  border-radius: calc(8px * var(--k));
-  pointer-events: none;
-}
-.tc .fascia { display: flex; flex-direction: column; align-items: center; gap: calc(2px * var(--k)); }
-.tc.for .fascia { background: var(--banda); border-radius: calc(8px * var(--k)); padding: calc(5px * var(--k)) 0 calc(4px * var(--k)); }
+.tc .fascia { display: flex; flex-direction: column; align-items: center; gap: calc(2px * var(--k)); margin-top: auto; }
+.tc.for:not(.img):not(.coperta) { background: var(--verde); color: var(--crema); border-color: var(--verde); }
+.tc.for .fascia { background: var(--crema); color: var(--inch); border-radius: calc(4px * var(--k)); padding: calc(5px * var(--k)) calc(4px * var(--k)) calc(4px * var(--k)); align-self: stretch; }
 .tc .eti { align-self: flex-start; font-size: calc(8px * var(--k)); }
 .tc .terna { display: flex; gap: calc(7px * var(--k)); }
 .tc .ic { display: flex; flex-direction: column; align-items: center; gap: calc(1.5px * var(--k)); }
@@ -108,8 +122,9 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
   border: calc(6px * var(--k)) solid var(--carta);
   box-shadow: 0 0 0 1px var(--bordo), 0 1px 3px rgba(31, 58, 68, .28);
 }
-.tc.coperta.lav { background: repeating-linear-gradient(45deg, var(--dorso-lav) 0 10px, #2c776c 10px 20px); }
-.tc.coperta.for { background: repeating-linear-gradient(45deg, var(--dorso-for) 0 10px, #a36f20 10px 20px); }
+.tc.coperta.img { display: block; border: 0; }
+.tc.coperta.lav { background: var(--dorso-lav); }
+.tc.coperta.for { background: var(--dorso-for); }
 .retro {
   font-size: calc(11px * var(--k));
   font-weight: 700;
@@ -151,6 +166,7 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
   border-bottom: 1px solid var(--bordo);
 }
 .marchio { font-size: 17px; }
+.barra button { white-space: nowrap; }
 .barra .spazio { flex: 1; }
 .posti { display: flex; flex-wrap: wrap; gap: 6px; }
 .posto {
@@ -162,7 +178,7 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
   border-radius: 99px;
   padding: 2px 5px 2px 4px;
 }
-.posto.turno { border-color: var(--verde); background: #e2f0e9; }
+.posto.turno { border-color: var(--evidenza); background: #ffe3ee; }
 .posto.assente { opacity: .55; }
 .posto .nome { border: 0; background: none; padding: 2px 6px; font-weight: 700; }
 .posto.io .nome { color: var(--verde-scuro); }
@@ -174,18 +190,18 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 .solo-stretto { display: none; }
 .azione .dorso { margin-right: 6px; vertical-align: -3px; }
 
-.scena { grid-area: scena; overflow: auto; background: #cfdccf; overscroll-behavior: contain; touch-action: none; cursor: grab; }
+.scena { grid-area: scena; overflow: auto; background: #aebbb8; overscroll-behavior: contain; touch-action: none; cursor: grab; }
 .piano { position: relative; }
 .tappeto {
   position: absolute;
   left: 0;
   top: 0;
   transform-origin: 0 0;
-  background: #e3ece2;
+  background: #c6d1ce;
 }
-.centro-tavolo { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(255, 255, 255, .4); }
+.centro-tavolo { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(255, 255, 255, .28); }
 .corsia { position: absolute; top: 0; bottom: 0; border-left: 2px dashed rgba(31, 58, 68, .2); }
-.corsia.mia { background: rgba(47, 125, 111, .07); }
+.corsia.mia { background: rgba(255, 255, 255, .22); }
 .cartello { position: absolute; left: 14px; top: 8px; font-size: 20px; font-weight: 700; color: rgba(31, 58, 68, .5); }
 .corsia.turno .cartello { color: var(--verde-scuro); }
 
@@ -245,10 +261,10 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
   flex-direction: column;
   gap: 4px;
   padding: 6px 12px 8px;
-  background: #fbf9f3;
+  background: var(--carta);
   border-top: 2px solid var(--bordo);
 }
-.manobar.bersaglio { outline: 0; background: #fff3d2; border-top-color: var(--evidenza); }
+.manobar.bersaglio { outline: 0; background: #ffe3ee; border-top-color: var(--evidenza); }
 .azioni { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; min-height: 34px; }
 .azione { background: var(--carta); font-size: 14px; font-weight: 600; padding: 5px 12px; }
 .azione.forte { background: var(--verde); border-color: var(--verde); color: #fff; }
@@ -263,7 +279,7 @@ button.tondo { width: 26px; height: 26px; padding: 0; border-radius: 50%; line-h
 .tts.con-cronaca .anteprima { right: 266px; }
 .anteprima { position: fixed; right: 16px; top: 62px; z-index: 40; display: none; pointer-events: none; }
 .anteprima.visibile { display: block; }
-.anteprima .tc { --k: 2.1; position: relative; box-shadow: 0 14px 34px rgba(31, 58, 68, .4); }
+.anteprima .tc { --k: 2.5; position: relative; box-shadow: 0 14px 34px rgba(31, 58, 68, .4); }
 .strati { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
 .fantasma { position: fixed; transform-origin: 0 0; opacity: .93; transition: none; box-shadow: 0 12px 26px rgba(31, 58, 68, .38); }
 
@@ -291,7 +307,12 @@ input {
   color: var(--inch);
 }
 .codice { letter-spacing: .3em; font-weight: 700; text-transform: uppercase; font-family: ui-monospace, Consolas, monospace; }
-.invito .codice { font-size: 28px; margin-left: 8px; }
+.invito { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 20px; }
+.invito-testi { flex: 1 1 220px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.invito .codice { font-size: 34px; line-height: 1; }
+.invito .bottoni { margin-top: 2px; }
+.qr { flex: none; width: 190px; height: 190px; border: 1px solid var(--bordo); border-radius: 12px; overflow: hidden; background: #fff; }
+.qr svg { display: block; width: 100%; height: 100%; }
 .bottoni { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 6px; }
 .elenco { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .elenco li { display: flex; align-items: center; gap: 8px; }
@@ -306,6 +327,7 @@ input {
 
 .velo { position: fixed; inset: 0; z-index: 70; background: rgba(31, 58, 68, .45); display: grid; place-items: center; padding: 16px; }
 .foglio { max-width: 660px; max-height: 90vh; overflow: auto; font-weight: 400; user-select: text; -webkit-user-select: text; }
+.legenda { align-self: center; width: min(100%, 320px); border-radius: 10px; border: 1px solid var(--bordo); }
 .foglio ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
 
 /* ---- schermi bassi e telefono ------------------------------------------ */
@@ -352,12 +374,14 @@ input {
   .mano { gap: 16px; }
   .mano .tc { --k: .62; }
   .anteprima, .tts.con-cronaca .anteprima { right: 8px; }
-  .anteprima .tc { --k: 1.3; }
+  .qr { width: 160px; height: 160px; }
+  .invito { justify-content: center; }
+  .anteprima .tc { --k: 1.7; }
 }
 /* telefono in orizzontale: barra su una riga, mano bassa, il resto al tavolo */
 @media (max-height: 520px) {
   .barra { flex-wrap: nowrap; overflow-x: auto; padding: 4px 8px; }
-  .barra > * { flex: none; }
+  .barra > *, .barra .voci > * { flex: none; }
   .barra .secondario, .barra .spazio { display: none; }
   /* prima i comandi, poi i giocatori: così restano sempre a portata */
   .posti { order: 2; flex-basis: auto; overflow: visible; padding: 0; }

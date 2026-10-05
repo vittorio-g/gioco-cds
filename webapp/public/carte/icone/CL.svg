@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Collaborazione">
+  <title>Collaborazione</title>
+  <defs>
+  <filter id="stampa" x="-8%" y="-8%" width="116%" height="116%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="4" result="onda"/>
+    <feDisplacementMap in="SourceGraphic" in2="onda" scale="3.2" xChannelSelector="R" yChannelSelector="G" result="mosso"/>
+    <feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="1" seed="9" result="grana"/>
+    <feColorMatrix in="grana" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 14 -10" result="buchi"/>
+    <feComposite in="mosso" in2="buchi" operator="out"/>
+  </filter>
+  </defs>
+  <g filter="url(#stampa)">
+    <polygon points="7,14 49,6 91,11 90,89 10,92" fill="#17474d" transform="translate(3.5 3.5)" opacity="0.9"/>
+    <polygon points="7,14 49,6 91,11 90,89 10,92" fill="#ff3d8b"/>
+    <g fill="none">
+    <circle cx="66" cy="37" r="10.5" fill="#17474d"/>
+    <path d="M49 80 Q50 55 67 55 Q85 55 86 80 Z" fill="#17474d"/>
+    <circle cx="37" cy="36" r="12" fill="#17474d" stroke="#ff3d8b" stroke-width="4"/>
+    <path d="M15 80 Q16 55 37 55 Q58 55 59 80 Z" fill="#17474d" stroke="#ff3d8b" stroke-width="4" stroke-linejoin="round"/>
+    </g>
+    
+  </g>
+</svg>

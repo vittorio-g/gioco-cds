@@ -4,6 +4,8 @@
 //   msedge --headless --disable-gpu --remote-debugging-port=9333 --user-data-dir=<cartella vuota> about:blank
 // Uso: node strumenti/prova_computer.mjs [http://localhost:8791] [cartella per le immagini]
 import puppeteer from 'puppeteer-core';
+import jsQR from 'jsqr';
+import { PNG } from 'pngjs';
 
 const base = process.argv[2] ?? 'http://localhost:8791';
 const dove = process.argv[3] ?? '.';
@@ -17,6 +19,39 @@ await page.setViewport({ width: 1366, height: 768, deviceScaleFactor: 1 });
 const errori = [];
 page.on('pageerror', (e) => { if (!String(e.stack).includes('chrome-extension://')) errori.push(String(e)); });
 page.on('dialog', (d) => d.accept());
+
+// Le azioni passano dal server: invece di aspettare un tempo fisso si aspetta
+// che ogni richiesta partita abbia avuto la sua risposta.
+await page.evaluateOnNewDocument(() => {
+  window.__inAttesa = 0;
+  const Vero = window.WebSocket;
+  window.WebSocket = class extends Vero {
+    constructor(...a) {
+      super(...a);
+      this.addEventListener('message', (e) => {
+        try {
+          const m = JSON.parse(e.data);
+          if (m.t === 'stato' || m.t === 'errore') window.__inAttesa = Math.max(0, window.__inAttesa - 1);
+        } catch {}
+      });
+    }
+    send(d) {
+      try {
+        const m = JSON.parse(d);
+        if (m.a !== 'op' || m.op?.o !== 'trascina') window.__inAttesa++;
+      } catch {}
+      return super.send(d);
+    }
+  };
+});
+let piuLenta = 0;
+async function quiete() {
+  const t0 = Date.now();
+  await attesa(150);
+  while (Date.now() - t0 < 8000 && (await page.evaluate(() => window.__inAttesa > 0))) await attesa(30);
+  piuLenta = Math.max(piuLenta, Date.now() - t0);
+  await attesa(120);
+}
 const centro = (sel, i = 0) => page.evaluate((s, k) => { const e = document.querySelectorAll(s)[k]; if (!e) return null; const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, alto: r.top, a: r.height }; }, sel, i);
 const bottone = (t) => page.evaluate((x) => { const e = [...document.querySelectorAll('button')].find((b) => b.offsetParent && b.innerText.trim().startsWith(x)); if (!e) return null; const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }, t);
 const stato = () => page.evaluate(() => ({
@@ -31,7 +66,7 @@ async function trascina(a, b) {
   await page.mouse.down();
   for (let i = 1; i <= 10; i++) { await page.mouse.move(a.x + ((b.x - a.x) * i) / 10, a.y + ((b.y - a.y) * i) / 10); await attesa(12); }
   await page.mouse.up();
-  await attesa(400);
+  await quiete();
 }
 
 await page.goto(base, { waitUntil: 'networkidle0' });
@@ -41,6 +76,14 @@ let b = await bottone('Crea una stanza nuova');
 await page.mouse.click(b.x, b.y);
 await page.waitForSelector('.sala .scheda');
 const codice = await page.evaluate(() => location.hash.slice(1));
+// il QR dell'invito: lo si fotografa e lo si decodifica come farebbe un telefono
+const leggiQR = async (selettore) => {
+  const png = PNG.sync.read(Buffer.from(await (await page.$(selettore)).screenshot()));
+  return jsQR(new Uint8ClampedArray(png.data), png.width, png.height)?.data ?? null;
+};
+const lettoInSala = await leggiQR('.sala .qr');
+await page.screenshot({ path: `${dove}/pc_sala.png` });
+verifica(lettoInSala === `${base}/#${codice}`, 'il QR della sala d’attesa porta al link della stanza', `letto: ${lettoInSala}`);
 const finti = ['Bruno', 'Carla'].map((nome) => { const ws = new WebSocket(`${base.replace(/^http/, 'ws')}/ws/${codice}`); ws.onopen = () => ws.send(JSON.stringify({ a: 'entra', nome })); return ws; });
 await page.waitForFunction(() => document.querySelectorAll('.elenco li').length === 3);
 b = await bottone('Apparecchia il tavolo');
@@ -53,7 +96,7 @@ let s0 = await stato();
 verifica(s0.zoom > 60 && s0.scorri[0] === 0, `si vede tutto il tavolo in larghezza (zoom ${s0.zoom}%)`);
 const mazzo = await centro('.pila.mazzo.lav');
 await page.mouse.click(mazzo.x, mazzo.y);
-await attesa(350);
+await quiete();
 let s = await stato();
 verifica(s.mano === s0.mano + 1, 'un clic sul mazzo pesca', `${s0.mano} -> ${s.mano}`);
 const sc = await centro('.scena');
@@ -80,8 +123,19 @@ await page.keyboard.up('Control');
 await attesa(300);
 s = await stato();
 verifica(s.zoom > s0.zoom + 5, 'Ctrl + rotella ingrandisce il tavolo', `${s0.zoom}% -> ${s.zoom}%`);
+b = await bottone('Invita');
+await page.mouse.click(b.x, b.y);
+await attesa(300);
+const lettoAlTavolo = await leggiQR('.velo .qr');
+verifica(lettoAlTavolo === `${base}/#${codice}`, 'anche a tavolo apparecchiato "Invita" mostra il QR giusto', `letto: ${lettoAlTavolo}`);
+await page.screenshot({ path: `${dove}/pc_invito.png` });
+b = await bottone('Chiudi');
+await page.mouse.click(b.x, b.y);
+await attesa(200);
+verifica(!(await page.$('.velo')), 'la finestra di invito si chiude');
 await page.screenshot({ path: `${dove}/pc_tavolo.png` });
 verifica(errori.length === 0, 'nessun errore nella pagina', errori.join(' | '));
+console.log(`  (risposta più lenta del server: ${piuLenta} ms)`);
 for (const ws of finti) ws.close();
 await page.close();
 await browser.disconnect();

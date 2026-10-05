@@ -10,24 +10,26 @@ Gioco di carte competitivo. Formi dei lavoratori e li mandi a lavorare: vince ch
 
 Due mazzi separati di carte 63 × 88 mm. I dorsi sono coperti: da dietro una carta dice solo a quale mazzo appartiene.
 
-**Lavoratori (60 carte).** Ogni lavoratore ha una fascia con 3 icone: le sue **attitudini**. I lavoratori sono tutti diversi.
+**Lavoratori (60 carte).** Ogni lavoratore ha un nome, una battuta e una fascia con 3 icone: le sue **attitudini**. I lavoratori sono tutti diversi.
 
 **Ambiti (60 carte).** Ogni ambito ha una terna di 3 icone e si può giocare in due modi: come **formazione** dà quelle 3 icone a un lavoratore come competenze; come **lavoro** quelle 3 icone sono il requisito per essere assunti.
 
 Le icone vengono da un insieme di 10 simboli e sulla stessa terna possono ripetersi. I simboli non sono ugualmente diffusi, ed è voluto: un lavoro con simboli rari è più difficile da ottenere.
 
-| Sigla | Icona | Icone sugli ambiti | Icone sui lavoratori |
-|---|---|---|---|
-| CL | due persone | 26 | 24 |
-| DI | monitor | 26 | 24 |
-| OR | foglio | 26 | 24 |
-| MA | chiave inglese | 25 | 24 |
-| CO | fumetto | 23 | 24 |
-| CR | stella | 14 | 14 |
-| CD | organigramma | 13 | 14 |
-| AN | grafico a barre | 11 | 14 |
-| RI | lente | 8 | 9 |
-| ST | bandierina | 8 | 9 |
+| Sigla | Nome **[P]** | Icona | Colore | Icone sugli ambiti | Icone sui lavoratori |
+|---|---|---|---|---|---|
+| CL | Collaborazione | due persone | rosa | 26 | 24 |
+| DI | Digitale | monitor | rosa | 26 | 24 |
+| OR | Organizzazione | elenco spuntato | rosa | 26 | 24 |
+| MA | Manualità | chiave inglese | rosa | 25 | 24 |
+| CO | Comunicazione | fumetto | rosa | 23 | 24 |
+| CR | Creatività | stella | petrolio | 14 | 14 |
+| CD | Coordinamento | organigramma | petrolio | 13 | 14 |
+| AN | Analisi | grafico a barre | petrolio | 11 | 14 |
+| RI | Ricerca | lente | petrolio con stellina | 8 | 9 |
+| ST | Strategia | bandierina | petrolio con stellina | 8 | 9 |
+
+Il colore dell'icona dice quanto è diffuso il simbolo: rosa si trova spesso, petrolio meno, con la stellina è raro.
 
 ### Gli ambiti del mazzo
 
@@ -35,13 +37,13 @@ Gli ambiti diversi sono 24, alcuni molto più frequenti di altri: due copie dell
 
 | Copie | Ambiti |
 |---|---|
-| 5 | `MA DI OR` · `CO OR CL` |
-| 4 | `MA DI CL` · `DI CO OR` · `MA CO CL` |
-| 3 | `DI OR AN` · `MA DI AN` · `MA CL CR` · `OR CL CR` · `CO CL CD` · `DI CO CD` |
-| 2 | `CO CR RI` · `OR CD RI` · `MA DI RI` · `MA AN ST` · `OR AN ST` · `CL CR ST` · `MA CR CD` |
-| 1 | `OR RI RI` · `DI CO ST` · `CL CD ST` · `CO CD CD` · `CL AN CR` · `DI OR CR` |
+| 5 | Logistica `MA DI OR` · Segreteria `CO OR CL` |
+| 4 | Assistenza tecnica `MA DI CL` · Assistenza clienti `DI CO OR` · Ristorazione `MA CO CL` |
+| 3 | Contabilità `DI OR AN` · Controllo qualità `MA DI AN` · Artigianato `MA CL CR` · Educazione `OR CL CR` · Risorse umane `CO CL CD` · Gestione progetti `DI CO CD` |
+| 2 | Giornalismo `CO CR RI` · Ricerca `OR CD RI` · Prototipazione `MA DI RI` · Agricoltura `MA AN ST` · Consulenza `OR AN ST` · Pubblicità `CL CR ST` · Spettacolo `MA CR CD` |
+| 1 | Archivio `OR RI RI` · Marketing `DI CO ST` · Direzione `CL CD ST` · Torre di controllo `CO CD CD` · Architettura `CL AN CR` · Sviluppo web `DI OR CR` |
 
-Per ogni ambito c'è tra i lavoratori qualcuno con esattamente quelle attitudini. Gli elenchi completi sono in [mazzi/lavoratori.csv](mazzi/lavoratori.csv) e [mazzi/lavori_v3.csv](mazzi/lavori_v3.csv).
+Ogni ambito ha un nome di mestiere **[P]** e, tra i lavoratori, qualcuno con esattamente quelle attitudini. Gli elenchi completi sono in [mazzi/lavoratori.csv](mazzi/lavoratori.csv) e [mazzi/lavori_v3.csv](mazzi/lavori_v3.csv).
 
 ## 2. Tre parole
 

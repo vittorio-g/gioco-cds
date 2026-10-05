@@ -1,0 +1,937 @@
+{
+ "lavoratori": {
+  "01": {
+   "file": "lavoratori/01.webp",
+   "nome": "La Regina delle Tabelle",
+   "battuta": "Ha una tabella per tutto. Anche per le tabelle.",
+   "attitudini": [
+    "DI",
+    "OR",
+    "OR"
+   ]
+  },
+  "02": {
+   "file": "lavoratori/02.webp",
+   "nome": "Il Capocantiere",
+   "battuta": "Urla istruzioni che nessuno aveva chiesto.",
+   "attitudini": [
+    "MA",
+    "CO",
+    "CD"
+   ]
+  },
+  "03": {
+   "file": "lavoratori/03.webp",
+   "nome": "L'Archistar",
+   "battuta": "Bellissimo. Cade, ma è bellissimo.",
+   "attitudini": [
+    "CL",
+    "AN",
+    "CR"
+   ]
+  },
+  "04": {
+   "file": "lavoratori/04.webp",
+   "nome": "Il Venditore di Trapani",
+   "battuta": "Ti serviva un buco. Hai comprato tre trapani.",
+   "attitudini": [
+    "MA",
+    "CO",
+    "ST"
+   ]
+  },
+  "05": {
+   "file": "lavoratori/05.webp",
+   "nome": "L'Archivista",
+   "battuta": "Sa dov'è ogni cosa. Anche le tue ferie del 2019.",
+   "attitudini": [
+    "OR",
+    "RI",
+    "RI"
+   ]
+  },
+  "06": {
+   "file": "lavoratori/06.webp",
+   "nome": "La Regista delle Call",
+   "battuta": "Sei in muto. Sei ancora in muto.",
+   "attitudini": [
+    "DI",
+    "CL",
+    "CD"
+   ]
+  },
+  "07": {
+   "file": "lavoratori/07.webp",
+   "nome": "L'Amico di Tutti",
+   "battuta": "Sa il nome del tuo gatto. E di quello del capo.",
+   "attitudini": [
+    "CO",
+    "CL",
+    "CL"
+   ]
+  },
+  "08": {
+   "file": "lavoratori/08.webp",
+   "nome": "L'Artista dei Grafici",
+   "battuta": "Il dato è sbagliato. Ma guarda che colori.",
+   "attitudini": [
+    "AN",
+    "CR",
+    "CR"
+   ]
+  },
+  "09": {
+   "file": "lavoratori/09.webp",
+   "nome": "La Segretaria Onnisciente",
+   "battuta": "Sa tutto. Ti passa l'interno.",
+   "attitudini": [
+    "CO",
+    "OR",
+    "CL"
+   ]
+  },
+  "10": {
+   "file": "lavoratori/10.webp",
+   "nome": "Lo Smanettone",
+   "battuta": "L'ha smontato per capire come funziona. Funzionava.",
+   "attitudini": [
+    "MA",
+    "DI",
+    "RI"
+   ]
+  },
+  "11": {
+   "file": "lavoratori/11.webp",
+   "nome": "La Mediatrice",
+   "battuta": "Ha un sondaggio anche per scegliere la pizza.",
+   "attitudini": [
+    "CL",
+    "CL",
+    "AN"
+   ]
+  },
+  "12": {
+   "file": "lavoratori/12.webp",
+   "nome": "L'Inventore da Garage",
+   "battuta": "Funziona. Non chiedere come.",
+   "attitudini": [
+    "MA",
+    "AN",
+    "CR"
+   ]
+  },
+  "13": {
+   "file": "lavoratori/13.webp",
+   "nome": "Il Nerd dei Dati",
+   "battuta": "Non esce da tre giorni. I numeri sì.",
+   "attitudini": [
+    "DI",
+    "DI",
+    "AN"
+   ]
+  },
+  "14": {
+   "file": "lavoratori/14.webp",
+   "nome": "La Capoclasse",
+   "battuta": "Ha fatto il gruppo prima che servisse.",
+   "attitudini": [
+    "CO",
+    "CL",
+    "CD"
+   ]
+  },
+  "15": {
+   "file": "lavoratori/15.webp",
+   "nome": "Il Generale dell'Orto",
+   "battuta": "Ha un piano quinquennale per le zucchine.",
+   "attitudini": [
+    "MA",
+    "AN",
+    "ST"
+   ]
+  },
+  "16": {
+   "file": "lavoratori/16.webp",
+   "nome": "La Caporeparto",
+   "battuta": "Comanda i robot. I robot hanno paura.",
+   "attitudini": [
+    "MA",
+    "DI",
+    "CD"
+   ]
+  },
+  "17": {
+   "file": "lavoratori/17.webp",
+   "nome": "Il Tecnico Paziente",
+   "battuta": "Te lo rispiega. Per la quarta volta. Sorridendo.",
+   "attitudini": [
+    "MA",
+    "DI",
+    "CL"
+   ]
+  },
+  "18": {
+   "file": "lavoratori/18.webp",
+   "nome": "La Signora delle Slide",
+   "battuta": "Trenta slide. Per dirti di no.",
+   "attitudini": [
+    "CO",
+    "OR",
+    "AN"
+   ]
+  },
+  "19": {
+   "file": "lavoratori/19.webp",
+   "nome": "La Curiosa",
+   "battuta": "Fa domande. Poi domande sulle risposte.",
+   "attitudini": [
+    "CO",
+    "CL",
+    "RI"
+   ]
+  },
+  "20": {
+   "file": "lavoratori/20.webp",
+   "nome": "Il Fiume in Piena",
+   "battuta": "Ha un'idea. Anzi dodici. Nessuna entro venerdì.",
+   "attitudini": [
+    "CO",
+    "CO",
+    "CR"
+   ]
+  },
+  "21": {
+   "file": "lavoratori/21.webp",
+   "nome": "Il Social Media Coso",
+   "battuta": "Non sa bene cosa fa. Ma lo posta.",
+   "attitudini": [
+    "DI",
+    "CO",
+    "CL"
+   ]
+  },
+  "22": {
+   "file": "lavoratori/22.webp",
+   "nome": "La Project Manager",
+   "battuta": "Ti ha messo in copia. Di nuovo.",
+   "attitudini": [
+    "DI",
+    "CO",
+    "CD"
+   ]
+  },
+  "23": {
+   "file": "lavoratori/23.webp",
+   "nome": "Il Precisino",
+   "battuta": "Ti aiuta volentieri. Poi ti corregge.",
+   "attitudini": [
+    "CL",
+    "AN",
+    "AN"
+   ]
+  },
+  "24": {
+   "file": "lavoratori/24.webp",
+   "nome": "La Magazziniera",
+   "battuta": "Sa dov'è ogni scatola. E dove sarà nel 2031.",
+   "attitudini": [
+    "MA",
+    "OR",
+    "ST"
+   ]
+  },
+  "25": {
+   "file": "lavoratori/25.webp",
+   "nome": "Il Portinaio Tuttofare",
+   "battuta": "Aggiusta, riordina e sa i fatti di tutti.",
+   "attitudini": [
+    "MA",
+    "OR",
+    "CL"
+   ]
+  },
+  "26": {
+   "file": "lavoratori/26.webp",
+   "nome": "Radio Corridoio",
+   "battuta": "Lo sapeva già. Prima di te.",
+   "attitudini": [
+    "CO",
+    "CO",
+    "CL"
+   ]
+  },
+  "27": {
+   "file": "lavoratori/27.webp",
+   "nome": "Il Burocrate Gentile",
+   "battuta": "Manca un timbro. Gli dispiace moltissimo.",
+   "attitudini": [
+    "CO",
+    "OR",
+    "OR"
+   ]
+  },
+  "28": {
+   "file": "lavoratori/28.webp",
+   "nome": "Il Muratore Filosofo",
+   "battuta": "Tira su muri. Abbatte certezze.",
+   "attitudini": [
+    "MA",
+    "MA",
+    "CL"
+   ]
+  },
+  "29": {
+   "file": "lavoratori/29.webp",
+   "nome": "La Maga della Colla a Caldo",
+   "battuta": "Con due tappi e uno spago ti fa un lampadario.",
+   "attitudini": [
+    "MA",
+    "CL",
+    "CR"
+   ]
+  },
+  "30": {
+   "file": "lavoratori/30.webp",
+   "nome": "L'Esploratore di Cantine",
+   "battuta": "Cerca un tubo. Trova un reperto.",
+   "attitudini": [
+    "MA",
+    "CL",
+    "RI"
+   ]
+  },
+  "31": {
+   "file": "lavoratori/31.webp",
+   "nome": "La Voce Calma",
+   "battuta": "Resta in linea. Dentro urla.",
+   "attitudini": [
+    "DI",
+    "CO",
+    "OR"
+   ]
+  },
+  "32": {
+   "file": "lavoratori/32.webp",
+   "nome": "Il Tutorial Vivente",
+   "battuta": "Lo spiega in dieci minuti. Ne servono novanta.",
+   "attitudini": [
+    "MA",
+    "DI",
+    "CO"
+   ]
+  },
+  "33": {
+   "file": "lavoratori/33.webp",
+   "nome": "La Multischeda",
+   "battuta": "Quaranta schede aperte. Tutte importanti.",
+   "attitudini": [
+    "DI",
+    "DI",
+    "CR"
+   ]
+  },
+  "34": {
+   "file": "lavoratori/34.webp",
+   "nome": "Il Consulente",
+   "battuta": "Ti dice che ore sono. Col tuo orologio.",
+   "attitudini": [
+    "OR",
+    "AN",
+    "ST"
+   ]
+  },
+  "35": {
+   "file": "lavoratori/35.webp",
+   "nome": "La Contabile",
+   "battuta": "Trova l'errore. Lo trova sempre.",
+   "attitudini": [
+    "DI",
+    "OR",
+    "AN"
+   ]
+  },
+  "36": {
+   "file": "lavoratori/36.webp",
+   "nome": "Il Capitano del Fantacalcio",
+   "battuta": "In ufficio tace. Nella lega è Napoleone.",
+   "attitudini": [
+    "DI",
+    "CL",
+    "ST"
+   ]
+  },
+  "37": {
+   "file": "lavoratori/37.webp",
+   "nome": "Il Cameriere Acrobata",
+   "battuta": "Sei piatti, due braccia, nessuna pietà.",
+   "attitudini": [
+    "MA",
+    "CO",
+    "CL"
+   ]
+  },
+  "38": {
+   "file": "lavoratori/38.webp",
+   "nome": "La Regista del Caos",
+   "battuta": "Ha un piano. È a colori.",
+   "attitudini": [
+    "OR",
+    "CR",
+    "CD"
+   ]
+  },
+  "39": {
+   "file": "lavoratori/39.webp",
+   "nome": "Il Sistemista",
+   "battuta": "La password? No.",
+   "attitudini": [
+    "DI",
+    "OR",
+    "CD"
+   ]
+  },
+  "40": {
+   "file": "lavoratori/40.webp",
+   "nome": "La Sondaggista",
+   "battuta": "Ha solo due domande. Sono quaranta.",
+   "attitudini": [
+    "CO",
+    "CO",
+    "RI"
+   ]
+  },
+  "41": {
+   "file": "lavoratori/41.webp",
+   "nome": "Il Guru del Marketing",
+   "battuta": "Diventerà virale. Lo dice lui.",
+   "attitudini": [
+    "DI",
+    "CO",
+    "ST"
+   ]
+  },
+  "42": {
+   "file": "lavoratori/42.webp",
+   "nome": "La Sviluppatrice",
+   "battuta": "Sul suo computer funziona.",
+   "attitudini": [
+    "DI",
+    "OR",
+    "CR"
+   ]
+  },
+  "43": {
+   "file": "lavoratori/43.webp",
+   "nome": "Il Professore",
+   "battuta": "Ha una teoria. E quattro dottorandi per dimostrarla.",
+   "attitudini": [
+    "OR",
+    "CD",
+    "RI"
+   ]
+  },
+  "44": {
+   "file": "lavoratori/44.webp",
+   "nome": "La Direttrice",
+   "battuta": "La sua porta è sempre aperta. Lei non c'è.",
+   "attitudini": [
+    "CL",
+    "CD",
+    "ST"
+   ]
+  },
+  "45": {
+   "file": "lavoratori/45.webp",
+   "nome": "Quello dei Grafici",
+   "battuta": "Ti dà torto. Con le fonti.",
+   "attitudini": [
+    "DI",
+    "CO",
+    "AN"
+   ]
+  },
+  "46": {
+   "file": "lavoratori/46.webp",
+   "nome": "La Scenografa",
+   "battuta": "Dammi un martello e quattro volontari.",
+   "attitudini": [
+    "MA",
+    "CR",
+    "CD"
+   ]
+  },
+  "47": {
+   "file": "lavoratori/47.webp",
+   "nome": "Il Signore degli Scaffali",
+   "battuta": "Ogni cosa al suo posto. Anche tu.",
+   "attitudini": [
+    "MA",
+    "OR",
+    "OR"
+   ]
+  },
+  "48": {
+   "file": "lavoratori/48.webp",
+   "nome": "La Comandante dei Traslochi",
+   "battuta": "Il divano passa. Fidati.",
+   "attitudini": [
+    "MA",
+    "CD",
+    "ST"
+   ]
+  },
+  "49": {
+   "file": "lavoratori/49.webp",
+   "nome": "Il Mago del Nastro Adesivo",
+   "battuta": "Rotto? No. Provvisorio.",
+   "attitudini": [
+    "MA",
+    "MA",
+    "OR"
+   ]
+  },
+  "50": {
+   "file": "lavoratori/50.webp",
+   "nome": "La Custode del Calendario",
+   "battuta": "Ha spostato la riunione. Tre volte.",
+   "attitudini": [
+    "DI",
+    "OR",
+    "CL"
+   ]
+  },
+  "51": {
+   "file": "lavoratori/51.webp",
+   "nome": "Il Banconista",
+   "battuta": "Altro? Altro? Altro?",
+   "attitudini": [
+    "MA",
+    "CO",
+    "OR"
+   ]
+  },
+  "52": {
+   "file": "lavoratori/52.webp",
+   "nome": "La Direttrice Creativa",
+   "battuta": "Più grande il logo. No, più emozione.",
+   "attitudini": [
+    "CL",
+    "CR",
+    "ST"
+   ]
+  },
+  "53": {
+   "file": "lavoratori/53.webp",
+   "nome": "Il Maestro dei Lavoretti",
+   "battuta": "Ha sempre la colla. E un piano B.",
+   "attitudini": [
+    "OR",
+    "CL",
+    "CR"
+   ]
+  },
+  "54": {
+   "file": "lavoratori/54.webp",
+   "nome": "La Torre di Controllo",
+   "battuta": "Tu vai. Tu fermo. Tu... chi sei?",
+   "attitudini": [
+    "CO",
+    "CD",
+    "CD"
+   ]
+  },
+  "55": {
+   "file": "lavoratori/55.webp",
+   "nome": "Il Pianificatore",
+   "battuta": "Ha un piano B. E un C. Sta finendo l'alfabeto.",
+   "attitudini": [
+    "OR",
+    "AN",
+    "CD"
+   ]
+  },
+  "56": {
+   "file": "lavoratori/56.webp",
+   "nome": "La Corriera",
+   "battuta": "Suona una volta. Poi sparisce.",
+   "attitudini": [
+    "MA",
+    "DI",
+    "OR"
+   ]
+  },
+  "57": {
+   "file": "lavoratori/57.webp",
+   "nome": "Il Collaudatore",
+   "battuta": "È perfetto. Rifallo.",
+   "attitudini": [
+    "MA",
+    "DI",
+    "AN"
+   ]
+  },
+  "58": {
+   "file": "lavoratori/58.webp",
+   "nome": "L'Inviata Speciale",
+   "battuta": "Fonti attendibili. Cioè sua cugina.",
+   "attitudini": [
+    "CO",
+    "CR",
+    "RI"
+   ]
+  },
+  "59": {
+   "file": "lavoratori/59.webp",
+   "nome": "Quello che Ha Letto un Articolo",
+   "battuta": "Ha fatto le sue ricerche. Te le inoltra.",
+   "attitudini": [
+    "DI",
+    "CL",
+    "RI"
+   ]
+  },
+  "60": {
+   "file": "lavoratori/60.webp",
+   "nome": "La Stampatrice 3D",
+   "battuta": "Ti stampa tutto. Anche quello che non serve.",
+   "attitudini": [
+    "MA",
+    "DI",
+    "CR"
+   ]
+  }
+ },
+ "ambiti": {
+  "logistica": {
+   "file": "ambiti/logistica.webp",
+   "nome": "Logistica",
+   "battuta": "Il pacco è in consegna. Da martedì.",
+   "terna": [
+    "MA",
+    "DI",
+    "OR"
+   ],
+   "copie": 5
+  },
+  "segreteria": {
+   "file": "ambiti/segreteria.webp",
+   "nome": "Segreteria",
+   "battuta": "Le faremo sapere.",
+   "terna": [
+    "CO",
+    "OR",
+    "CL"
+   ],
+   "copie": 5
+  },
+  "assistenza-tecnica": {
+   "file": "ambiti/assistenza-tecnica.webp",
+   "nome": "Assistenza tecnica",
+   "battuta": "Era il cavo. È sempre il cavo.",
+   "terna": [
+    "MA",
+    "DI",
+    "CL"
+   ],
+   "copie": 4
+  },
+  "assistenza-clienti": {
+   "file": "ambiti/assistenza-clienti.webp",
+   "nome": "Assistenza clienti",
+   "battuta": "Ha provato a spegnere e riaccendere?",
+   "terna": [
+    "DI",
+    "CO",
+    "OR"
+   ],
+   "copie": 4
+  },
+  "ristorazione": {
+   "file": "ambiti/ristorazione.webp",
+   "nome": "Ristorazione",
+   "battuta": "Il cliente ha sempre ragione. Purtroppo.",
+   "terna": [
+    "MA",
+    "CO",
+    "CL"
+   ],
+   "copie": 4
+  },
+  "contabilita": {
+   "file": "ambiti/contabilita.webp",
+   "nome": "Contabilità",
+   "battuta": "Mancano tre centesimi. Nessuno va a casa.",
+   "terna": [
+    "DI",
+    "OR",
+    "AN"
+   ],
+   "copie": 3
+  },
+  "controllo-qualita": {
+   "file": "ambiti/controllo-qualita.webp",
+   "nome": "Controllo qualità",
+   "battuta": "È perfetto. Rifallo.",
+   "terna": [
+    "MA",
+    "DI",
+    "AN"
+   ],
+   "copie": 3
+  },
+  "artigianato": {
+   "file": "ambiti/artigianato.webp",
+   "nome": "Artigianato",
+   "battuta": "Fatto a mano. Si vede.",
+   "terna": [
+    "MA",
+    "CL",
+    "CR"
+   ],
+   "copie": 3
+  },
+  "educazione": {
+   "file": "ambiti/educazione.webp",
+   "nome": "Educazione",
+   "battuta": "Oggi lavoretto. Domani colla ovunque.",
+   "terna": [
+    "OR",
+    "CL",
+    "CR"
+   ],
+   "copie": 3
+  },
+  "risorse-umane": {
+   "file": "ambiti/risorse-umane.webp",
+   "nome": "Risorse umane",
+   "battuta": "La tua opinione conta. Compila il modulo.",
+   "terna": [
+    "CO",
+    "CL",
+    "CD"
+   ],
+   "copie": 3
+  },
+  "gestione-progetti": {
+   "file": "ambiti/gestione-progetti.webp",
+   "nome": "Gestione progetti",
+   "battuta": "Siamo in ritardo. Facciamo una riunione.",
+   "terna": [
+    "DI",
+    "CO",
+    "CD"
+   ],
+   "copie": 3
+  },
+  "giornalismo": {
+   "file": "ambiti/giornalismo.webp",
+   "nome": "Giornalismo",
+   "battuta": "Fonti attendibili. Cioè mio cugino.",
+   "terna": [
+    "CO",
+    "CR",
+    "RI"
+   ],
+   "copie": 2
+  },
+  "ricerca": {
+   "file": "ambiti/ricerca.webp",
+   "nome": "Ricerca",
+   "battuta": "I fondi sono finiti. Le ipotesi no.",
+   "terna": [
+    "OR",
+    "CD",
+    "RI"
+   ],
+   "copie": 2
+  },
+  "prototipazione": {
+   "file": "ambiti/prototipazione.webp",
+   "nome": "Prototipazione",
+   "battuta": "Versione 47. Questa è quella buona.",
+   "terna": [
+    "MA",
+    "DI",
+    "RI"
+   ],
+   "copie": 2
+  },
+  "agricoltura": {
+   "file": "ambiti/agricoltura.webp",
+   "nome": "Agricoltura",
+   "battuta": "Doveva piovere. Ha grandinato.",
+   "terna": [
+    "MA",
+    "AN",
+    "ST"
+   ],
+   "copie": 2
+  },
+  "consulenza": {
+   "file": "ambiti/consulenza.webp",
+   "nome": "Consulenza",
+   "battuta": "Ti dice che ore sono. Col tuo orologio.",
+   "terna": [
+    "OR",
+    "AN",
+    "ST"
+   ],
+   "copie": 2
+  },
+  "pubblicita": {
+   "file": "ambiti/pubblicita.webp",
+   "nome": "Pubblicità",
+   "battuta": "Il cliente vuole il logo più grande.",
+   "terna": [
+    "CL",
+    "CR",
+    "ST"
+   ],
+   "copie": 2
+  },
+  "spettacolo": {
+   "file": "ambiti/spettacolo.webp",
+   "nome": "Spettacolo",
+   "battuta": "Chi è di scena? Il fondale no.",
+   "terna": [
+    "MA",
+    "CR",
+    "CD"
+   ],
+   "copie": 2
+  },
+  "archivio": {
+   "file": "ambiti/archivio.webp",
+   "nome": "Archivio",
+   "battuta": "È tutto qui. Da qualche parte.",
+   "terna": [
+    "OR",
+    "RI",
+    "RI"
+   ],
+   "copie": 1
+  },
+  "marketing": {
+   "file": "ambiti/marketing.webp",
+   "nome": "Marketing",
+   "battuta": "Diventerà virale. Fidati.",
+   "terna": [
+    "DI",
+    "CO",
+    "ST"
+   ],
+   "copie": 1
+  },
+  "direzione": {
+   "file": "ambiti/direzione.webp",
+   "nome": "Direzione",
+   "battuta": "La porta è sempre aperta. L'ufficio è vuoto.",
+   "terna": [
+    "CL",
+    "CD",
+    "ST"
+   ],
+   "copie": 1
+  },
+  "torre-di-controllo": {
+   "file": "ambiti/torre-di-controllo.webp",
+   "nome": "Torre di controllo",
+   "battuta": "Tutti fermi. Tu no. Anzi sì.",
+   "terna": [
+    "CO",
+    "CD",
+    "CD"
+   ],
+   "copie": 1
+  },
+  "architettura": {
+   "file": "ambiti/architettura.webp",
+   "nome": "Architettura",
+   "battuta": "Bellissimo. E il bagno dove va?",
+   "terna": [
+    "CL",
+    "AN",
+    "CR"
+   ],
+   "copie": 1
+  },
+  "sviluppo-web": {
+   "file": "ambiti/sviluppo-web.webp",
+   "nome": "Sviluppo web",
+   "battuta": "Sul mio computer funziona.",
+   "terna": [
+    "DI",
+    "OR",
+    "CR"
+   ],
+   "copie": 1
+  }
+ },
+ "carteAmbito": {
+  "01": "logistica",
+  "02": "logistica",
+  "03": "logistica",
+  "04": "logistica",
+  "05": "logistica",
+  "06": "segreteria",
+  "07": "segreteria",
+  "08": "segreteria",
+  "09": "segreteria",
+  "10": "segreteria",
+  "11": "assistenza-tecnica",
+  "12": "assistenza-tecnica",
+  "13": "assistenza-tecnica",
+  "14": "assistenza-tecnica",
+  "15": "assistenza-clienti",
+  "16": "assistenza-clienti",
+  "17": "assistenza-clienti",
+  "18": "assistenza-clienti",
+  "19": "ristorazione",
+  "20": "ristorazione",
+  "21": "ristorazione",
+  "22": "ristorazione",
+  "23": "contabilita",
+  "24": "contabilita",
+  "25": "contabilita",
+  "26": "controllo-qualita",
+  "27": "controllo-qualita",
+  "28": "controllo-qualita",
+  "29": "artigianato",
+  "30": "artigianato",
+  "31": "artigianato",
+  "32": "educazione",
+  "33": "educazione",
+  "34": "educazione",
+  "35": "risorse-umane",
+  "36": "risorse-umane",
+  "37": "risorse-umane",
+  "38": "gestione-progetti",
+  "39": "gestione-progetti",
+  "40": "gestione-progetti",
+  "41": "giornalismo",
+  "42": "giornalismo",
+  "43": "ricerca",
+  "44": "ricerca",
+  "45": "prototipazione",
+  "46": "prototipazione",
+  "47": "agricoltura",
+  "48": "agricoltura",
+  "49": "consulenza",
+  "50": "consulenza",
+  "51": "pubblicita",
+  "52": "pubblicita",
+  "53": "spettacolo",
+  "54": "spettacolo",
+  "55": "archivio",
+  "56": "marketing",
+  "57": "direzione",
+  "58": "torre-di-controllo",
+  "59": "architettura",
+  "60": "sviluppo-web"
+ },
+ "dorsi": {
+  "lavoratori": "dorso_lavoratori.webp",
+  "ambiti": "dorso_ambiti.webp"
+ },
+ "legenda": "legenda.webp"
+}
