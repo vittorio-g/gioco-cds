@@ -6,6 +6,7 @@ Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazz
 - **Salvataggio per Tabletop Simulator:** [tts/Collocamento.json](tts/Collocamento.json)
 - **Regole:** [REGOLAMENTO.md](REGOLAMENTO.md)
 - **Problemi aperti e cose da guardare nei playtest:** [BUCHI.md](BUCHI.md)
+- **Mercato del Lavoro**, il prototipo di destrezza in tempo reale: [regole](mercato-del-lavoro/REGOLAMENTO.md) e [simulazioni](mercato-del-lavoro/BUCHI.md)
 
 ## Cosa c'è nel repository
 
@@ -17,6 +18,7 @@ Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazz
 | `webapp/public/tts/` | I fogli di carte che Tabletop Simulator scarica dal tavolo online. |
 | `tts/` | Il salvataggio per Tabletop Simulator. |
 | `strumenti/` | Simulazioni tra bot e prove automatiche del tavolo. |
+| `mercato-del-lavoro/` | Il secondo prototipo, un gioco di destrezza: le regole dei designer, un modello della partita e i risultati. |
 | `grafica/` | `da_pdf.py`, che dai PDF della grafica ricava tutte le immagini, e i dati delle carte (`dati/`). In `stampa/` i sorgenti dei PDF da stampare. Gli altri script sono quelli della prima grafica. |
 | `carte/` | Il PDF del primo mazzo a due facce, superato. |
 
@@ -101,6 +103,14 @@ node strumenti/analisi.mjs
 ```
 
 Partite tra bot con le regole di [REGOLAMENTO.md](REGOLAMENTO.md), scritte in `strumenti/regole.mjs`. I numeri di [BUCHI.md](BUCHI.md) vengono da qui. Le varianti da provare (formazioni negli scarti, una copia sola degli ambiti, ricambio del mercato, chi ha quale potere) ci sono come opzioni. Tutto insieme ci mette qualche minuto; `node strumenti/analisi.mjs valore bilancia` lancia solo alcune parti. Le parti sugli stili di gioco sono `stili`, `risposta`, `selettivi`, `adattivi` e `regole`.
+
+### Simulazioni di Mercato del Lavoro
+
+```bash
+node mercato-del-lavoro/analisi.mjs
+```
+
+Un modello della partita del prototipo di destrezza ([regole](mercato-del-lavoro/REGOLAMENTO.md)), scritto in `mercato-del-lavoro/modello.mjs`. La fisica (quanto spesso cade qualcosa, quanto è grande la pedana) è fatta di ipotesi dichiarate in cima al file; [mercato-del-lavoro/BUCHI.md](mercato-del-lavoro/BUCHI.md) dice quali conclusioni reggono quando cambiano. Tutto insieme ci mette una decina di minuti; `node mercato-del-lavoro/analisi.mjs conti base` lancia solo alcune parti.
 
 ### Grafica
 

@@ -12,3 +12,6 @@ grafica/stampa/*.pdf
 grafica/illustrazioni/
 grafica/carte/
 grafica/prove_stile/
+
+# Il PDF del regolamento dei designer resta fuori: nel repository c'è la trascrizione.
+mercato-del-lavoro/*.pdf
