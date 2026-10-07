@@ -2,7 +2,7 @@
 
 Il documento del pitch ([regolamenti.tex](regolamenti.tex), da cui si ricava `regolamenti.pdf`) riporta i tre regolamenti con alcune revisioni. Qui c'è l'elenco, gioco per gioco: che cosa diceva il testo dei designer, che cosa dice ora, perché. Dove c'è un numero, viene dalle simulazioni.
 
-I testi originali dei designer restano dove erano: [REGOLAMENTO.md](../REGOLAMENTO.md) per Collocamento e [mercato-del-lavoro/REGOLAMENTO.md](../mercato-del-lavoro/REGOLAMENTO.md) per Mercato del Lavoro. Il regolamento della Variante Carte è arrivato in PDF il 7 ottobre 2026.
+I testi dei designer sono trascritti senza modifiche in [REGOLAMENTO.md](../REGOLAMENTO.md) per Collocamento, [variante-carte/REGOLAMENTO.md](../variante-carte/REGOLAMENTO.md) per la Variante Carte e [mercato-del-lavoro/REGOLAMENTO.md](../mercato-del-lavoro/REGOLAMENTO.md) per Mercato del Lavoro.
 
 Le revisioni sono proposte: le decisioni restano ai designer.
 
@@ -43,7 +43,7 @@ In 2 e in 3 la partita resta quella di prima. I quattro poteri, misurati dando o
 
 ## 2. Variante Carte
 
-Testo di partenza: il PDF "CDS Variante Carte", prototipo v0.1. Questo gioco non è stato simulato: le revisioni vengono dalla lettura.
+Testo di partenza: il PDF "CDS Variante Carte", prototipo v0.1, ricevuto il 7 ottobre 2026. Questo gioco non è stato simulato: le revisioni vengono dalla lettura.
 
 | | Prima | Ora | Perché |
 |---|---|---|---|

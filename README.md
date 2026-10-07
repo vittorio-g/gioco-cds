@@ -6,6 +6,7 @@ Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazz
 - **Salvataggio per Tabletop Simulator:** [tts/Collocamento.json](tts/Collocamento.json)
 - **Regole:** [REGOLAMENTO.md](REGOLAMENTO.md)
 - **Problemi aperti e cose da guardare nei playtest:** [BUCHI.md](BUCHI.md)
+- **Variante Carte**, il prototipo di carte in tempo reale: [regole](variante-carte/REGOLAMENTO.md)
 - **Mercato del Lavoro**, il prototipo di destrezza in tempo reale: [regole](mercato-del-lavoro/REGOLAMENTO.md) e [simulazioni](mercato-del-lavoro/BUCHI.md)
 - **Il documento per il pitch**, con i tre regolamenti rivisti: [che cosa è stato rivisto](pitch/REVISIONI.md); il PDF è su Drive
 
@@ -19,7 +20,8 @@ Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazz
 | `webapp/public/tts/` | I fogli di carte che Tabletop Simulator scarica dal tavolo online. |
 | `tts/` | Il salvataggio per Tabletop Simulator. |
 | `strumenti/` | Simulazioni tra bot e prove automatiche del tavolo. |
-| `mercato-del-lavoro/` | Il secondo prototipo, un gioco di destrezza: le regole dei designer, un modello della partita e i risultati. |
+| `variante-carte/` | Il prototipo di carte in tempo reale: le regole dei designer. |
+| `mercato-del-lavoro/` | Il prototipo di destrezza: le regole dei designer, un modello della partita e i risultati. |
 | `pitch/` | Il documento per il pitch: i tre regolamenti (Collocamento, Variante Carte, Mercato del Lavoro) rivisti e impaginati nello stile delle carte. Sorgente LaTeX, script delle figure ed elenco delle revisioni. |
 | `grafica/` | `da_pdf.py`, che dai PDF della grafica ricava tutte le immagini, e i dati delle carte (`dati/`). In `stampa/` i sorgenti dei PDF da stampare. Gli altri script sono quelli della prima grafica. |
 | `carte/` | Il PDF del primo mazzo a due facce, superato. |
