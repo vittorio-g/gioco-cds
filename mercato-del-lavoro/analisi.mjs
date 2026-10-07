@@ -1,5 +1,5 @@
 // Mercato del Lavoro v0.1: le prove. I numeri di BUCHI.md vengono da qui.
-//   node mercato-del-lavoro/analisi.mjs [conti base pedana ordine velocita fretta altezza riuso chiude tentativo varianti tenuta]
+//   node mercato-del-lavoro/analisi.mjs [conti base pedana ordine velocita fretta altezza riuso chiude tentativo varianti tenuta revisione]
 // Senza argomenti le fa tutte.
 import { partita, casuale, mazzo, REGOLE } from './modello.mjs';
 
@@ -272,6 +272,27 @@ const PARTI = {
     }
     console.log('\n--- chiamata errata che costa un punto: chi corre (in 4)');
     for (const pen of [0, 1]) for (const x of [1, 1.3, 1.8]) lui(`penalità ${pen}, lui a ${num(x, 2)}`, prova([{ fretta: x }, ...uguali(3)], { penalitaChiamata: pen }, {}, 10000));
+  },
+
+  // Le regole riviste per il documento del pitch: ognuno ha i suoi meeple (12 in 2, 8 in 3, 6 in 4), uno a round,
+  // posato per primo; la partita finisce col round in cui qualcuno posa l'ultimo.
+  revisione() {
+    console.log('\n=== Regole scritte e regole riviste (tutti uguali) ===');
+    for (const [nome, f] of FISICHE) {
+      console.log(`\n--- ${nome}`);
+      for (const n of [2, 3, 4]) {
+        const riviste = { meeplePersonali: 24 / n, fineAlPrimo: true, unMeeplePerRound: true };
+        for (const [quali, r] of [['scritte', {}], ['riviste', riviste]]) {
+          const m = prova(uguali(n), r, f);
+          riga(`in ${n}, ${quali}`, m);
+          console.log(`      fine: ${Object.entries(m.fine).map(([c, v]) => `${c} ${pct(v)}`).join(', ')}; ultimo round con un solo giocatore in gara ${pct(m.ultimoDaSolo)}; round senza vincitore ${num(m.senzaVincitore, 2)}; componenti posati a testa ${num(m.media('posati'))}; pezzi rimasti ${num(m.pezziRimasti, 0)}; perché si fermano: ${Object.entries(m.perche).map(([c, v]) => `${c} ${num(v / T, 2)}`).join(', ')}`);
+        }
+      }
+    }
+    console.log('\n--- in 4, regole riviste: chi brucia i meeple, chi è più veloce');
+    const R4 = { meeplePersonali: 6, fineAlPrimo: true, unMeeplePerRound: true };
+    lui('lui brucia i meeple quando è in testa', prova([{ chiude: true }, ...uguali(3)], R4));
+    lui('lui il 10% più veloce', prova([{ velocita: 1.1 }, ...uguali(3)], R4));
   },
 
   // Le conclusioni reggono se la fisica è diversa da come l'ho immaginata?

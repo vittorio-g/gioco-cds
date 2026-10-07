@@ -2,6 +2,8 @@
 
 Regolamento simulato: [REGOLAMENTO.md](REGOLAMENTO.md), prototipo v0.1 del 6 ottobre 2026.
 
+Le regole riviste che ne sono uscite (meeple personali, uno per round e posato per primo, la carta toccata per fermare il round) sono in [../pitch/REVISIONI.md](../pitch/REVISIONI.md), con i loro numeri: `node mercato-del-lavoro/analisi.mjs revisione`.
+
 ## Come leggere questo documento
 
 Un gioco di destrezza non si simula come un gioco di carte. Le regole non dicono quanto è grande la pedana, che forma hanno i pezzi, quanto spesso cade qualcosa: sono cose che si scoprono solo con i pezzi in mano. Per questo i risultati sono di tre tipi, e accanto a ognuno c'è scritto quale.

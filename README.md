@@ -7,6 +7,7 @@ Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazz
 - **Regole:** [REGOLAMENTO.md](REGOLAMENTO.md)
 - **Problemi aperti e cose da guardare nei playtest:** [BUCHI.md](BUCHI.md)
 - **Mercato del Lavoro**, il prototipo di destrezza in tempo reale: [regole](mercato-del-lavoro/REGOLAMENTO.md) e [simulazioni](mercato-del-lavoro/BUCHI.md)
+- **Il documento per il pitch**, con i tre regolamenti rivisti: [che cosa è stato rivisto](pitch/REVISIONI.md); il PDF è su Drive
 
 ## Cosa c'è nel repository
 
@@ -19,6 +20,7 @@ Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazz
 | `tts/` | Il salvataggio per Tabletop Simulator. |
 | `strumenti/` | Simulazioni tra bot e prove automatiche del tavolo. |
 | `mercato-del-lavoro/` | Il secondo prototipo, un gioco di destrezza: le regole dei designer, un modello della partita e i risultati. |
+| `pitch/` | Il documento per il pitch: i tre regolamenti (Collocamento, Variante Carte, Mercato del Lavoro) rivisti e impaginati nello stile delle carte. Sorgente LaTeX, script delle figure ed elenco delle revisioni. |
 | `grafica/` | `da_pdf.py`, che dai PDF della grafica ricava tutte le immagini, e i dati delle carte (`dati/`). In `stampa/` i sorgenti dei PDF da stampare. Gli altri script sono quelli della prima grafica. |
 | `carte/` | Il PDF del primo mazzo a due facce, superato. |
 
@@ -33,6 +35,7 @@ Le immagini pesanti della grafica sono su Google Drive, non su GitHub:
 | `pdf/` | I due PDF originali della grafica, con le terne a 10 simboli: `lavoratori_A4.pdf` e `ambiti_A4.pdf`. Da qui si rifà tutto. |
 | `carte_v2/` | Le carte in uso, a sei simboli, una per file in PNG: `lavoratori/` (60 più il dorso) e `ambiti/` (30 più il dorso). |
 | `stampa/` | I PDF da stampare, con le carte in uso: nove per pagina, fronte e retro, con i segni di taglio. |
+| `pitch/` | Il documento per il pitch, `regolamenti.pdf`, e le immagini che gli servono (`img/`). |
 | `illustrazioni/` | Le illustrazioni originali della prima grafica: 60 lavoratori e 24 ambiti. |
 | `carte/` | Le carte della prima grafica. |
 | `prove_stile/` | Le prove dei quattro stili fatte prima di scegliere. |
@@ -111,6 +114,14 @@ node mercato-del-lavoro/analisi.mjs
 ```
 
 Un modello della partita del prototipo di destrezza ([regole](mercato-del-lavoro/REGOLAMENTO.md)), scritto in `mercato-del-lavoro/modello.mjs`. La fisica (quanto spesso cade qualcosa, quanto è grande la pedana) è fatta di ipotesi dichiarate in cima al file; [mercato-del-lavoro/BUCHI.md](mercato-del-lavoro/BUCHI.md) dice quali conclusioni reggono quando cambiano. Tutto insieme ci mette una decina di minuti; `node mercato-del-lavoro/analisi.mjs conti base` lancia solo alcune parti.
+
+### Documento per il pitch
+
+```bash
+py -3 pitch/figure.py
+```
+
+prepara in `pitch/img/` le immagini che il documento usa, partendo da `grafica/carte_v2/` e `grafica/illustrazioni/` (da Drive). In alternativa si scarica da Drive la cartella `pitch/img`. Poi, da dentro `pitch/`, `pdflatex regolamenti.tex`. Serve una distribuzione LaTeX con TikZ, tcolorbox, TeX Gyre Heros e qrcode.
 
 ### Grafica
 

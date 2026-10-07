@@ -36,6 +36,7 @@ export const OPZIONI = {
   giroInPiu: true, // false: scattata la fine si chiude il giro in corso e basta
   formazioniNegliScarti: false, // chiuso un set, le sue formazioni vanno negli scarti invece di restare sul tavolo
   ricambioMercato: 0, // dopo quanti giri un lavoratore che nessuno prende viene sostituito; 0 = mai
+  scorreAlPescare: false, // chi sceglie l'azione "pescare" fa anche uscire dal mercato il lavoratore che c'è da più tempo
 };
 
 // Una mossa che le regole non permettono.
@@ -269,6 +270,13 @@ export function gioca(s, M, m, chi, rnd = Math.random) {
     for (let i = 0; i < o.pescata; i++) {
       const c = pescaAmbito(s, rnd);
       if (c != null) g.mano.push(c);
+    }
+    // Variante: il mercato è una fila. Il lavoratore più vecchio va sotto il mazzo e ne entra uno nuovo in coda.
+    if (o.scorreAlPescare && s.mercato.length && s.mazzoLav.length) {
+      const x = s.mercato.shift();
+      s.mazzoLav.unshift(x.w);
+      rifornisci(s);
+      s.conta.sostituiti++;
     }
   } else if (m.t !== 'passa') {
     throw new Rifiuto('Azione sconosciuta.');

@@ -608,5 +608,22 @@ const PARTI = {
   },
 };
 
+// Le regole riviste per il documento del pitch, a confronto con quelle scritte.
+PARTI.revisione = () => {
+  console.log('\n=== Regole scritte e regole riviste ===');
+  const SCRITTE = { poteri: A_ROTAZIONE };
+  const RIVISTE = { poteri: PER_DIFFICOLTA([1, 2, 4, 3]), pescaDelPotere: 1, scorreAlPescare: true, ...RIMESSE };
+  for (const n of [2, 3, 4]) {
+    esperimento(`In ${n}: regole scritte`, n, SCRITTE);
+    esperimento(`In ${n}: regole riviste (formazioni negli scarti, "pesca" 1 carta, mercato che scorre, poteri per difficolt\u00e0)`, n, RIVISTE);
+  }
+  console.log('\n=== Una revisione alla volta, in 3 ===');
+  esperimento('Solo: chiuso un set, le formazioni vanno negli scarti', 3, { ...SCRITTE, ...RIMESSE });
+  esperimento('Solo: chi pesca fa scorrere il mercato', 3, { ...SCRITTE, scorreAlPescare: true });
+  esperimento('Solo: "pesca" fa pescare 1 carta e i poteri vanno per difficolt\u00e0', 3, { poteri: PER_DIFFICOLTA([1, 2, 4, 3]), pescaDelPotere: 1 });
+  console.log('\n=== Con le regole riviste: quanto vale ogni potere per chi lo ha da solo (in 3) ===');
+  for (const k of [1, 2, 3, 4]) esperimento(`Solo per lui: ${NOMI_POTERI[k]}`, 3, { poteri: TUTTI(k), pescaDelPotere: 1, scorreAlPescare: true, ...RIMESSE, ruota: true });
+};
+
 const chieste = process.argv.slice(2);
 for (const [nome, parte] of Object.entries(PARTI)) if (!chieste.length || chieste.includes(nome)) parte();

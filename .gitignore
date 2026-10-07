@@ -15,3 +15,10 @@ grafica/prove_stile/
 
 # Il PDF del regolamento dei designer resta fuori: nel repository c'è la trascrizione.
 mercato-del-lavoro/*.pdf
+
+# Il documento del pitch: su GitHub vanno il sorgente e lo script delle figure.
+# Il PDF e le immagini ricavate dalle carte stanno su Drive, come il resto della grafica.
+pitch/*.pdf
+pitch/img/
+pitch/*.aux
+pitch/*.log

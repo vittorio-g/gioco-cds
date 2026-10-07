@@ -6,6 +6,8 @@ I numeri vengono da [strumenti/analisi.mjs](strumenti/analisi.mjs): 3.000 partit
 
 I bot cercano il set che rende di più per i turni che costa (una pila, un lavoratore del mercato, un lavoro che hanno in mano) e fanno il primo passo; se non vedono niente che valga, pescano. Misurano ritmo e ordini di grandezza: un giocatore vero troverà mosse migliori, quindi i numeri vanno confermati al tavolo.
 
+Le regole riviste che ne sono uscite (formazioni negli scarti a set chiuso, mercato che scorre, "pesca" da 1 carta, poteri per difficoltà) sono in [pitch/REVISIONI.md](pitch/REVISIONI.md), con i loro numeri: `node strumenti/analisi.mjs revisione`.
+
 Due cose non sono ancora decise e le ho fissate io per poter simulare: i 60 ambiti sono **due copie di ognuno dei 30**, e i poteri sono dati a **15 lavoratori per tipo**, a rotazione sul numero della carta. Le altre scelte sono nel capitolo 7.
 
 ## 1. In breve

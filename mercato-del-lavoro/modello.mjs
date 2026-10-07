@@ -20,6 +20,7 @@ export const REGOLE = {
   penalitaMassima: Infinity,
   penalitaChiamata: 0, // variante: punti persi per una chiamata errata
   meeplePersonali: 0, // variante: ognuno ha i suoi meeple invece del mucchio comune
+  fineAlPrimo: false, // con i meeple personali: la partita finisce col round in cui qualcuno posa il suo ultimo meeple
   fineDopoCarte: 0, // variante: la partita finisce dopo tante carte assegnate
   unMeeplePerRound: false, // variante: non più di un meeple a testa per round
 };
@@ -423,7 +424,7 @@ export function partita(stili, regole = {}, fisica = {}, rnd = Math.random) {
       info.senzaVincitore++;
       fermi++;
     }
-    const finiti = R.meeplePersonali ? sedi.every((s) => s.personali <= 0) : centro.meeple <= 0;
+    const finiti = R.meeplePersonali ? (R.fineAlPrimo ? sedi.some((s) => s.personali <= 0) : sedi.every((s) => s.personali <= 0)) : centro.meeple <= 0;
     if (finiti) { info.fine = 'meeple finiti'; info.ultimoDaSolo = e.inGara === 1; break; }
     if (R.fineDopoCarte && info.assegnate >= R.fineDopoCarte) { info.fine = 'carte assegnate'; break; }
     if (fermi >= 3) { info.fine = 'nessuno può più completare'; break; }

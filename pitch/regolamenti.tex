@@ -1,0 +1,959 @@
+% Tre prototipi CDS: i regolamenti per il pitch.
+%
+% Le immagini le prepara figure.py (py -3 pitch/figure.py), poi si compila due volte:
+%   pdflatex regolamenti.tex
+\documentclass[10pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{tgheros}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[a4paper,left=28mm,right=17mm,top=28mm,bottom=24mm]{geometry}
+\usepackage{xcolor,graphicx,tikz,enumitem,array,tabularx,colortbl,eso-pic,calc,pgffor}
+\usepackage[most]{tcolorbox}
+\usepackage[tracking=true,expansion=false]{microtype}
+\usepackage{qrcode}
+\usetikzlibrary{calc,arrows.meta}
+
+\pdfinfo{/Title (CDS - Tre prototipi: regolamenti) /Subject (Collocamento, Variante Carte, Mercato del Lavoro)}
+
+% ---------------------------------------------------------------- colori: quelli delle carte
+\definecolor{carta}{HTML}{F3ECDD}
+\definecolor{cartascura}{HTML}{E5DACA}
+\definecolor{petrolio}{HTML}{17474D}
+\definecolor{rosa}{HTML}{FF3D8B}
+\definecolor{cMA}{HTML}{D85A24}
+\definecolor{cDI}{HTML}{2878C8}
+\definecolor{cCO}{HTML}{D53883}
+\definecolor{cOR}{HTML}{D2A51B}
+\definecolor{cCR}{HTML}{BE3D36}
+\definecolor{cRI}{HTML}{75513E}
+\colorlet{arancio}{cMA}
+\tcbset{colupper=petrolio}
+
+% ---------------------------------------------------------------- la pagina è una carta
+% Fascia a sinistra, filo verticale, testata con l'etichetta e il numero, piede: come sulle carte.
+\newif\ifpaginacarta \paginacartatrue
+\newcommand{\gioco}{CDS · TRE PROTOTIPI}
+\newcommand{\tessera}{}
+\colorlet{accento}{rosa}
+\colorlet{fascia}{cartascura}
+\colorlet{filo}{petrolio}
+\colorlet{sufascia}{petrolio}
+\newcommand{\duecifre}[1]{\ifnum#1<10 0\fi\number#1}
+
+\AddToShipoutPictureBG{\AtPageLowerLeft{%
+  \ifpaginacarta
+  \begin{tikzpicture}[x=1mm,y=1mm]
+    \useasboundingbox (0,0) rectangle (210,297);
+    \fill[carta] (0,0) rectangle (210,297);
+    \fill[fascia] (0,0) rectangle (16,297);
+    \draw[filo,line width=1.7pt] (16,0) -- (16,297);
+    \ifx\tessera\empty\else
+      \begin{scope}[shift={(8,279.5)},rotate=-5]
+        \fill[white] (-4.7,-4.7) rectangle (4.7,4.7);
+        \fill[accento] (-4.1,-4.1) rectangle (4.1,4.1);
+        \node[text=white,font=\fontsize{13}{13}\selectfont\bfseries,rotate=-5,inner sep=0] at (0,0) {\tessera};
+      \end{scope}
+    \fi
+    \node[rotate=90,text=sufascia,font=\fontsize{6.5}{7}\selectfont,inner sep=0] at (8,110) {\textls[300]{\gioco}};
+    \node[text=sufascia,font=\fontsize{6}{7}\selectfont\bfseries,inner sep=0] at (8,13.4) {CDS};
+    \node[anchor=base west,text=petrolio,font=\fontsize{7.5}{9}\selectfont\bfseries,inner sep=0] at (28,280.6) {\textls[260]{\gioco}};
+    \node[anchor=base east,text=petrolio,font=\fontsize{8.5}{9}\selectfont,inner sep=0] at (193,280.6) {\duecifre{\value{page}}};
+    \draw[petrolio,line width=1.1pt] (28,277) -- (193,277);
+    \draw[petrolio,line width=.4pt] (28,15.6) -- (193,15.6);
+    \node[anchor=base west,text=petrolio,font=\fontsize{5.6}{7}\selectfont\bfseries,inner sep=0] at (28,11.6) {CDS · TRE PROTOTIPI};
+    \node[anchor=base east,text=petrolio,font=\fontsize{5.6}{7}\selectfont,inner sep=0] at (193,11.6) {REGOLAMENTI · OTTOBRE 2026};
+  \end{tikzpicture}%
+  \fi}}
+
+\pagestyle{empty}
+\color{petrolio}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.9mm}
+\linespread{1.1}
+\raggedbottom
+\setlist[itemize]{leftmargin=4.6mm,itemsep=.7mm,topsep=.6mm,parsep=0pt,partopsep=0pt,label={\color{accento}\rule[.24ex]{1.5mm}{1.5mm}}}
+\setlist[enumerate]{leftmargin=5.2mm,itemsep=.7mm,topsep=.6mm,parsep=0pt,partopsep=0pt,label={\bfseries\arabic*.}}
+\renewcommand{\arraystretch}{1.5}
+
+% ---------------------------------------------------------------- titoli, etichette, note
+\newcommand{\etichetta}[1]{{\fontsize{7}{9}\selectfont\bfseries\textls[170]{\MakeUppercase{#1}}}}
+\newcommand{\titolone}[1]{\par\noindent{\color{accento}\rule{14mm}{2.8pt}}\par\vspace{1.4mm}\noindent{\fontsize{24}{26}\selectfont\bfseries\MakeUppercase{#1}}\par\vspace{3mm}}
+\newcommand{\titolo}[1]{\par\vspace{4.2mm}\noindent{\color{accento}\rule{11mm}{2.4pt}}\par\vspace{1mm}\noindent{\fontsize{15}{17}\selectfont\bfseries\MakeUppercase{#1}}\par\vspace{1.2mm}}
+\newcommand{\sottotitolo}[1]{\par\vspace{2.2mm}\noindent{\fontsize{10.5}{12.5}\selectfont\bfseries #1}\par\vspace{-.6mm}}
+\newcommand{\attacco}[1]{{\fontsize{11.5}{16}\selectfont #1\par}}
+
+\newtcolorbox{nota}[1]{enhanced,colback=cartascura,colframe=cartascura,boxrule=0pt,arc=0pt,outer arc=0pt,
+  left=4.5mm,right=3.6mm,top=2.5mm,bottom=2.5mm,boxsep=0pt,borderline west={2.6pt}{0pt}{accento},
+  before skip=3.2mm,after skip=3.2mm,parbox=false,
+  before upper={{\color{accento}\etichetta{#1}}\par\vspace{.3mm}}}
+
+% I passi numerati: il quadrato col numero, come nei regolamenti dei designer.
+\newcounter{passo}
+\newcommand{\daccapo}{\setcounter{passo}{0}}
+\newcommand{\passo}[2]{\stepcounter{passo}\par\vspace{.4mm}\noindent
+  \begin{minipage}[t]{7.4mm}\vspace{0pt}\tikz\node[fill=petrolio,text=white,font=\fontsize{11}{11}\selectfont\bfseries,minimum size=6.6mm,inner sep=0]{\thepasso};\end{minipage}\hspace{2.6mm}%
+  \begin{minipage}[t]{\dimexpr\linewidth-10mm\relax}\vspace{.2mm}\textbf{#1}\enspace #2\end{minipage}\par\vspace{.6mm}}
+
+% ---------------------------------------------------------------- icone e carte
+\newcommand{\ico}[1]{\raisebox{-.26em}{\includegraphics[height=1.2em]{img/ico_#1}}}
+\newcommand{\terna}[1]{\foreach \s in {#1}{\ico{\s}\hspace{.1em}}}
+\newcommand{\spunta}{\tikz[baseline=.1mm]\draw[line width=1.2pt,accento,line cap=round,line join=round] (0,1.1mm) -- (.9mm,0) -- (2.7mm,2.8mm);}
+
+% Una carta in una figura: \cartaAt[stile del bordo]{x,y}{rotazione}{larghezza in mm}{immagine}
+\newcommand{\cartaAt}[5][]{%
+  \begin{scope}[shift={(#2)},rotate=#3]
+    \pgfmathsetmacro{\cartaW}{#4/2}\pgfmathsetmacro{\cartaH}{#4*88/126}\pgfmathsetmacro{\cartaR}{#4*0.04}
+    \fill[black,opacity=.22,rounded corners=\cartaR mm] (-\cartaW+.6,-\cartaH-.8) rectangle (\cartaW+.6,\cartaH-.8);
+    \begin{scope}
+      \clip[rounded corners=\cartaR mm] (-\cartaW,-\cartaH) rectangle (\cartaW,\cartaH);
+      \node[inner sep=0,outer sep=0,rotate=#3] at (0,0) {\includegraphics[width=#4mm,height=\dimexpr#4mm*88/63\relax]{img/#5}};
+    \end{scope}
+    \draw[petrolio,opacity=.6,line width=.3pt,rounded corners=\cartaR mm,#1] (-\cartaW,-\cartaH) rectangle (\cartaW,\cartaH);
+  \end{scope}}
+
+\newcommand{\senzasillabe}{\hyphenpenalty=10000 \exhyphenpenalty=10000 }
+
+% Un punto di una carta disegnata con \cartaAt, dato in punti dell'immagine (756 x 1056).
+\newcommand{\sullacarta}[6]{% nome, x e y del centro, larghezza, u, v
+  \coordinate (#1) at ({#2+(#5/756-.5)*#4},{#3+(.5-#6/1056)*#4*88/63});}
+
+% Un'illustrazione quadrata col filo, come sulle carte.
+\newcommand{\quadro}[2]{\tikz\node[inner sep=0,draw=petrolio,line width=1pt]{\includegraphics[width=#1]{img/#2}};}
+
+% Il meeple e i pezzi Competenza, per gli schemi del gioco di destrezza.
+\newcommand{\meeple}[4][petrolio]{% [colore]{x,y della base}{scala}{rotazione}
+  \begin{scope}[shift={(#2)},rotate=#4,scale=#3]
+    \fill[#1,rounded corners=#3*.42mm] (-1,7.1) -- (-4.1,5.7) -- (-4.5,5) -- (-4.1,4.2) -- (-1.8,4.6) -- (-3.4,.3) -- (-3,0) -- (-.8,0) -- (0,1.9) -- (.8,0) -- (3,0) -- (3.4,.3) -- (1.8,4.6) -- (4.1,4.2) -- (4.5,5) -- (4.1,5.7) -- (1,7.1) -- cycle;
+    \fill[#1] (0,8.2) circle (1.75);
+  \end{scope}}
+\newcommand{\pezzo}[4][0]{% [rotazione]{x,y del centro}{colore}{lettera}
+  \begin{scope}[shift={(#2)},rotate=#1]
+    \fill[black,opacity=.18,rounded corners=.6mm] (-2.5+.4,-2.5-.5) rectangle (2.5+.4,2.5-.5);
+    \fill[#3,rounded corners=.6mm] (-2.5,-2.5) rectangle (2.5,2.5);
+    \node[text=white,font=\fontsize{8}{8}\selectfont\bfseries,inner sep=0,rotate=#1] at (0,0) {#4};
+  \end{scope}}
+\newcommand{\pedana}[3]{\fill[petrolio,rounded corners=.5mm] (#1,#2-1.8) rectangle (#1+#3,#2);}
+
+% ---------------------------------------------------------------- le aperture: un dorso di carta a tutta pagina
+\newcommand{\apertura}[6]{% colore, numero, titolo, in breve, tipo di gioco, disegno
+  \clearpage\paginacartafalse
+  \AddToShipoutPictureBG*{\AtPageLowerLeft{\begin{tikzpicture}[x=1mm,y=1mm]
+    \useasboundingbox (0,0) rectangle (210,297);
+    \fill[#1] (0,0) rectangle (210,297);
+    \draw[white,line width=1.1pt,rounded corners=5mm] (9,9) rectangle (201,288);
+    \node[text=white,font=\fontsize{11}{13}\selectfont,inner sep=0] at (105,256) {\textls[420]{PROTOTIPO #2 DI 3}};
+    \node[text=white,font=\fontsize{43}{45}\selectfont\bfseries,align=center,text width=176mm,anchor=north,inner sep=0] (t) at (105,246) {#3};
+    \draw[white,line width=1.5pt] ($(t.south)+(-42,-7)$) -- ($(t.south)+(42,-7)$);
+    \node[text=white,font=\fontsize{10}{13}\selectfont,anchor=north,inner sep=0] (f) at ($(t.south)+(0,-11.5)$) {\textls[170]{#5}};
+    \node[text=white,font=\fontsize{13}{18.5}\selectfont\itshape,align=center,text width=136mm,anchor=north,inner sep=0] at ($(f.south)+(0,-8)$) {#4};
+    #6
+  \end{tikzpicture}}}%
+  \null\clearpage\paginacartatrue}
+
+\begin{document}
+
+% ================================================================ COPERTINA
+\paginacartafalse
+\AddToShipoutPictureBG*{\AtPageLowerLeft{\begin{tikzpicture}[x=1mm,y=1mm]
+  \useasboundingbox (0,0) rectangle (210,297);
+  \fill[petrolio] (0,0) rectangle (210,297);
+  \draw[white,line width=1.1pt,rounded corners=5mm] (9,9) rectangle (201,288);
+  \node[text=white,font=\fontsize{14}{16}\selectfont,inner sep=0] at (105,252) {\textls[620]{CDS}};
+  \node[text=white,font=\fontsize{52}{54}\selectfont\bfseries,inner sep=0] at (105,227) {TRE PROTOTIPI};
+  \draw[white,line width=1.5pt] (58,211) -- (152,211);
+  \node[text=white,font=\fontsize{10}{13}\selectfont,inner sep=0] at (105,202.5) {\textls[170]{COLLOCAMENTO · VARIANTE CARTE · MERCATO DEL LAVORO}};
+  \node[text=white,font=\fontsize{13.5}{19}\selectfont\itshape,align=center,text width=140mm,inner sep=0] at (105,184) {Tre giochi sul mercato del lavoro: far incontrare persone, competenze, formazione e opportunità.};
+  \cartaAt{31,82}{17}{52}{lav_03}
+  \cartaAt{179,82}{-17}{52}{lav_02}
+  \cartaAt{67,95}{9}{52}{amb_27}
+  \cartaAt{143,95}{-9}{52}{amb_17}
+  \cartaAt{105,100}{0}{54}{lav_07}
+  \node[text=white,font=\fontsize{8.5}{10}\selectfont,inner sep=0] at (105,22) {\textls[260]{REGOLAMENTI · OTTOBRE 2026}};
+\end{tikzpicture}}}
+\null\clearpage\paginacartatrue
+
+% ================================================================ IL PROGETTO
+\titolone{Un tema, tre giochi}
+
+\attacco{Far incontrare persone, competenze, formazione e opportunità: è il lavoro di chi si occupa di collocamento, ed è il tema di questi tre prototipi.}
+
+Lo raccontano con tre linguaggi diversi: un gioco di carte a turni, una caccia alla carta in tempo reale, un gioco di destrezza. Il tono è lo stesso in tutti e tre: persone un po' sopra le righe, in uffici, cantieri e magazzini che chiunque riconosce.
+
+Questo documento raccoglie i tre regolamenti, rivisti e allineati tra loro. Ogni gioco si legge da solo.
+
+\vspace{3mm}
+\newcommand{\scheda}[7]{% colore, numero, titolo, tipo, testo, dati, in una frase
+  \begin{tcolorbox}[enhanced,width=\linewidth,colback=cartascura,colframe=cartascura,boxrule=0pt,arc=0pt,outer arc=0pt,
+      left=4mm,right=4mm,top=0mm,bottom=4.5mm,boxsep=0pt,borderline north={3.2pt}{0pt}{#1}]
+    \begin{minipage}[t][121mm][t]{\linewidth}
+    \vspace{4.5mm}%
+    \tikz[baseline=-1.1mm]{\begin{scope}[rotate=-5]\fill[white] (-.42,-.42) rectangle (.42,.42);\fill[#1] (-.36,-.36) rectangle (.36,.36);\node[text=white,font=\fontsize{12}{12}\selectfont\bfseries,rotate=-5,inner sep=0] at (0,0) {#2};\end{scope}}\par\vspace{2.6mm}
+    {\color{#1}\fontsize{6.6}{8}\selectfont\bfseries\textls[140]{\MakeUppercase{#4}}\par}\vspace{1.2mm}
+    {\fontsize{14.5}{16}\selectfont\bfseries\raggedright\MakeUppercase{#3}\par}\vspace{1.8mm}
+    {\fontsize{9}{12.6}\selectfont\raggedright #5\par\vspace{2.2mm}#6\par}
+    \vfill
+    {\color{#1}\rule{8mm}{1.6pt}}\par\vspace{.6mm}
+    {\fontsize{9}{12.4}\selectfont\itshape\raggedright #7\par}
+    \end{minipage}
+  \end{tcolorbox}}
+\newcommand{\dato}[2]{\textbf{#1}\enspace #2\par\vspace{.5mm}}
+
+\noindent
+\begin{minipage}[t]{.318\linewidth}\scheda{rosa}{1}{Collocamento}{Carte · a turni}
+  {Costruisci percorsi di formazione, accogli i lavoratori che li cercano e trova a ognuno il lavoro che quel percorso rende possibile. Più il lavoro somiglia alle sue ambizioni, più punti fai.}
+  {\dato{Giocatori}{2--4}\dato{Ritmo}{un'azione per turno, cinque collocamenti a testa}\dato{Sul tavolo}{60 Lavoratori, 60 Ambiti, 4 token}}
+  {Il gioco da tavolo: mano da gestire, mercato comune, set da chiudere.}
+\end{minipage}\hfill
+\begin{minipage}[t]{.318\linewidth}\scheda{petrolio}{2}{Variante Carte}{Carte · tempo reale}
+  {Un lavoratore al centro, il mercato sparso sul tavolo. Tutti cercano insieme, con una mano sola e una carta alla volta, la formazione e il lavoro che combaciano. Il primo che ci riesce si prende il lavoratore.}
+  {\dato{Giocatori}{2--4}\dato{Ritmo}{tre round lampo}\dato{Sul tavolo}{carte Mercato a due facce, carte Lavoratore}}
+  {Tre lavoratori. Una mano sola. Una carta alla volta.}
+\end{minipage}\hfill
+\begin{minipage}[t]{.318\linewidth}\scheda{arancio}{3}{Mercato del Lavoro}{Destrezza · tempo reale}
+  {Ogni giocatore fa crescere la propria Sede: per collocare un lavoratore, il suo meeple deve toccare i tre pezzi Competenza che il lavoro richiede. Quello che posi resta. La Sede si affolla, sale, e prima o poi qualcosa cade.}
+  {\dato{Giocatori}{2--4}\dato{Ritmo}{6, 8 o 12 round simultanei}\dato{Sul tavolo}{meeple, 75 pezzi Competenza, 30 Carte Lavoro, 4 pedane}}
+  {Sembra facile. Finché non devi far stare tutto in piedi.}
+\end{minipage}
+
+\titolo{Le sei competenze}
+
+Sono il linguaggio comune dei due giochi di carte: ogni Lavoratore e ogni Ambito ne mostra tre. Nel gioco di destrezza le competenze diventano pezzi da toccare.
+
+\vspace{1mm}
+\newcommand{\competenza}[3]{\begin{minipage}[c]{.158\linewidth}\centering\includegraphics[width=11.5mm]{img/ico_#1}\par\vspace{1mm}{\fontsize{8.6}{10}\selectfont\bfseries #2\par}{\fontsize{7.2}{9}\selectfont #1 · #3\par}\end{minipage}}
+\noindent\competenza{MA}{Manualità}{comune}\hfill\competenza{DI}{Digitale}{comune}\hfill\competenza{CO}{Comunicazione}{comune}\hfill\competenza{OR}{Organizzazione}{non comune}\hfill\competenza{CR}{Creatività}{non comune}\hfill\competenza{RI}{Ricerca}{rara}
+
+\clearpage
+
+% ================================================================ IL CAST
+\titolone{Il cast}
+
+\attacco{Sessanta lavoratori e trenta ambiti professionali, ognuno con un nome e una battuta.}
+
+È il tono che tiene insieme i tre giochi: l'ironia di chi un ufficio, un cantiere o un centralino li ha visti davvero. Nessun eroe e nessuna caricatura cattiva: colleghi.
+
+\vspace{2mm}
+\newcommand{\ritratto}[3]{\begin{minipage}[t]{.292\linewidth}\quadro{\linewidth-1pt}{#1}\par\vspace{1.2mm}{\fontsize{10.5}{12}\selectfont\bfseries\MakeUppercase{#2}\par}\vspace{.2mm}{\fontsize{8.8}{11.6}\selectfont\raggedright #3\par}\end{minipage}}
+\noindent\ritratto{ill_03}{L'Archistar}{Bellissimo. Cade, ma è bellissimo.}\hfill
+\ritratto{ill_02}{Il Capocantiere}{Urla istruzioni che nessuno aveva chiesto.}\hfill
+\ritratto{ill_07}{L'Amico di Tutti}{Sa il nome del tuo gatto. E di quello del capo.}
+
+\vspace{4mm}
+\noindent\ritratto{ill_22}{La Project Manager}{Ti ha messo in copia. Di nuovo.}\hfill
+\ritratto{ill_10}{Lo Smanettone}{L'ha smontato per capire come funziona. Funzionava.}\hfill
+\ritratto{ill_27}{Il Burocrate Gentile}{Manca un timbro. Gli dispiace moltissimo.}
+
+\vspace{-1mm}
+\titolo{E trenta ambiti in cui metterli al lavoro}
+
+\newcommand{\ambitino}[3]{\begin{minipage}[t]{.212\linewidth}\quadro{\linewidth-1pt}{#1}\par\vspace{1mm}{\fontsize{9}{10.5}\selectfont\bfseries\MakeUppercase{#2}\par}\vspace{.1mm}{\fontsize{8.2}{10.6}\selectfont\raggedright #3\par}\end{minipage}}
+\vspace{1mm}
+\noindent\ambitino{art_14}{Segreteria}{Le faremo sapere.}\hfill
+\ambitino{art_01}{Assistenza tecnica}{Era il cavo. È sempre il cavo.}\hfill
+\ambitino{art_15}{Contabilità}{Mancano tre centesimi. Nessuno va a casa.}\hfill
+\ambitino{art_28}{Sviluppo web}{Sul mio computer funziona.}
+
+% ================================================================ 1. COLLOCAMENTO
+\apertura{rosa}{1}{COLLOCAMENTO}{Forma i lavoratori rispettando le loro ambizioni, trova a ognuno il lavoro giusto e chiudi il collocamento prima degli altri.}{2--4 GIOCATORI · CARTE · A TURNI}{%
+  \cartaAt{62,100}{-8}{72}{amb_08}
+  \cartaAt{81,103}{-3.5}{72}{amb_13}
+  \cartaAt{104,104}{2}{72}{lav_17}
+  \cartaAt{130,102}{7.5}{72}{amb_17}
+  \node[text=white,font=\fontsize{10}{13}\selectfont\itshape,inner sep=0] at (105,27) {«Le faremo sapere.»\enspace{\upshape\fontsize{7.5}{9}\selectfont\textls[180]{SEGRETERIA}}};
+}
+\renewcommand{\gioco}{COLLOCAMENTO}\renewcommand{\tessera}{1}
+\colorlet{accento}{rosa}\colorlet{fascia}{cartascura}\colorlet{filo}{petrolio}\colorlet{sufascia}{petrolio}
+
+\titolone{Il gioco in breve}
+
+\attacco{Ogni giocatore gestisce un piccolo ufficio di collocamento.}
+
+Con le carte Ambito costruisce percorsi di \textbf{Formazione}. Quando un percorso offre ciò che un \textbf{Lavoratore} desidera, lo accoglie. Poi gli trova un \textbf{Lavoro} che quel percorso rende possibile. Formazione, Lavoratore e Lavoro formano un \textbf{set}: più il Lavoro somiglia alle ambizioni del Lavoratore, più punti vale.
+
+La fine della partita scatta quando qualcuno chiude il quinto set. Vince chi ha più punti.
+
+\titolo{Materiale}
+
+\begin{itemize}
+  \item \textbf{60 carte Lavoratore.} Ognuna ha tre icone \textbf{ambizione} e un potere.
+  \item \textbf{60 carte Ambito:} 30 ambiti, due copie di ognuno. Ogni carta ha tre icone \textbf{competenza} e appartiene a una di cinque \textbf{categorie}: Tecnica e produzione, Servizi e relazioni, Organizzazione e gestione, Creatività e comunicazione, Ricerca e innovazione.
+  \item \textbf{4 token obiettivo:} due da 5 punti e due da 3.
+\end{itemize}
+
+\vspace{2mm}
+\noindent\begin{tikzpicture}[x=1mm,y=1mm]
+  \useasboundingbox (0,0) rectangle (165,84);
+  \cartaAt{56,39}{0}{54}{lav_17}
+  \cartaAt{137,39}{0}{54}{amb_17}
+  \begin{scope}[font=\fontsize{7.8}{10.4}\selectfont\senzasillabe,line width=.5pt]
+    % il lavoratore: le ambizioni, il nome, il numero
+    \sullacarta{la}{56}{39}{54}{0}{36}\sullacarta{lb}{56}{39}{54}{0}{446}
+    \draw ($(la)+(-1,0)$) -- ($(la)+(-2.2,0)$) -- ($(lb)+(-2.2,0)$) -- ($(lb)+(-1,0)$);
+    \draw ($(la)!.5!(lb)+(-2.2,0)$) -- ($(la)!.5!(lb)+(-4.4,0)$);
+    \node[anchor=east,align=right,text width=22.5mm,inner sep=0] at ($(la)!.5!(lb)+(-5.4,0)$) {\textbf{Tre ambizioni.}\\Quello che la formazione deve offrirgli.};
+    \sullacarta{ln}{56}{39}{54}{0}{748}
+    \draw ($(ln)+(8.4,0)$) -- ($(ln)+(-4.4,0)$); \fill ($(ln)+(8.4,0)$) circle (.6);
+    \node[anchor=east,align=right,text width=22.5mm,inner sep=0] at ($(ln)+(-5.4,0)$) {\textbf{Nome e battuta.}};
+    \sullacarta{lp}{56}{39}{54}{712}{50}
+    \draw ($(lp)+(0,1.4)$) -- ($(lp)+(0,5.4)$) -- ($(lp)+(6.6,5.4)$); \fill ($(lp)+(0,1.4)$) circle (.6);
+    \node[anchor=west,inner sep=0] at ($(lp)+(7.6,5.4)$) {\textbf{Numero:} dice quale potere ha.};
+    % l'ambito: le competenze, la categoria
+    \sullacarta{aa}{137}{39}{54}{0}{36}\sullacarta{ab}{137}{39}{54}{0}{446}
+    \draw ($(aa)+(-1,0)$) -- ($(aa)+(-2.2,0)$) -- ($(ab)+(-2.2,0)$) -- ($(ab)+(-1,0)$);
+    \node[anchor=east,align=right,text width=22mm,inner sep=0] at ($(aa)!.5!(ab)+(-3.4,0)$) {\textbf{Tre competenze.}\\Offerte come Formazione, richieste come Lavoro.};
+    \sullacarta{ac}{137}{39}{54}{0}{962}
+    \draw ($(ac)+(4,0)$) -- ($(ac)+(-2.4,0)$); \fill ($(ac)+(4,0)$) circle (.6);
+    \node[anchor=east,align=right,text width=22mm,inner sep=0] at ($(ac)+(-3.4,0)$) {\textbf{Categoria.}\\Serve per i token.};
+  \end{scope}
+\end{tikzpicture}
+
+\vspace{1mm}
+Le competenze sono sei: \ico{MA} Manualità, \ico{DI} Digitale e \ico{CO} Comunicazione sono comuni; \ico{OR} Organizzazione e \ico{CR} Creatività si trovano meno; \ico{RI} Ricerca è rara. La stessa icona può comparire più volte su una carta.
+
+\begin{nota}{Una carta, due usi}
+Una carta Ambito si gioca come \textbf{Formazione} oppure come \textbf{Lavoro}. Come Formazione \emph{offre} le sue tre competenze; come Lavoro le \emph{richiede}.
+\end{nota}
+
+{\fontsize{8}{10.6}\selectfont Sulle carte del prototipo la fascia dei Lavoratori riporta ancora la dicitura «attitudini»: sono le ambizioni.\par}
+
+\clearpage
+% ---------------------------------------------------------------- preparazione e turno
+\titolo{Preparazione}
+\daccapo
+\passo{Mescolate}{separatamente il mazzo dei Lavoratori e quello degli Ambiti.}
+\passo{Pescate}{3 carte Ambito a testa: è la vostra mano.}
+\passo{Aprite il mercato.}{Rivelate in fila tanti Lavoratori quanti sono i giocatori. I Lavoratori nuovi entreranno sempre in coda alla fila.}
+\passo{Preparate i token}{accanto ai mazzi e lasciate spazio per gli scarti degli Ambiti.}
+
+\vspace{1.5mm}
+\noindent\begin{tikzpicture}[x=1mm,y=1mm]
+  \useasboundingbox (0,-3) rectangle (165,60);
+  \begin{scope}[font=\fontsize{6.4}{8}\selectfont\bfseries]
+    \cartaAt{12,41}{0}{17}{dorso_amb}
+    \node[inner sep=0] at (12,26.4) {\textls[150]{AMBITI}};
+    \draw[petrolio,line width=.5pt,dash pattern=on 1.2mm off 1mm,rounded corners=.7mm] (25.5,29.1) rectangle (42.5,52.9);
+    \node[inner sep=0] at (34,26.4) {\textls[150]{SCARTI}};
+    \foreach \x/\y/\v in {55/46.5/5,65/46.5/5,55/36/3,65/36/3}{\fill[petrolio] (\x,\y) circle (4.1);\draw[carta,line width=.6pt] (\x,\y) circle (3.3);\node[text=carta,font=\fontsize{9}{9}\selectfont\bfseries,inner sep=0] at (\x,\y) {\v};}
+    \node[inner sep=0] at (60,26.4) {\textls[150]{TOKEN}};
+    \cartaAt{90,41}{0}{17}{lav_06}
+    \cartaAt{111,41}{0}{17}{lav_28}
+    \cartaAt{132,41}{0}{17}{lav_54}
+    \cartaAt{155,41}{0}{17}{dorso_lav}
+    \node[inner sep=0] at (111,57.4) {\textls[150]{IL MERCATO DEI LAVORATORI}};
+    \node[inner sep=0] at (155,26.4) {\textls[150]{LAVORATORI}};
+    \draw[accento,line width=.9pt,-{Stealth[length=2.2mm]}] (144.8,26.4) -- (139.2,26.4);
+    \draw[accento,line width=.9pt,-{Stealth[length=2.2mm]}] (83,26.4) -- (77,26.4);
+    \node[inner sep=0,font=\fontsize{6.6}{8}\selectfont] at (111,26.4) {chi è in fila da più tempo esce per primo};
+    \cartaAt{18,8}{10}{15}{amb_13}
+    \cartaAt{28,9.4}{0}{15}{amb_08}
+    \cartaAt{38,8}{-10}{15}{amb_17}
+    \node[anchor=west,inner sep=0] at (50,9) {\textls[150]{LA TUA MANO: 3 AMBITI}};
+    \node[anchor=west,inner sep=0,font=\fontsize{8.4}{11}\selectfont,text width=62mm] at (102,9) {Inizia il giocatore più giovane, poi si procede in senso orario. Il limite di mano è \textbf{6 carte}.};
+  \end{scope}
+\end{tikzpicture}
+
+\titolo{Il turno}
+
+Nel tuo turno fai \textbf{una sola} di queste cinque azioni. I poteri dei Lavoratori possono concederne altre.
+\daccapo
+\passo{Aprire una formazione.}{Gioca una carta Ambito davanti a te: diventa una Formazione e apre una nuova pila. Puoi avere quante pile vuoi.}
+\passo{Migliorare una formazione.}{Gioca una carta Ambito sotto una tua Formazione: le sue tre competenze si sommano a quelle della pila. Puoi farlo anche dopo aver inserito un Lavoratore, finché il set non è chiuso.}
+\passo{Inserire un lavoratore.}{Prendi un Lavoratore dal mercato e mettilo sopra una tua pila che non ne ha ancora uno. Le competenze della pila devono comprendere \textbf{tutte e tre le sue ambizioni}, contate una per una: due icone Digitale ne chiedono due. Il mercato si ripristina subito, in coda. Poi \textbf{attivi il potere} del Lavoratore che hai preso.}
+\passo{Completare un set con un lavoro.}{Gioca dalla mano una carta Ambito, come Lavoro, sopra una tua pila che ha già un Lavoratore. Le Formazioni della pila devono comprendere \textbf{tutte e tre le icone del Lavoro}. Segna i punti, controlla i token obiettivo e metti negli scarti le Formazioni: Lavoratore e Lavoro restano davanti a te.}
+\passo{Pescare.}{Pesca 2 carte Ambito. Poi il mercato scorre: il Lavoratore che è in fila da più tempo va in fondo al mazzo e ne entra uno nuovo in coda.}
+
+Se non puoi fare nessuna azione, passi. \textbf{Alla fine del turno}, se hai più di 6 carte in mano, scarta quelle in eccesso: è l'ultima cosa che fai.
+
+\clearpage
+% ---------------------------------------------------------------- il set e i punti
+\titolo{Come si costruisce un set}
+
+Le carte si sovrappongono lasciando visibili tutte le fasce delle icone. Ogni nuova Formazione va \textbf{sotto} le precedenti; il Lavoratore va sopra le Formazioni; il Lavoro va sopra il Lavoratore. In una pila le competenze in più, o ripetute, non danno fastidio.
+
+\vspace{2mm}
+\noindent\begin{tikzpicture}[x=1mm,y=1mm]
+  \useasboundingbox (0,0) rectangle (165,60);
+  \cartaAt{19,26}{0}{36}{amb_08}
+  \cartaAt{25.57,26}{0}{36}{amb_13}
+  \cartaAt{32.14,26}{0}{36}{lav_17}
+  \cartaAt{38.71,26}{0}{36}{amb_17}
+  \foreach \x/\n in {4.3/1,10.87/2,17.44/3,24.01/4}{\fill[petrolio] (\x,56.4) circle (2.2);\node[text=white,font=\fontsize{7.5}{8}\selectfont\bfseries,inner sep=0] at (\x,56.4) {\n};\draw[petrolio,line width=.4pt] (\x,54.2) -- (\x,52);}
+  \begin{scope}[shift={(66,0)}]
+    \newcommand{\riga}[4]{% y, numeri, titolo, testo
+      \node[anchor=north west,inner sep=0,text width=97mm,font=\fontsize{8.6}{12}\selectfont] at (0,#1) {{\fontsize{7}{9}\selectfont\bfseries\color{accento}\textls[160]{#2}}\\[-.2mm]\textbf{#3}\enspace #4};}
+    \riga{59}{1 · 2\enspace FORMAZIONI}{Ristorazione e Logistica.}{La pila offre \terna{MA,CO,CO}\,\terna{MA,DI,OR}}
+    \riga{45.5}{3\enspace LAVORATORE}{Il Tecnico Paziente}{desidera \terna{MA,DI,CO}\,e la pila le ha tutte \spunta}
+    \riga{32}{4\enspace LAVORO}{Direzione}{richiede \terna{CO,MA,OR}\,e la pila le ha tutte \spunta}
+    \riga{18.5}{PUNTI}{Due ambizioni combaciano col Lavoro,}{\ico{MA} e \ico{CO}: il set vale \textbf{5 + 5 = 10 punti}. Con Assistenza clienti \terna{DI,CO,MA} varrebbe 16.}
+  \end{scope}
+\end{tikzpicture}
+
+Chiuso il set, le Formazioni vanno negli scarti. Davanti a te restano il Lavoratore e il suo Lavoro: un collocamento riuscito.
+
+\titolo{Punti del collocamento}
+
+Ogni set vale \textbf{5 punti}, più un bonus per le ambizioni del Lavoratore che combaciano con le icone della carta giocata come Lavoro. Ogni icona si abbina una volta sola.
+
+\vspace{1mm}
+\noindent{\arrayrulecolor{carta}\setlength{\arrayrulewidth}{1.2pt}\renewcommand{\arraystretch}{1.3}%
+\begin{tabularx}{\linewidth}{>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X|>{\centering\arraybackslash}X}
+\rowcolor{petrolio}\textcolor{white}{\etichetta{Corrispondenze}} & \textcolor{white}{\etichetta{Punti base}} & \textcolor{white}{\etichetta{Bonus}} & \textcolor{white}{\etichetta{Totale}}\\\hline
+\rowcolor{cartascura} nessuna & 5 & 0 & \textbf{5}\\\hline
+\rowcolor{cartascura} 1 & 5 & 2 & \textbf{7}\\\hline
+\rowcolor{cartascura} 2 & 5 & 5 & \textbf{10}\\\hline
+\rowcolor{cartascura} 3 & 5 & 11 & \textbf{16}
+\end{tabularx}}
+
+\vspace{1.5mm}
+Le ambizioni non devono per forza combaciare col Lavoro: un lavoro qualunque si trova sempre. È il lavoro dei sogni che fa la differenza.
+
+\titolo{I token obiettivo}
+
+Per gli obiettivi conta la \textbf{categoria} della carta che ha chiuso ogni set come Lavoro. Ogni giocatore può prendere al massimo un token per obiettivo; i token si sommano al punteggio finale.
+
+\noindent\begin{minipage}[t]{.47\linewidth}
+\sottotitolo{Tre set della stessa categoria}
+
+Il primo giocatore che chiude 3 set della stessa categoria prende il token da \textbf{5 punti}. Il secondo che ci riesce prende quello da \textbf{3 punti}.
+\end{minipage}\hfill
+\begin{minipage}[t]{.47\linewidth}
+\sottotitolo{Quattro set di categorie diverse}
+
+Il primo giocatore che chiude 4 set di quattro categorie diverse prende il token da \textbf{5 punti}. Il secondo che ci riesce prende quello da \textbf{3 punti}.
+\end{minipage}
+
+\clearpage
+% ---------------------------------------------------------------- poteri, fine della partita
+\titolo{I poteri dei lavoratori}
+
+Ogni Lavoratore ha uno di quattro poteri. Il potere si attiva \textbf{quando inserisci il Lavoratore} con l'azione 3.
+
+\vspace{1mm}
+\noindent{\arrayrulecolor{carta}\setlength{\arrayrulewidth}{1.2pt}%
+\begin{tabularx}{\linewidth}{>{\centering\arraybackslash}p{8mm}|>{\raggedright\arraybackslash}p{19mm}|>{\raggedright\arraybackslash}X}
+\rowcolor{petrolio}\textcolor{white}{\etichetta{N.}} & \textcolor{white}{\etichetta{Potere}} & \textcolor{white}{\etichetta{Effetto}}\\\hline
+\rowcolor{cartascura}\textbf{1} & \textbf{Pesca} & Pesca 1 carta Ambito.\\\hline
+\rowcolor{cartascura}\textbf{2} & \textbf{Prenota} & Prendi un Lavoratore dal mercato e tienilo da parte, scoperto: è prenotato per te. Il mercato si ripristina.\\\hline
+\rowcolor{cartascura}\textbf{3} & \textbf{Forma} & Gioca subito fino a 2 carte Ambito dalla mano come Formazioni: per aprire pile nuove o per migliorarne di tue.\\\hline
+\rowcolor{cartascura}\textbf{4} & \textbf{Piazza} & Metti subito un altro Lavoratore, dal mercato o tra i tuoi prenotati, su una tua pila libera, ignorando una delle sue tre ambizioni. Il suo potere non si attiva.
+\end{tabularx}}
+
+\vspace{2mm}
+\begin{itemize}
+  \item \textbf{Un Lavoratore prenotato} si inserisce con l'azione 3, al posto di prenderne uno dal mercato: valgono gli stessi requisiti e il mercato non cambia. Il suo potere si attiva in quel momento, non quando lo prenoti.
+  \item I Lavoratori prenotati non contano nel limite di mano e può usarli solo chi li ha prenotati.
+  \item Un potere che non puoi o non vuoi usare va perso.
+\end{itemize}
+
+\begin{nota}{Chi ha quale potere}
+Il potere più utile sta sui Lavoratori più difficili da formare. Nel prototipo i poteri non sono ancora stampati sulle carte: si leggono dal numero del Lavoratore.\par\vspace{1.4mm}
+{\fontsize{8.4}{12}\selectfont
+\textbf{1 · Pesca}\enspace 08 · 10 · 12 · 13 · 15 · 18 · 23 · 24 · 33 · 34 · 35 · 49 · 55 · 57 · 58\par
+\textbf{2 · Prenota}\enspace 04 · 07 · 09 · 14 · 19 · 28 · 38 · 42 · 44 · 46 · 47 · 52 · 53 · 54 · 60\par
+\textbf{3 · Forma}\enspace 05 · 16 · 17 · 25 · 26 · 32 · 37 · 39 · 43 · 45 · 48 · 50 · 51 · 56 · 59\par
+\textbf{4 · Piazza}\enspace 01 · 02 · 03 · 06 · 11 · 20 · 21 · 22 · 27 · 29 · 30 · 31 · 36 · 40 · 41\par}
+\end{nota}
+
+\titolo{Fine della partita}
+
+La fine della partita scatta quando un giocatore completa il suo \textbf{quinto set}. Terminate il giro in corso, fino al giocatore alla destra di chi ha iniziato la partita; poi giocate \textbf{ancora un giro completo}. In questi turni si possono chiudere altri set e prendere i token rimasti.
+
+\begin{nota}{Esempio}
+Chi ha iniziato la partita chiude il quinto set. Gli altri terminano il giro; poi tutti, lui compreso, giocano un ultimo turno.
+\end{nota}
+
+Quando il mazzo degli Ambiti finisce, rimescolate gli scarti. Se un mazzo finisce e non si può ricostituire, la fine della partita scatta allo stesso modo.
+
+\sottotitolo{Vittoria}
+
+Ognuno somma i punti dei propri set e quelli dei token. Vince chi ha il punteggio più alto. In caso di parità, tra i giocatori a pari punti vince \textbf{il primo che urla «Lavoro!»}.
+
+% ================================================================ 2. VARIANTE CARTE
+\apertura{petrolio}{2}{VARIANTE CARTE}{Tre lavoratori. Una mano sola. Una carta alla volta. Trova la formazione giusta, trova il lavoro giusto e prenditi il lavoratore prima degli altri.}{2--4 GIOCATORI · CARTE · TEMPO REALE}{%
+  \cartaAt{30,120}{-24}{34}{amb_25}
+  \cartaAt{58,82}{16}{34}{amb_13}
+  \cartaAt{84,126}{8}{34}{amb_19}
+  \cartaAt{34,66}{-9}{34}{amb_22}
+  \cartaAt{150,126}{-13}{34}{amb_10}
+  \cartaAt{178,100}{21}{34}{amb_28}
+  \cartaAt{140,70}{-27}{34}{amb_07}
+  \cartaAt{172,62}{6}{34}{amb_14}
+  \cartaAt{118,118}{31}{34}{amb_01}
+  \cartaAt{82,64}{-18}{34}{amb_27}
+  \cartaAt[rosa,opacity=1,line width=2.2pt]{107,90}{-3}{48}{lav_19}
+  \node[text=white,font=\fontsize{10}{13}\selectfont\itshape,inner sep=0] at (105,24) {«È tutto qui. Da qualche parte.»\enspace{\upshape\fontsize{7.5}{9}\selectfont\textls[180]{ARCHIVIO}}};
+}
+\renewcommand{\gioco}{VARIANTE CARTE}\renewcommand{\tessera}{2}
+\colorlet{accento}{rosa}\colorlet{fascia}{petrolio}\colorlet{filo}{rosa}\colorlet{sufascia}{carta}
+
+\titolone{L'idea}
+
+\attacco{Ogni lavoratore arriva con ciò che sa già fare, ma non sempre possiede tutto quello che serve per il lavoro giusto.}
+
+A volte basta trovare la formazione adatta. A volte il lavoro perfetto è già lì, nascosto dall'altra parte di una carta. Il problema è che il mercato non è ordinato: offerte e percorsi formativi sono sparsi ovunque, e tutti cercano nello stesso momento. Dovrete riconoscere in fretta ciò che serve, scegliere quali carte trattenere e costruire il percorso corretto prima degli altri.
+
+\begin{nota}{Idea centrale}
+Cerca una carta alla volta con una sola mano. Se ti serve, mettila davanti a te. Se non ti serve, rimettila subito nel Mercato. Appena hai costruito una combinazione valida, prendi il Lavoratore.
+\end{nota}
+
+\sottotitolo{Scopo del gioco}
+
+Colloca più lavoratori degli altri trovando, nel caos del Mercato, le Formazioni e il Lavoro che permettono di soddisfare tutte le competenze richieste.
+
+\titolo{Componenti}
+
+\noindent\begin{minipage}[c]{.50\linewidth}
+\sottotitolo{Carte Mercato, a due facce}
+
+\begin{itemize}
+  \item \textbf{Fronte, Formazione:} mostra una competenza che un lavoratore può acquisire.
+  \item \textbf{Retro, Lavoro:} mostra le competenze richieste per accedere a quel lavoro.
+\end{itemize}
+
+\sottotitolo{Carte Lavoratore}
+
+Ogni Lavoratore mostra le competenze che \textbf{possiede già}. Si sommano a quelle delle Formazioni raccolte durante il round.
+\end{minipage}\hfill
+\begin{minipage}[c]{.46\linewidth}
+\begin{tikzpicture}[x=1mm,y=1mm]
+  \useasboundingbox (0,0) rectangle (76,56);
+  \newcommand{\schemacarta}[3]{% x, etichetta, icone
+    \begin{scope}[shift={(#1,4)}]
+      \fill[black,opacity=.2,rounded corners=1.2mm] (.6,-.8) rectangle (30.6,41.2);
+      \fill[carta,rounded corners=1.2mm] (0,0) rectangle (30,42);
+      \begin{scope}\clip[rounded corners=1.2mm] (0,0) rectangle (30,42);\fill[petrolio] (0,0) rectangle (8,42);\fill[rosa] (8,0) rectangle (8.5,42);\end{scope}
+      \draw[petrolio,line width=.4pt,rounded corners=1.2mm] (0,0) rectangle (30,42);
+      \foreach \s [count=\i] in {#3}{\node[inner sep=0] at (4,44-\i*8.6) {\includegraphics[width=6mm]{img/ico_\s}};}
+      \node[anchor=west,inner sep=0,font=\fontsize{5.2}{6}\selectfont\bfseries] at (10.5,38.6) {\textls[200]{MERCATO}};
+      \draw[petrolio,line width=.5pt] (10.5,36.8) -- (28,36.8);
+      \node[anchor=west,inner sep=0,font=\fontsize{7.6}{9}\selectfont\bfseries] at (10.5,14.5) {#2};
+    \end{scope}}
+  \schemacarta{2}{FORMAZIONE}{DI}
+  \schemacarta{44}{LAVORO}{DI,CO,MA}
+  \node[anchor=west,inner sep=0,font=\fontsize{6.6}{8.4}\selectfont,text width=18mm,align=left] at (12.5,12.5) {offre\\una competenza};
+  \node[anchor=west,inner sep=0,font=\fontsize{6.6}{8.4}\selectfont,text width=18mm,align=left] at (54.5,12.5) {chiede queste\\competenze};
+  \draw[accento,line width=1pt,{Stealth[length=2.2mm]}-{Stealth[length=2.2mm]}] (33.5,27) to[bend left=38] (42.5,27);
+  \node[inner sep=0,font=\fontsize{6}{7}\selectfont\bfseries] at (38,34) {\textls[150]{GIRA}};
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont\bfseries] at (17,51.5) {\textls[150]{FRONTE}};
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont\bfseries] at (59,51.5) {\textls[150]{RETRO}};
+\end{tikzpicture}
+\end{minipage}
+
+\titolo{Preparazione}
+\daccapo
+\passo{Sparpagliate il Mercato.}{Mescolate le carte Mercato e sparpagliatele al centro del tavolo: su qualunque lato, orientate in qualsiasi direzione, anche un po' sovrapposte.}
+\passo{Preparate i Lavoratori.}{Mescolate le carte Lavoratore e formate un mazzo coperto a parte.}
+\passo{Lasciate spazio}{davanti a ogni giocatore per le carte che deciderà di trattenere.}
+
+\begin{nota}{Importante}
+Il Mercato deve essere raggiungibile da tutti. Non serve ordinarlo: più è caotico, più rappresenta bene il cuore del gioco.
+\end{nota}
+
+\clearpage
+% ---------------------------------------------------------------- il round
+\titolo{Svolgimento della partita}
+
+La partita è composta da \textbf{3 round}. In ogni round viene rivelato un solo Lavoratore.
+\daccapo
+\passo{Rivela il Lavoratore.}{Rivelate la prima carta Lavoratore e mettetela al centro, ben visibile a tutti. Da questo momento la ricerca comincia.}
+\passo{Cerca nel Mercato.}{Tutti giocano contemporaneamente, e per tutti valgono le stesse regole:
+  \begin{itemize}
+    \item puoi usare \textbf{una sola mano};
+    \item puoi prendere dal Mercato \textbf{una sola carta alla volta};
+    \item puoi girare e rigirare la carta che hai preso per guardarne entrambi i lati;
+    \item finché hai una carta in mano non puoi prenderne un'altra.
+  \end{itemize}}
+\passo{Tieni o rimetti.}{Dopo aver guardato una carta scegli: se vuoi tenerla, mettila davanti a te mostrando il lato che intendi usare; se non vuoi tenerla, rimettila subito nel Mercato. Una carta posata resta com'è fino alla fine del round: non si gira e non torna nel Mercato.}
+\passo{Costruisci una combinazione valida.}{Per collocare il Lavoratore devi avere davanti a te \textbf{un Lavoro} e tutte le \textbf{Formazioni} che servono perché, sommate alle competenze del Lavoratore, coprano tutti i simboli richiesti da quel Lavoro.}
+
+\begin{nota}{Regola chiave}
+Competenze del Lavoratore + Formazioni raccolte = tutte le competenze richieste dal Lavoro.
+\end{nota}
+
+\vspace{1mm}
+\noindent\begin{tikzpicture}[x=1mm,y=1mm]
+  \useasboundingbox (0,0) rectangle (165,48);
+  \newcommand{\cartina}[3]{% x, titolo, icone
+    \begin{scope}[shift={(#1,8)}]
+      \fill[black,opacity=.2,rounded corners=1.1mm] (.6,-.8) rectangle (26.3,35.2);
+      \fill[carta,rounded corners=1.1mm] (0,0) rectangle (25.7,36);
+      \begin{scope}\clip[rounded corners=1.1mm] (0,0) rectangle (25.7,36);\fill[petrolio] (0,0) rectangle (7,36);\fill[rosa] (7,0) rectangle (7.45,36);\end{scope}
+      \draw[petrolio,line width=.4pt,rounded corners=1.1mm] (0,0) rectangle (25.7,36);
+      \foreach \s [count=\i] in {#3}{\node[inner sep=0] at (3.5,37.8-\i*7.4) {\includegraphics[width=5.2mm]{img/ico_\s}};}
+      \node[anchor=west,inner sep=0,font=\fontsize{6.2}{7}\selectfont\bfseries] at (9.6,13) {#2};
+    \end{scope}}
+  \cartaAt{19,26}{0}{30}{lav_07}
+  \node[font=\fontsize{20}{20}\selectfont\bfseries,inner sep=0] at (45.5,26) {+};
+  \cartina{53}{FORMAZIONE}{DI}
+  \node[font=\fontsize{20}{20}\selectfont\bfseries,inner sep=0] at (87.5,26) {=};
+  \cartina{96}{LAVORO}{DI,CO,MA}
+  \node[anchor=west,inner sep=0,text width=37mm,font=\fontsize{8.8}{12.4}\selectfont,align=left] at (128,26) {L'Amico di Tutti ha già \ico{CO} e \ico{MA}. La Formazione gli dà \ico{DI}: il Lavoro è suo \spunta};
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont\bfseries] at (19,1.6) {\textls[150]{IL LAVORATORE}};
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont\bfseries] at (65.8,3.6) {\textls[150]{UNA FORMAZIONE}};
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont\bfseries] at (108.8,3.6) {\textls[150]{UN LAVORO}};
+\end{tikzpicture}
+
+\begin{itemize}
+  \item \textbf{Un simbolo, una fonte.} Se il Lavoro chiede due volte la stessa competenza servono due fonti diverse: due Formazioni, oppure una Formazione e un'icona del Lavoratore.
+  \item Puoi tenere davanti a te più Lavori e più Formazioni del necessario: al controllo indichi il Lavoro che usi.
+\end{itemize}
+
+\titolo{Prendere il lavoratore}
+
+Appena ritieni di avere davanti a te una combinazione completa, \textbf{prendi fisicamente la carta Lavoratore} dal centro del tavolo, con la mano libera. Tutti si fermano e la combinazione viene controllata.
+
+\noindent\begin{minipage}[t]{.47\linewidth}
+\sottotitolo{Combinazione corretta}
+
+Se tutte le competenze richieste dal Lavoro sono coperte, conquisti il Lavoratore e lo metti davanti a te: vale un punto.
+\end{minipage}\hfill
+\begin{minipage}[t]{.47\linewidth}
+\sottotitolo{Combinazione errata}
+
+Se ne manca anche una sola, il Lavoratore torna al centro e la ricerca riprende. Tu sei fuori dal round: le tue carte restano dove sono.
+\end{minipage}
+
+\clearpage
+% ---------------------------------------------------------------- fine del round e della partita
+\titolo{Fine del round}
+
+Quando un Lavoratore viene conquistato:
+\daccapo
+\passo{Le carte tornano al centro.}{Tutte le carte Mercato trattenute dai giocatori tornano nel Mercato.}
+\passo{Si rimescola il caos.}{Le carte vengono sparpagliate di nuovo.}
+\passo{Si riparte.}{Si rivela un nuovo Lavoratore e comincia subito il round successivo.}
+
+\begin{nota}{Se nessuno può riuscirci}
+Se tutti i giocatori sono fuori dal round, o se tutti sono d'accordo che la combinazione non si può più completare, il Lavoratore va in fondo al mazzo, le carte tornano nel Mercato e il round si rigioca con un Lavoratore nuovo.
+\end{nota}
+
+\titolo{Fine della partita}
+
+Dopo che sono stati conquistati \textbf{3 Lavoratori}, la partita termina. Vince chi possiede più carte Lavoratore.
+
+\sottotitolo{Parità}
+
+In caso di parità rivelate un quarto Lavoratore: partecipano allo spareggio solo i giocatori in parità, e il primo che lo conquista vince la partita.
+
+\vspace{7mm}
+\noindent\begin{tikzpicture}[x=1mm,y=1mm]
+  \useasboundingbox (0,0) rectangle (165,96);
+  \cartaAt{15,70}{-19}{29}{amb_25}
+  \cartaAt{41,74}{10}{29}{amb_03}
+  \cartaAt{64,68}{-33}{29}{amb_19}
+  \cartaAt{110,74}{14}{29}{amb_10}
+  \cartaAt{134,70}{-8}{29}{amb_28}
+  \cartaAt{148,70}{25}{29}{amb_22}
+  \cartaAt{20,27}{27}{29}{amb_14}
+  \cartaAt{47,22}{-11}{29}{amb_08}
+  \cartaAt{121,23}{-25}{29}{amb_15}
+  \cartaAt{147,29}{12}{29}{amb_07}
+  \cartaAt{68,33}{6}{29}{amb_13}
+  \cartaAt{106,43}{-14}{29}{amb_27}
+  \cartaAt[rosa,opacity=1,line width=2pt]{85,50}{3}{38}{lav_26}
+\end{tikzpicture}
+
+{\fontsize{7.6}{10}\selectfont\centering Il Mercato a metà di un round. Nel prototipo le illustrazioni sono quelle di Collocamento.\par}
+
+% ================================================================ 3. MERCATO DEL LAVORO
+\apertura{arancio}{3}{MERCATO DEL LAVORO}{Gestire lavoratori, competenze e opportunità sembra facile. Finché non devi far stare tutto in piedi.}{2--4 GIOCATORI · DESTREZZA · TEMPO REALE}{%
+  \begin{scope}[shift={(105,94)},rotate=-4]
+    \fill[black,opacity=.25] (-54+1.2,-54-1.6) rectangle (54+1.2,54-1.6);
+    \fill[white] (-54,-54) rectangle (54,54);
+    \node[inner sep=0,rotate=-4] at (0,0) {\includegraphics[width=101mm]{img/ill_03}};
+  \end{scope}
+  \node[text=white,font=\fontsize{10}{13}\selectfont\itshape,inner sep=0] at (105,24) {«Bellissimo. Cade, ma è bellissimo.»\enspace{\upshape\fontsize{7.5}{9}\selectfont\textls[180]{L'ARCHISTAR}}};
+}
+\renewcommand{\gioco}{MERCATO DEL LAVORO}\renewcommand{\tessera}{3}
+\colorlet{accento}{arancio}\colorlet{fascia}{arancio}\colorlet{filo}{petrolio}\colorlet{sufascia}{white}
+
+\titolone{L'idea}
+
+\attacco{Sulla carta è semplice: c'è un lavoro disponibile, ci sono tre competenze richieste e da qualche parte c'è una persona da collocare.}
+
+Nella realtà ogni scelta si appoggia su quelle precedenti. Le sedi si riempiono, le competenze si intrecciano, i lavoratori si accumulano, e basta un gesto sbagliato perché qualcosa cada fuori dal sistema.
+
+Ogni giocatore dirige una \textbf{Sede}. Per collocare un lavoratore deve far toccare al suo meeple i tre pezzi Competenza che il lavoro richiede. Bisogna essere rapidi nel trovare la combinazione giusta, precisi nel costruirla e abbastanza audaci da crescere verso l'alto. Ma ogni errore resta lì, visibile, e a fine partita presenta il conto.
+
+\sottotitolo{Obiettivo}
+
+Fai più punti degli altri risolvendo Carte Lavoro, facendo crescere la tua Sede in altezza e limitando i componenti che cadono fuori.
+
+\titolo{Componenti}
+
+\noindent\begin{minipage}[c]{.47\linewidth}\raggedright
+\begin{itemize}
+  \item \textbf{25 meeple Lavoratore.}
+  \item \textbf{75 pezzi Competenza:} 15 per ciascuno dei 5 tipi di competenza.
+  \item \textbf{30 Carte Lavoro,} ognuna con 3 simboli Competenza.
+  \item \textbf{4 pedane Sede.}
+\end{itemize}
+
+\vspace{1mm}
+I tre simboli di una Carta Lavoro indicano ciò che un nuovo lavoratore deve possedere per accedere a quel lavoro.
+\end{minipage}\hfill
+\begin{minipage}[c]{.48\linewidth}
+\begin{tikzpicture}[x=1mm,y=1mm]
+  \useasboundingbox (0,0) rectangle (78,40);
+  \meeple{9,14}{1.5}{0}
+  \node[inner sep=0,font=\fontsize{6.2}{8}\selectfont\bfseries] at (9,8) {\textls[150]{MEEPLE}};
+  \foreach \c/\l [count=\i] in {cMA/A,cDI/B,cCO/C,cOR/D,cCR/E}{\pezzo{15+\i*7.2,21}{\c}{\l}}
+  \node[inner sep=0,font=\fontsize{6.2}{8}\selectfont\bfseries] at (36.6,8) {\textls[150]{PEZZI: 5 TIPI}};
+  \begin{scope}[shift={(60,5)}]
+    \fill[black,opacity=.2,rounded corners=1mm] (.5,-.7) rectangle (17.5,30.3);
+    \fill[carta,rounded corners=1mm] (0,0) rectangle (17,31);
+    \draw[petrolio,line width=.5pt,rounded corners=1mm] (0,0) rectangle (17,31);
+    \node[inner sep=0,font=\fontsize{4.8}{6}\selectfont\bfseries] at (8.5,27.2) {\textls[180]{LAVORO}};
+    \draw[petrolio,line width=.4pt] (2.5,25.4) -- (14.5,25.4);
+    \pezzo{8.5,20}{cMA}{A}\pezzo{8.5,13.5}{cDI}{B}\pezzo{8.5,7}{cCO}{C}
+  \end{scope}
+  \node[inner sep=0,font=\fontsize{6.2}{8}\selectfont\bfseries] at (68.5,0.6) {\textls[150]{CARTA LAVORO}};
+\end{tikzpicture}
+\end{minipage}
+
+\begin{nota}{Simboli ripetuti}
+Se una carta mostra due o tre volte la stessa competenza, servono due o tre pezzi distinti di quel tipo. Un singolo pezzo non può coprire più simboli della stessa carta.
+\end{nota}
+
+\titolo{Preparazione}
+\daccapo
+\passo{Scegliete una Sede.}{Ogni giocatore prende una pedana e la mette davanti a sé, vuota.}
+\passo{Prendete i vostri lavoratori.}{Ognuno prende i suoi meeple e li tiene accanto alla pedana: \textbf{12 a testa in 2 giocatori, 8 in 3, 6 in 4}. Il meeple che avanza resta nella scatola.}
+\passo{Create il mercato centrale.}{Mettete tutti i pezzi Competenza al centro del tavolo, alla portata di tutti.}
+\passo{Preparate i lavori.}{Mescolate le 30 Carte Lavoro e formate un mazzo coperto al centro.}
+\passo{Lasciate spazio}{attorno a ogni Sede: i componenti che cadranno resteranno dove finiscono.}
+
+\clearpage
+% ---------------------------------------------------------------- come si gioca
+\begin{nota}{Regola fondamentale: quello che posi, resta}
+Quando un componente viene appoggiato sulla tua Sede e rilasciato, non puoi più spostarlo. Puoi costruire accanto, sopra o contro i pezzi già presenti, ma non puoi correggere il passato.
+\end{nota}
+
+\titolo{Come si gioca}
+
+La partita è una serie di round rapidissimi. Tutti giocano contemporaneamente.
+\daccapo
+\passo{Rivela un Lavoro.}{Girate la prima Carta Lavoro del mazzo e lasciatela visibile a tutti.}
+\passo{Partite insieme.}{Da questo momento tutti possono costruire sulla propria Sede, \textbf{un componente alla volta}: lo prendi, lo posi, e solo allora ne prendi un altro. Per gareggiare per la carta, il primo componente che posi è \textbf{un tuo meeple nuovo}: uno solo per round.}
+\passo{Crea il contatto.}{Il meeple nuovo deve toccare direttamente tre pezzi Competenza che corrispondono ai tre simboli della carta. Puoi usare pezzi presi dal centro e pezzi già presenti nella tua Sede, senza mai spostarli.}
+\passo{Lascia tutto.}{Ogni componente che appoggi e rilasci resta sulla Sede, anche se un altro giocatore completa il lavoro prima di te. Quello che hai ancora in mano quando il round finisce torna da dove l'hai preso.}
+\passo{Prendi la carta.}{Appena la tua configurazione è completa e non la stai più toccando, \textbf{metti la mano sulla Carta Lavoro}: il primo che la tocca ferma il round. Dopo un rapido controllo, se è tutto giusto prendi la carta e la metti davanti a te.}
+\passo{Ripartite.}{Rivelate subito la Carta Lavoro successiva.}
+
+\titolo{Che cosa significa «a contatto»}
+
+\noindent\begin{minipage}[c]{.56\linewidth}
+\begin{itemize}
+  \item Il meeple deve toccare fisicamente e direttamente ciascuno dei tre pezzi richiesti.
+  \item Il contatto può avvenire di lato, dall'alto o dal basso: il gioco usa tutte e tre le dimensioni.
+  \item I pezzi devono essere rilasciati. Non puoi tenere in equilibrio una configurazione con le dita mentre fermi il round.
+  \item Un pezzo Competenza può servire in round successivi ad altri lavoratori, se riescono a toccarlo senza spostarlo.
+\end{itemize}
+\end{minipage}\hfill
+\begin{minipage}[c]{.40\linewidth}
+\begin{tikzpicture}[x=1mm,y=1mm]
+  \useasboundingbox (0,0) rectangle (66,42);
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont\bfseries] at (33,39.5) {\textls[150]{CARTA LAVORO: A · B · C}};
+  % valido: A e B ai lati, C sopra
+  \pedana{2}{10}{28}
+  \meeple{16,10}{1.2}{0}
+  \pezzo{9.4,12.5}{cMA}{A}
+  \pezzo{22.6,12.5}{cDI}{B}
+  \pezzo{16,24.5}{cCO}{C}
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont\bfseries,text=accento] at (16,4.4) {\textls[150]{VALIDO}};
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont] at (16,.6) {tocca A, B e C};
+  % non valido: C tocca B ma non il meeple
+  \pedana{36}{10}{28}
+  \meeple{47,10}{1.2}{0}
+  \pezzo{40.4,12.5}{cMA}{A}
+  \pezzo{53.6,12.5}{cDI}{B}
+  \pezzo{58.7,12.5}{cCO}{C}
+  \draw[accento,line width=1.3pt,line cap=round] (56.6,18.4) -- (60.8,22.6);\draw[accento,line width=1.3pt,line cap=round] (56.6,22.6) -- (60.8,18.4);
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont\bfseries,text=accento] at (50,4.4) {\textls[150]{NON VALIDO}};
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont] at (50,.6) {C tocca B, non il meeple};
+\end{tikzpicture}
+\end{minipage}
+
+\titolo{Chiamata errata}
+
+Se fermi il round ma la tua configurazione non soddisfa la carta, non ottieni il Lavoro. Il round riprende subito e tu non puoi più conquistare quella carta. Tutti i componenti già posati restano dove sono.
+
+\begin{itemize}
+  \item \textbf{Se il tuo meeple nuovo cade o si sposta} prima che tu abbia completato il contatto, per questa carta sei fuori: non puoi usarne un altro.
+  \item \textbf{Se nessuno può riuscirci,} perché tutti sono fuori o tutti sono d'accordo che non si può, la carta si scarta e se ne rivela un'altra.
+\end{itemize}
+
+\clearpage
+% ---------------------------------------------------------------- cadute, fine, punti
+\titolo{Cadute e crolli}
+
+La Sede diventa sempre più affollata. Prima o poi qualcosa cadrà. Quando succede, non si ripara nulla.
+
+\begin{nota}{Un pezzo caduto resta dove è caduto}
+Se un meeple o un pezzo Competenza lascia del tutto la tua Sede e finisce sul tavolo, non puoi raccoglierlo, spostarlo o riutilizzarlo. Resta lì fino alla fine della partita e vale \textbf{\textminus 1 punto}.
+\end{nota}
+
+\begin{itemize}
+  \item Se un crollo fa cadere più componenti, ciascuno vale \textminus 1 punto.
+  \item I componenti che si spostano o rotolano ma restano sostenuti dalla Sede, direttamente o indirettamente, restano in gioco nella nuova posizione.
+  \item Un componente caduto non conta per l'altezza finale della Sede.
+  \item I pezzi caduti possono rendere scomodo lo spazio attorno a te: fanno parte del disastro e non si toccano.
+  \item Una Carta Lavoro conquistata resta tua anche se la costruzione che l'ha vinta crolla più tardi.
+\end{itemize}
+
+\titolo{Fine della partita}
+
+La partita termina alla fine del round in cui un giocatore \textbf{posa il suo ultimo meeple}. Sono 12 round in 2 giocatori, 8 in 3, 6 in 4.
+
+\titolo{Punteggio}
+
+\noindent\begin{minipage}[c]{.44\linewidth}
+{\arrayrulecolor{carta}\setlength{\arrayrulewidth}{1.2pt}%
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{18mm}}
+\rowcolor{cartascura} Ogni Carta Lavoro & \textbf{+1}\\\hline
+\rowcolor{cartascura} Sede più alta & \textbf{+3}\\\hline
+\rowcolor{cartascura} Seconda Sede più alta & \textbf{+2}\\\hline
+\rowcolor{cartascura} Terza Sede più alta & \textbf{+1}\\\hline
+\rowcolor{cartascura} Ogni componente caduto & \textbf{\textminus 1}
+\end{tabularx}}
+\end{minipage}\hfill
+\begin{minipage}[c]{.52\linewidth}
+\begin{tikzpicture}[x=1mm,y=1mm]
+  \useasboundingbox (0,0) rectangle (86,52);
+  % sede alta
+  \pedana{2}{8}{22}
+  \foreach \p/\c/\l in {{7,10.5}/cMA/A,{12.4,10.5}/cDI/B,{17.8,10.5}/cCO/C,{9.7,15.9}/cOR/D,{15.1,15.9}/cCR/E,{12.4,21.3}/cMA/A,{12.4,26.7}/cDI/B}{\pezzo{\p}{\c}{\l}}
+  \meeple{12.4,29.2}{1.05}{0}
+  \node[inner sep=0,font=\fontsize{11}{11}\selectfont\bfseries,text=accento] at (13,3) {+3};
+  % sede media
+  \pedana{30}{8}{22}
+  \foreach \p/\c/\l in {{35,10.5}/cCO/C,{40.4,10.5}/cOR/D,{45.8,10.5}/cMA/A,{40.4,15.9}/cDI/B}{\pezzo{\p}{\c}{\l}}
+  \meeple{40.4,18.4}{1.05}{0}
+  \node[inner sep=0,font=\fontsize{11}{11}\selectfont\bfseries,text=accento] at (41,3) {+2};
+  % sede bassa, con un caduto
+  \pedana{58}{8}{22}
+  \foreach \p/\c/\l in {{63,10.5}/cDI/B,{68.4,10.5}/cCR/E}{\pezzo{\p}{\c}{\l}}
+  \meeple{74.5,8}{1.05}{0}
+  \pezzo[24]{83,3.4}{cCO}{C}
+  \node[inner sep=0,font=\fontsize{11}{11}\selectfont\bfseries,text=accento] at (67,3) {+1};
+  \node[inner sep=0,font=\fontsize{8}{8}\selectfont\bfseries] at (83,9.6) {\textminus 1};
+  % righello
+  \draw[petrolio,line width=.4pt,dash pattern=on 1mm off .8mm] (0,39.4) -- (26,39.4);
+  \draw[petrolio,line width=.4pt,dash pattern=on 1mm off .8mm] (28,28.6) -- (54,28.6);
+  \draw[petrolio,line width=.4pt,dash pattern=on 1mm off .8mm] (56,18.2) -- (82,18.2);
+  \node[inner sep=0,font=\fontsize{6.2}{8}\selectfont\bfseries] at (42,48) {\textls[150]{CONTA IL PUNTO PIÙ ALTO ANCORA SOSTENUTO}};
+\end{tikzpicture}
+\end{minipage}
+
+\sottotitolo{Come si misura l'altezza}
+
+A fine partita confrontate il punto più alto di ogni struttura ancora sostenuta dalla sua pedana, senza toccare niente. Se la differenza non è evidente, usate un righello. Una Sede vuota non prende bonus.
+
+In caso di parità di altezza prevale chi ha meno componenti caduti, poi chi ha più Carte Lavoro. Se la parità resta, i giocatori alla pari prendono entrambi quel bonus e il piazzamento successivo viene saltato.
+
+\sottotitolo{Vittoria}
+
+Somma i punti delle Carte Lavoro, il bonus altezza e le penalità per i componenti caduti. Chi ha il totale più alto ha gestito meglio il proprio mercato del lavoro e vince la partita.
+
+\clearpage
+% ---------------------------------------------------------------- esempio
+\titolo{Esempio di round}
+
+\noindent\begin{minipage}[c]{.50\linewidth}\setlength{\parskip}{1.9mm}\raggedright
+La Carta Lavoro richiede le competenze A, B e C.
+
+Marta prende uno dei suoi meeple. Nella sua Sede c'è già un pezzo A in una posizione utile: appoggia il meeple contro A, poi prende dal centro B, lo posa accanto al lavoratore, e fa lo stesso con C.
+
+Nel frattempo Luca ha posato il suo meeple e un pezzo B, ma non ha ancora completato la combinazione.
+
+Marta lascia la costruzione senza sostenerla e mette la mano sulla Carta Lavoro. Il contatto c'è: la carta è sua.
+
+Luca si ferma. Il meeple e il pezzo B che ha già rilasciato restano sulla sua Sede; il pezzo che aveva in mano torna al centro. Si gira subito la carta successiva.
+\end{minipage}\hfill
+\begin{minipage}[c]{.46\linewidth}
+\begin{tikzpicture}[x=1.22mm,y=1.22mm]
+  \useasboundingbox (4,0) rectangle (64,72);
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont\bfseries] at (34,70) {\textls[150]{LA SEDE DI MARTA}};
+  \pedana{6}{44}{56}
+  \meeple[petrolio!50]{16,44}{1.2}{0}
+  \pezzo{9.4,46.5}{cOR}{D}\pezzo{22.6,46.5}{cDI}{B}
+  \pezzo{37.4,46.5}{cMA}{A}
+  \meeple{44,44}{1.2}{0}
+  \pezzo{50.6,46.5}{cDI}{B}
+  \pezzo{44,58.5}{cCO}{C}
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont\bfseries,text=accento] at (34,37) {\textls[150]{A · B · C: COMPLETO}};
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont\bfseries] at (34,27) {\textls[150]{LA SEDE DI LUCA}};
+  \pedana{6}{8}{56}
+  \pezzo{16,10.5}{cCR}{E}
+  \meeple{34,8}{1.2}{0}
+  \pezzo{40.6,10.5}{cDI}{B}
+  \node[inner sep=0,font=\fontsize{6.4}{8}\selectfont] at (34,1.6) {mancano A e C: meeple e B restano dove sono};
+\end{tikzpicture}
+\end{minipage}
+
+\titolo{Il senso della costruzione}
+
+All'inizio le competenze sono facili da collegare. Poi la Sede cresce. I pezzi utili possono trovarsi nel posto sbagliato, i nuovi lavoratori devono infilarsi tra quelli vecchi e costruire verso l'alto diventa sempre più rischioso. La stessa struttura che ti aiuta a riusare le competenze è anche ciò che rende ogni nuovo collocamento più difficile.
+
+\begin{nota}{Cuore tematico}
+Far crescere il mercato del lavoro è positivo, ma più il sistema cresce più diventa complesso da gestire. La destrezza rende questa complessità fisica, visibile e immediata.
+\end{nota}
+
+\titolo{Il round in sintesi}
+
+\begin{itemize}
+  \item Rivela 1 Carta Lavoro con 3 competenze.
+  \item Tutti giocano insieme, un componente alla volta.
+  \item Posa un tuo meeple nuovo e fagli toccare le 3 competenze richieste.
+  \item Puoi sfruttare le competenze già presenti nella tua Sede.
+  \item Tutto ciò che rilasci sulla Sede resta lì.
+  \item Il primo che completa e tocca la carta la prende.
+  \item Ciò che cade fuori dalla Sede resta dov'è e vale \textminus 1 punto.
+\end{itemize}
+
+\clearpage
+% ================================================================ A CHE PUNTO SIAMO
+\renewcommand{\gioco}{CDS · TRE PROTOTIPI}\renewcommand{\tessera}{}
+\colorlet{accento}{rosa}\colorlet{fascia}{cartascura}\colorlet{filo}{petrolio}\colorlet{sufascia}{petrolio}
+
+\titolone{A che punto siamo}
+
+\attacco{Tre prototipi a tre stadi diversi. Per ognuno: a che punto è, e che cosa resta da decidere con i pezzi in mano.}
+
+\vspace{2mm}
+\newcommand{\stato}[5]{% colore, numero, titolo, fatto, da fare
+  \noindent\begin{tcolorbox}[enhanced,colback=cartascura,colframe=cartascura,boxrule=0pt,arc=0pt,outer arc=0pt,left=5mm,right=5mm,top=3.4mm,bottom=3.4mm,boxsep=0pt,borderline west={3.2pt}{0pt}{#1},before skip=0mm,after skip=3.6mm]
+    \tikz[baseline=-1.1mm]{\begin{scope}[rotate=-5]\fill[white] (-.42,-.42) rectangle (.42,.42);\fill[#1] (-.36,-.36) rectangle (.36,.36);\node[text=white,font=\fontsize{12}{12}\selectfont\bfseries,rotate=-5,inner sep=0] at (0,0) {#2};\end{scope}}%
+    \hspace{2.4mm}{\fontsize{13.5}{15}\selectfont\bfseries\MakeUppercase{#3}}\par\vspace{2mm}
+    \begin{minipage}[t]{.5\linewidth}{\color{#1}\etichetta{A che punto è}}\par\vspace{.6mm}{\fontsize{9}{12.6}\selectfont\raggedright #4\par}\end{minipage}\hfill
+    \begin{minipage}[t]{.44\linewidth}{\color{#1}\etichetta{Da decidere al tavolo}}\par\vspace{.6mm}{\fontsize{9}{12.6}\selectfont\raggedright #5\par}\end{minipage}
+  \end{tcolorbox}}
+
+\stato{rosa}{1}{Collocamento}
+  {Regole complete e carte illustrate: 60 Lavoratori e 30 Ambiti. Le regole di questo documento sono state giocate da bot in migliaia di partite simulate: la partita arriva sempre al quinto set, in 2, in 3 e in 4 giocatori, in circa 25 giri; ognuno chiude tra 4 e 5 set e fa circa 55 punti; chi comincia non ha vantaggio.}
+  {I quattro poteri. Due di loro, Forma e Piazza, chiedono preparazione e nelle simulazioni vanno spesso a vuoto: vanno osservati con giocatori veri. Poi i poteri vanno stampati sulle carte.}
+
+\stato{petrolio}{2}{Variante Carte}
+  {Prototipo v0.1. Il regolamento è completo e pronto per i primi playtest: tre round, una regola chiave.}
+  {Il mazzo Mercato a due facce è da realizzare. Con le carte in mano si decide quante ne servono, quante competenze chiede un Lavoro e quanto dura un round.}
+
+\stato{arancio}{3}{Mercato del Lavoro}
+  {Prototipo v0.1. Un modello al computer della partita, con migliaia di partite simulate, ha guidato la revisione: i meeple personali che contano i round, la carta toccata per fermare il gioco, un componente alla volta.}
+  {La forma dei pezzi Competenza e la misura della pedana: decidono quanto la Sede si affolla, quanti lavoratori possono condividere lo stesso pezzo e quanto spesso qualcosa cade.}
+
+\vspace{1mm}
+\noindent\begin{minipage}[c]{.72\linewidth}
+\titolo{Provare Collocamento adesso}
+
+Le carte di Collocamento sono su un tavolo online, da aprire nel browser: un tavolo libero, senza regole imposte, per giocare a distanza con il regolamento alla mano.
+
+\vspace{1mm}
+{\fontsize{10.5}{13}\selectfont\bfseries collocamento.cortivo81.workers.dev}
+\end{minipage}\hfill
+\begin{minipage}[c]{.22\linewidth}\raggedleft
+\color{petrolio}\qrcode[height=30mm,nolink]{https://collocamento.cortivo81.workers.dev}
+\end{minipage}
+
+\end{document}
