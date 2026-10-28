@@ -11,6 +11,7 @@ Rispetto alle carte dei designer (grafica/carte_v2):
 - le carte Lavoratore si chiamano Persone.
 
     py -3 grafica/carte_nuove.py proposte   # nove carte per proposta, confronto e PDF da stampare
+    py -3 grafica/carte_nuove.py proposte B # solo la proposta B
     py -3 grafica/carte_nuove.py A          # tutte le carte nella proposta A, in grafica/carte_v3/
 
 Le carte escono a 12 px/mm, 67 x 92 mm: 63 x 88 più 2 mm di abbondanza per lato.
@@ -37,6 +38,8 @@ LARGO, ALTO = (W + 2 * ABB) * PX, (H + 2 * ABB) * PX
 
 CARTA, PETROLIO, ROSA, BIANCO = "#f3ecdd", "#17474d", "#ff3d8b", "#fffaf0"
 MANILA = "#ecdcb9"
+PANNA = "#f5efe3"      # il bianco caldo delle Persone nella proposta B: più chiaro della carta dei disegni
+MAGENTA = "#d53883"    # il rosa scuro dei titoletti: si legge anche sul bianco
 
 FONT_WIN = Path(os.environ.get("WINDIR", "C:/Windows")) / "Fonts"
 FONT_TEX = Path(os.environ.get("LOCALAPPDATA", "")) / "Programs/MiKTeX/fonts/opentype/public/tex-gyre"
@@ -334,14 +337,17 @@ BAHN = "bahnschrift.ttf"   # Bahnschrift: il DIN dei cartelli, con le larghezze 
 
 
 def carta_B(tipo, n):
-    """Manifesto: fondo pieno rosa (Persone) o petrolio (Ambiti) come i dorsi, titolo stretto e grande."""
+    """Manifesto: Persone su bianco panna con i titoletti rosa, Ambiti su petrolio; titolo stretto e grande.
+
+    Il 28/10/2026 il fondo delle Persone era rosa pieno come il dorso: a Vittorio sembrava aggressivo.
+    """
     persona = tipo == "persona"
     dati = PERSONE[n] if persona else AMBITI[n]
-    fondo, colore, chiaro = (ROSA, PETROLIO, BIANCO) if persona else (PETROLIO, BIANCO, BIANCO)
+    fondo, colore, accento = (PANNA, PETROLIO, MAGENTA) if persona else (PETROLIO, BIANCO, BIANCO)
     tela = Image.new("RGBA", (LARGO, ALTO), fondo)
     d = ImageDraw.Draw(tela)
     f = font(BAHN, 8.5, "SemiBold Condensed")
-    scrivi(d, X(5.5), X(7.6), "PERSONA" if persona else "AMBITO", f, colore, PT(8.5) * 0.22)
+    scrivi(d, X(5.5), X(7.6), "PERSONA" if persona else "AMBITO", f, accento, PT(8.5) * 0.22)
     scrivi(d, X(57.5), X(7.6), n, f, colore, PT(8.5) * 0.1, "rs")
     # nome in alto, grande
     f_nome, righe, pt, _ = adatta(dati["nome"].upper(), BAHN, 21, 13, L(52), 2, "Bold Condensed")
@@ -351,6 +357,11 @@ def carta_B(tipo, n):
     top = y / PX - ABB + 2.6
     aw, ah = 46, 64 - top
     img = con_bordo(illustrazione(tipo, n, aw, ah).convert("RGBA"), L(1.0), BIANCO)
+    if persona:  # sul fondo chiaro la stampa si stacca con un'ombra leggera
+        ombra = Image.new("RGBA", (img.width + L(3), img.height + L(3)), (0, 0, 0, 0))
+        ombra.paste(Image.new("RGBA", img.size, (23, 71, 77, 75)), (L(1.5), L(1.5)))
+        ombra = ombra.filter(ImageFilter.GaussianBlur(L(0.5)))
+        tela.alpha_composite(ombra, (X(5.5) - L(1.0) - L(1.5) + L(0.5), X(top) - L(1.5) + L(0.6)))
     tela.alpha_composite(img, (X(5.5) - L(1.0), X(top)))
     # icone in colonna a destra, attaccate al bordo della stampa
     codici = AMBIZIONI[n] if persona else COMPETENZE[n]
@@ -364,7 +375,7 @@ def carta_B(tipo, n):
     if persona:
         p = POTERI[CHI[n]]
         f_p = font(BAHN, 12, "Bold Condensed")
-        scrivi(d, X(5.5), X(79.4), p["nome"].upper(), f_p, PETROLIO, PT(12) * 0.05)
+        scrivi(d, X(5.5), X(79.4), p["nome"].upper(), f_p, accento, PT(12) * 0.05)
         f_b, r_b, pt_e, _ = adatta(p["breve"][0].upper() + p["breve"][1:], BAHN, 9, 7.5, L(52), 2, "SemiCondensed")
         paragrafo(d, X(5.5), X(79.4) + PT(pt_e) * 1.35, r_b, f_b, PETROLIO, PT(pt_e) * 1.1)
     else:
@@ -433,43 +444,56 @@ def carta_C(tipo, n):
 
 PROPOSTE = {
     "A": ("Fanzine", "Franklin Gothic Heavy e macchina da scrivere, fondo carta", carta_A, 53 / 39),
-    "B": ("Manifesto", "Bahnschrift stretto, fondo rosa e petrolio come i dorsi", carta_B, 46 / 30),
+    "B": ("Manifesto", "Bahnschrift stretto, Persone su bianco panna, Ambiti su petrolio", carta_B, 46 / 30),
     "C": ("Schedario", "Rockwell e macchina da scrivere, fondo cartellina", carta_C, 51 / 37),
 }
 CAMPIONE = [("persona", "27"), ("persona", "55"), ("persona", "19"), ("persona", "59"), ("persona", "07"),
             ("persona", "48"), ("ambito", "01"), ("ambito", "12"), ("ambito", "26")]
 
 
-def proposte():
+def proposte(chiavi=tuple(PROPOSTE)):
+    """Le carte di prova delle proposte, un'immagine di confronto e il PDF a grandezza vera.
+
+    Con tutte le proposte: confronto.jpg (una riga per proposta) e proposte_carte.pdf.
+    Con una sola, per esempio B: confronto_B.jpg (sei carte su due righe) e proposta_B.pdf.
+    """
     out = QUI / "proposte_carte"
     out.mkdir(exist_ok=True)
-    for chiave, (nome, _, fn, rapporto) in PROPOSTE.items():
+    for chiave in chiavi:
+        nome, _, fn, rapporto = PROPOSTE[chiave]
         controlla_volti(rapporto)
         for tipo, n in CAMPIONE:
             fn(tipo, n).save(out / f"{chiave}_{tipo}_{n}.png")
         print(chiave, nome)
-    # confronto: una riga per proposta, quattro carte
     scala = 0.42
     cw, ch = round(LARGO * scala), round(ALTO * scala)
-    righe = list(PROPOSTE)
-    scelte = [CAMPIONE[0], CAMPIONE[1], CAMPIONE[3], CAMPIONE[6]]
-    foglio = Image.new("RGB", (len(scelte) * (cw + 20) + 20, len(righe) * (ch + 70) + 10), "white")
+    if len(chiavi) > 1:  # una riga per proposta, quattro carte
+        righe = [(k, [CAMPIONE[0], CAMPIONE[1], CAMPIONE[3], CAMPIONE[6]]) for k in chiavi]
+        nome_file = "confronto"
+    else:  # una proposta sola: tre Persone e tre Ambiti
+        righe = [(chiavi[0], CAMPIONE[:3]), (chiavi[0], CAMPIONE[6:])]
+        nome_file = f"confronto_{chiavi[0]}"
+    colonne = max(len(s) for _, s in righe)
+    foglio = Image.new("RGB", (colonne * (cw + 20) + 20, len(righe) * (ch + 70) + 10), "white")
     d = ImageDraw.Draw(foglio)
-    for r, chiave in enumerate(righe):
+    for r, (chiave, scelte) in enumerate(righe):
         nome, desc, _, _ = PROPOSTE[chiave]
-        d.text((20, r * (ch + 70) + 18), f"{chiave}  {nome}  ·  {desc}", font=font("arialbd.ttf", 9), fill="black")
+        if r == 0 or len(chiavi) > 1:
+            titolo = f"{chiave}  {nome}  ·  {desc}" if len(chiavi) > 1 else f"{chiave}  {nome}"
+            d.text((20, r * (ch + 70) + 18), titolo, font=font("arialbd.ttf", 9), fill="black")
         for c, (tipo, n) in enumerate(scelte):
             im = Image.open(out / f"{chiave}_{tipo}_{n}.png").resize((cw, ch), Image.LANCZOS)
             foglio.paste(im, (20 + c * (cw + 20), r * (ch + 70) + 55))
-    foglio.save(out / "confronto.jpg", quality=88)
-    pdf_proposte(out)
+    foglio.save(out / f"{nome_file}.jpg", quality=88)
+    pdf_proposte(out, chiavi, "proposte_carte" if len(chiavi) > 1 else f"proposta_{chiavi[0]}")
 
 
-def pdf_proposte(out):
+def pdf_proposte(out, chiavi, nome_file):
     """Una pagina A4 per proposta con le nove carte a grandezza vera e la linea di taglio."""
     x0, y0 = (210 - 3 * (W + 2 * ABB)) / 2, (297 - 3 * (H + 2 * ABB)) / 2
     pagine = []
-    for chiave, (nome, desc, _, _) in PROPOSTE.items():
+    for chiave in chiavi:
+        nome, desc, _, _ = PROPOSTE[chiave]
         corpo = [rf"\node[anchor=north west,font=\sffamily\bfseries\small] at (12mm,-5mm) {{Proposta {chiave}: {nome}}};",
                  rf"\node[anchor=north east,font=\sffamily\small] at (198mm,-5mm) {{{desc}}};"]
         for k, (tipo, n) in enumerate(CAMPIONE):
@@ -485,10 +509,10 @@ def pdf_proposte(out):
            r"\usepackage{tgheros}\renewcommand{\familydefault}{\sfdefault}\pagestyle{empty}"
            r"\pdfinfo{/Title (Collocamento - tre proposte per le carte)}"
            "\n" r"\begin{document}" "\n" + "\n".join(f"\\null\n{p}" for p in pagine) + "\n" r"\end{document}" "\n")
-    (out / "proposte_carte.tex").write_text(tex, encoding="utf-8")
-    subprocess.run(["pdflatex", "-interaction=nonstopmode", "proposte_carte.tex"], cwd=out, check=True,
+    (out / f"{nome_file}.tex").write_text(tex, encoding="utf-8")
+    subprocess.run(["pdflatex", "-interaction=nonstopmode", f"{nome_file}.tex"], cwd=out, check=True,
                    capture_output=True)
-    print(out / "proposte_carte.pdf")
+    print(out / f"{nome_file}.pdf")
 
 
 def mazzo(chiave):
@@ -504,4 +528,7 @@ def mazzo(chiave):
 
 if __name__ == "__main__":
     arg = sys.argv[1] if len(sys.argv) > 1 else "proposte"
-    proposte() if arg == "proposte" else mazzo(arg.upper())
+    if arg == "proposte":
+        proposte(tuple(k.upper() for k in sys.argv[2:]) or tuple(PROPOSTE))
+    else:
+        mazzo(arg.upper())
