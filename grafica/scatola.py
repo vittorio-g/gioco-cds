@@ -168,20 +168,15 @@ def campitura(d, x0, y0, x1, y1, colore, lati=""):
     d.rectangle([P(x0), P(y0), P(x1) - 1, P(y1) - 1], fill=colore)
 
 
-def carta_piccola(tipo, n, largo_mm, angolo):
-    """Una carta del mazzo, senza abbondanza, con gli angoli tondi e un'ombra."""
-    cartella = "persone" if tipo == "persona" else "ambiti"
-    im = Image.open(QUI / "carte_v3" / cartella / f"{n}.png").convert("RGBA")
-    im = im.crop((24, 24, im.width - 24, im.height - 24))
-    w = P(largo_mm)
-    im = im.resize((w, round(w * 88 / 63)), Image.LANCZOS)
-    maschera = Image.new("L", im.size, 0)
-    ImageDraw.Draw(maschera).rounded_rectangle([0, 0, im.width - 1, im.height - 1], radius=P(1.4), fill=255)
-    im.putalpha(maschera)
-    bordo = P(1.5)
+def stampa_illustrazione(n, lato_mm, angolo):
+    """L'illustrazione originale di una Persona, intera (il volto non si taglia), come una stampa:
+    bordo bianco, ombra, un po' storta. Come le illustrazioni sulle carte nello stile B."""
+    im = Image.open(QUI / "illustrazioni" / "lav" / f"{n}.png").convert("RGBA").resize((P(lato_mm), P(lato_mm)), Image.LANCZOS)
+    im = cn.con_bordo(im, P(1.1), BIANCO)
+    bordo = P(2)
     ombra = Image.new("RGBA", (im.width + 2 * bordo, im.height + 2 * bordo), (0, 0, 0, 0))
-    ombra.paste(Image.new("RGBA", im.size, (0, 0, 0, 110)), (bordo, bordo + P(0.5)), maschera)
-    ombra = ombra.filter(ImageFilter.GaussianBlur(P(0.6)))
+    ombra.paste(Image.new("RGBA", im.size, (0, 0, 0, 120)), (bordo, bordo + P(0.7)))
+    ombra = ombra.filter(ImageFilter.GaussianBlur(P(0.8)))
     ombra.alpha_composite(im, (bordo, bordo))
     return ombra.rotate(angolo, resample=Image.BICUBIC, expand=True)
 
@@ -207,20 +202,32 @@ def incolla_centro(tela, im, cx, cy):
     tela.alpha_composite(im, (round(cx - im.width / 2), round(cy - im.height / 2)))
 
 
+COPERTINA = "03"  # la Persona del fronte: L'Archistar (scelta di Vittorio, al posto del ventaglio di carte)
+
+
 def fronte():
-    """Come la copertina del regolamento: petrolio, titolo grande, un ventaglio di carte."""
+    """Petrolio, titolo grande; sotto la stampa dell'Archistar con le sue tre ambizioni come adesivi
+    sul bordo, come sulle carte, e la sua battuta."""
     im, d = pannello(LARGO, ALTO)
     f_et = font(BAHN, 7, "SemiBold Condensed")
     scrivi(d, P(4.5), P(6.5), "CDS", f_et, ROSA, cn.PT(7) * 0.24)
     scrivi(d, P(LARGO - 4.5), P(6.5), "PROTOTIPO", f_et, PANNA, cn.PT(7) * 0.2, "rs")
     f_t, righe, pt, _ = cn.adatta("COLLOCAMENTO", BAHN, 26, 14, P(LARGO - 8), 1, "Bold Condensed")
-    scrivi(d, P(LARGO / 2), P(15) + cn.PT(pt) * 0.72, righe[0], f_t, PANNA, 0, "ms")
-    barra = Image.new("RGBA", (P(22), P(1.3)), ROSA).rotate(-2, resample=Image.BICUBIC, expand=True)
-    incolla_centro(im, barra, P(LARGO / 2), P(26.8))
-    for tipo, n, cx, cy, ang in (("persona", "03", 18.5, 52, 13), ("ambito", "27", 46.5, 52, -13),
-                                 ("persona", "07", LARGO / 2, 49, 0)):
-        incolla_centro(im, carta_piccola(tipo, n, 21, ang), P(cx), P(cy))
-    incolla_centro(im, chip("2-4 PARTECIPANTI · CARTE · A TURNI", 6.5, ROSA, "#ffffff", -1.5), P(LARGO / 2), P(80.5))
+    scrivi(d, P(LARGO / 2), P(13.5) + cn.PT(pt) * 0.72, righe[0], f_t, PANNA, 0, "ms")
+    barra = Image.new("RGBA", (P(20), P(1.2)), ROSA).rotate(-2, resample=Image.BICUBIC, expand=True)
+    incolla_centro(im, barra, P(LARGO / 2), P(24.6))
+    # la stampa, spostata a sinistra per far posto agli adesivi sul bordo destro
+    lato = 43
+    cx, cy = 29.5, 50.5
+    incolla_centro(im, stampa_illustrazione(COPERTINA, lato, 2), P(cx), P(cy))
+    for i, (k, ang) in enumerate(zip(cn.AMBIZIONI[COPERTINA], (6, -5, 4))):
+        incolla_centro(im, cn.adesivo(k, 9.5, ang, 0.8), P(cx + lato / 2 + 2.2), P(cy - 12.5 + i * 12.5))
+    # la battuta, tra virgolette, e chi la dice
+    persona = cn.PERSONE[COPERTINA]
+    f_b = font(BAHN, 8.6, "SemiBold SemiCondensed")
+    scrivi(d, P(LARGO / 2), P(78.2), f"«{persona['battuta']}»", f_b, PANNA, 0, "ms")
+    f_n = font(BAHN, 6.4, "SemiBold Condensed")
+    scrivi(d, P(LARGO / 2), P(82.4), persona["nome"].upper(), f_n, ROSA, cn.PT(6.4) * 0.24, "ms")
     return im
 
 
