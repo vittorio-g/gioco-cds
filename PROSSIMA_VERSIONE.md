@@ -8,9 +8,13 @@ Da allora i cambiamenti si accumulano qui per la versione successiva. Quelli seg
 già fatti nei dati e negli script, ma i PDF non sono stati rifatti: si rifanno tutti insieme quando
 serve la versione nuova (`py -3 grafica/pnp.py`, `py -3 grafica/scatola.py`, poi `pitch/` per il pitch).
 
-I file di taglio delle carte in laser-designs (`designs/collocamento-print-and-play`) hanno due livelli di
-crocini, grandi per le stampe fino al 28/10 e piccoli per quella del 28/10: dopo averci copiato gli SVG
-nuovi da `grafica/stampa/taglio/` va rilanciato `crocini_due_versioni.py` in quella cartella.
+**File di taglio.** Gli SVG di `grafica/stampa/taglio/` corrispondono a quello che si stampa. In laser-designs
+(`designs/collocamento-print-and-play`, `designs/collocamento-scatola`) i file sono rifiniti dalla sessione
+LASER: due versioni di crocini per le carte (`crocini_due_versioni.py`), segni di tolleranza incisi al posto
+dei crocini ripassati (`tools/crocini_tolleranza.py`, vedi `docs/crocini-tolleranza.md`), impaginazioni per i
+fogli plastificati. Quindi non si copiano sopra a mano: gli SVG nuovi si passano a LASER, oppure dopo la
+copia si rilanciano quegli strumenti (per la scatola:
+`python tools/crocini_tolleranza.py collocamento_scatola_taglio.svg --centri 14,10 283,10 14,200 283,200`).
 
 | Data | Cambiamento | Dove | Stato |
 |---|---|---|---|
