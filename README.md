@@ -150,7 +150,7 @@ I nomi dei poteri stanno in `grafica/dati/poteri.json`; quale Persona ha quale p
 py -3 grafica/scatola.py
 ```
 
-Scrive `grafica/stampa/collocamento_scatola.pdf`: una scatola a ribalta classica da mazzo di carte, su un A4 orizzontale da stampare su cartoncino, solo fronte, al 100%. Interno 65 x 90 x 42 mm, per le 124 carte e i 4 token plastificati (carta normale in buste da 80 micron, circa 0,3 mm a carta); il regolamento non ci va. Nello stile delle carte: fronte petrolio come la copertina del regolamento, retro panna con il contenuto, un fianco rosa e uno petrolio. Il profilo di taglio (`grafica/stampa/taglio/collocamento_scatola_taglio.svg`: taglio, pieghe da cordonare e crocini) e il progetto LightBurn sono nella repo `laser-designs`, cartella `designs/collocamento-scatola`. Le misure stanno in cima allo script: se il mazzo viene più spesso si cambia `PROFONDITA`.
+Scrive `grafica/stampa/collocamento_scatola.pdf`: una scatola a ribalta classica da mazzo di carte, su un A4 orizzontale da stampare su cartoncino, solo fronte, al 100%. Interno 65 x 90 x 40 mm, per le 124 carte e i 4 token plastificati (carta normale da 100-120 g in buste da 2 x 75 micron, 0,25-0,30 mm a carta); il regolamento non ci va. Linguette di chiusura tonde a tutta larghezza, alette con gli angoli tondi. Nello stile delle carte: fronte petrolio come la copertina del regolamento, retro panna con il contenuto, un fianco rosa e uno petrolio. Il profilo di taglio (`grafica/stampa/taglio/collocamento_scatola_taglio.svg`: taglio, pieghe da cordonare e crocini) e il progetto LightBurn sono nella repo `laser-designs`, cartella `designs/collocamento-scatola`. Le misure stanno in cima allo script: se il mazzo viene più spesso si cambia `PROFONDITA`.
 
 ### Documento per il pitch
 

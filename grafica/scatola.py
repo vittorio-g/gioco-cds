@@ -8,16 +8,20 @@ grafica/stampa/taglio/collocamento_scatola_taglio.svg (taglio, pieghe da cordona
 per tools/svg_to_lbrn2.py della repo laser-designs), più un'anteprima con le linee sovrapposte.
 
 Dentro ci vanno le carte plastificate, senza il regolamento: 120 carte, 4 carte riassunto e 4 token.
-Carta normale da 100-120 g in buste da 80 micron fa circa 0,3 mm a carta: 124 carte e 4 token sono
-circa 38,5 mm, e la scatola ne tiene 42 (PROFONDITA). Se il mazzo viene più spesso basta cambiare
-quel numero: fino a 43 mm la fustella sta nell'A4 con almeno 4,5 mm di margine per la stampante;
-oltre si accorcia LINGUETTA. Le linguette restano dentro la scatola: se la stampante ne perde
-l'abbondanza non si vede.
+Vittorio plastifica con buste da 2 x 75 micron (75 per foglio, 150 la busta intera): ogni carta ha
+0,15 mm di plastica, e con carta da 100-120 g viene 0,25-0,30 mm. 124 carte e 4 token fanno 35-38 mm,
+e la scatola ne tiene 40 (PROFONDITA). Se il mazzo viene più spesso basta cambiare quel numero: la
+fustella sta nell'A4 con almeno 4,5 mm di margine finché 2 x (LINGUETTA + PROFONDITA) + ALTO non
+supera 201 mm. Le linguette restano dentro la scatola: se la stampante ne perde l'abbondanza non si vede.
+
+Linguette a tutta larghezza fino allo spigolo, con i lati a quarto di cerchio (senza i gradini di
+scarico ai lati, che a Vittorio non piacevano); alette dei fianchi con gli angoli tondi.
 
 Chiusura "reverse tuck": il coperchio è attaccato al retro e si infila davanti, dove c'è la tacca per
 il pollice; il fondo è attaccato al fronte e si infila dietro. La linguetta di colla sta sul retro.
 Stile delle carte (proposta B): fronte petrolio come la copertina del regolamento, retro panna.
 """
+import math
 import sys
 from pathlib import Path
 
@@ -35,11 +39,12 @@ TAGLIO = STAMPA / "taglio"
 # ---------------------------------------------------------------- misure, in mm
 LARGO = 65         # fronte e retro: carte da 63 mm più un millimetro per parte
 ALTO = 90          # carte da 88 mm più un millimetro sopra e sotto
-PROFONDITA = 42    # i fianchi: il mazzo plastificato, circa 38,5 mm, più un po' di gioco
-LINGUETTA = 12     # la parte che si infila, sopra e sotto
+PROFONDITA = 40    # i fianchi: il mazzo plastificato, 35-38 mm, più un po' di gioco
+LINGUETTA = 14     # la parte che si infila, sopra e sotto: lingua tonda, lati a quarto di cerchio
 COLLA = 12         # la linguetta da incollare
 ALETTA = 20        # le alette parapolvere sopra e sotto i fianchi
-SMUSSO = 5         # gli angoli smussati di alette e linguetta di colla
+R_ALETTA = 6       # gli angoli tondi delle alette
+SMUSSO = 5         # gli angoli smussati della linguetta di colla
 POLLICE = 9        # raggio della tacca sul fronte
 ABB = 2            # abbondanza della stampa oltre il taglio
 FOGLIO = (297, 210)
@@ -69,19 +74,30 @@ ybt = ybb + LINGUETTA      # punta della linguetta del fondo
 
 # ---------------------------------------------------------------- la fustella
 def linguetta(xa, xz, y_attacco, y_punta):
-    """La parte che si infila, percorsa da xa a xz: un millimetro e mezzo più stretta per lato, angoli tondi.
+    """La parte che si infila, percorsa da xa a xz: parte dallo spigolo, a tutta larghezza, e i due
+    lati sono quarti di cerchio grandi quanto la linguetta: una lingua tonda.
 
     Il coperchio si percorre da sinistra a destra con la punta in alto, il fondo da destra a sinistra
     con la punta in basso: sono la stessa forma girata di 180 gradi, quindi gli archi girano nello
     stesso verso.
     """
-    r, s = 4, 1.5
+    r = abs(y_attacco - y_punta)
     h = 1 if xz > xa else -1               # verso di percorrenza
-    v = 1 if y_punta < y_attacco else -1   # la punta: su (coperchio) o giù (fondo)
-    return (f"L {xa + h * s:.2f} {y_attacco:.2f} L {xa + h * s:.2f} {y_punta + v * r:.2f} "
-            f"A {r} {r} 0 0 1 {xa + h * (s + r):.2f} {y_punta:.2f} L {xz - h * (s + r):.2f} {y_punta:.2f} "
-            f"A {r} {r} 0 0 1 {xz - h * s:.2f} {y_punta + v * r:.2f} L {xz - h * s:.2f} {y_attacco:.2f} "
-            f"L {xz:.2f} {y_attacco:.2f}")
+    return (f"A {r} {r} 0 0 1 {xa + h * r:.2f} {y_punta:.2f} L {xz - h * r:.2f} {y_punta:.2f} "
+            f"A {r} {r} 0 0 1 {xz:.2f} {y_attacco:.2f}")
+
+
+def aletta(xa, xz, y_attacco, y_punta, primo_lato=True):
+    """Un'aletta parapolvere percorsa da xa a xz, con gli angoli tondi.
+
+    Senza il primo lato quando quel lato è già tagliato da un'altra parte (il bordo del coperchio o del fondo).
+    """
+    r = R_ALETTA
+    h = 1 if xz > xa else -1
+    v = 1 if y_punta < y_attacco else -1
+    inizio = f"M {xa} {y_attacco} L {xa} {y_punta + v * r:.2f}" if primo_lato else f"M {xa} {y_punta + v * r:.2f}"
+    return (f"{inizio} A {r} {r} 0 0 1 {xa + h * r:.2f} {y_punta} L {xz - h * r:.2f} {y_punta} "
+            f"A {r} {r} 0 0 1 {xz} {y_punta + v * r:.2f} L {xz} {y_attacco}")
 
 
 def tagli():
@@ -94,28 +110,28 @@ def tagli():
     t.append(f"M {xb} {yb0} L {xb} {yt1} " + linguetta(xb, xs1, yt1, yt0) + f" L {xs1} {yb0}")
     # aletta alta del fianco sinistro (il lato sinistro è già il taglio del coperchio)
     a = yb0 - ALETTA
-    t.append(f"M {xs1} {a + SMUSSO} L {xs1 + SMUSSO} {a} L {xf - SMUSSO} {a} L {xf} {a + SMUSSO} L {xf} {yb0}")
+    t.append(aletta(xs1, xf, yb0, a, primo_lato=False))
     # bordo alto del fronte, con la tacca per il pollice
     c = xf + LARGO / 2
     t.append(f"M {xf} {yb0} L {c - POLLICE} {yb0} A {POLLICE} {POLLICE} 0 0 0 {c + POLLICE} {yb0} L {xs2} {yb0}")
     # aletta alta del fianco destro e bordo destro
-    t.append(f"M {xs2} {yb0} L {xs2} {a + SMUSSO} L {xs2 + SMUSSO} {a} L {xe - SMUSSO} {a} L {xe} {a + SMUSSO} L {xe} {yb1}")
+    t.append(aletta(xs2, xe, yb0, a) + f" L {xe} {yb1}")
     # aletta bassa del fianco destro (il lato sinistro è il taglio del fondo)
     b = yb1 + ALETTA
-    t.append(f"M {xe} {yb1} L {xe} {b - SMUSSO} L {xe - SMUSSO} {b} L {xs2 + SMUSSO} {b} L {xs2} {b - SMUSSO}")
+    t.append(aletta(xe, xs2, yb1, b).rsplit(" L ", 1)[0])
     # fondo e la sua linguetta, sotto il fronte
     t.append(f"M {xs2} {yb1} L {xs2} {ybb} " + linguetta(xs2, xf, ybb, ybt) + f" L {xf} {yb1}")
     # aletta bassa del fianco sinistro (il lato destro è il taglio del fondo)
-    t.append(f"M {xf} {b - SMUSSO} L {xf - SMUSSO} {b} L {xs1 + SMUSSO} {b} L {xs1} {b - SMUSSO} L {xs1} {yb1}")
+    t.append(aletta(xf, xs1, yb1, b, primo_lato=False))
     return t
 
 
 def pieghe():
     p = [f"M {x} {yb0} L {x} {yb1}" for x in (xb, xs1, xf, xs2)]          # i quattro spigoli e la colla
     p.append(f"M {xb} {yb0} L {xs1} {yb0}")                                  # retro | coperchio
-    p.append(f"M {xb + 1.5} {yt1} L {xs1 - 1.5} {yt1}")                      # coperchio | linguetta
+    p.append(f"M {xb} {yt1} L {xs1} {yt1}")                                  # coperchio | linguetta
     p.append(f"M {xf} {yb1} L {xs2} {yb1}")                                  # fronte | fondo
-    p.append(f"M {xf + 1.5} {ybb} L {xs2 - 1.5} {ybb}")                      # fondo | linguetta
+    p.append(f"M {xf} {ybb} L {xs2} {ybb}")                                  # fondo | linguetta
     for xa, xz in ((xs1, xf), (xs2, xe)):                                    # fianchi | alette
         p.append(f"M {xa} {yb0} L {xz} {yb0}")
         p.append(f"M {xa} {yb1} L {xz} {yb1}")
@@ -321,6 +337,23 @@ def anteprima(img, destino):
     d = ImageDraw.Draw(a)
     k = cn.PX / 4
 
+    def arco(p0, r, grande, verso, p1, n=16):
+        """I punti di un arco SVG di raggio r da p0 a p1 (solo cerchi, senza rotazione)."""
+        (x0, y0), (x1, y1) = p0, p1
+        mx, my = (x0 + x1) / 2, (y0 + y1) / 2
+        dx, dy = x1 - x0, y1 - y0
+        corda = math.hypot(dx, dy)
+        h = math.sqrt(max(r * r - corda * corda / 4, 0))
+        segno = 1 if grande != verso else -1
+        cx, cy = mx - segno * h * dy / corda, my + segno * h * dx / corda
+        a0, a1 = math.atan2(y0 - cy, x0 - cx), math.atan2(y1 - cy, x1 - cx)
+        da = a1 - a0
+        if verso and da < 0:
+            da += 2 * math.pi
+        if not verso and da > 0:
+            da -= 2 * math.pi
+        return [(cx + r * math.cos(a0 + da * j / n), cy + r * math.sin(a0 + da * j / n)) for j in range(1, n + 1)]
+
     def punti(path):
         toks = re.findall(r"[MLAHVZ]|-?\d+(?:\.\d+)?", path)
         pts, i, cur = [], 0, None
@@ -329,7 +362,9 @@ def anteprima(img, destino):
             if t in "ML":
                 cur = (float(toks[i + 1]), float(toks[i + 2])); pts.append(cur); i += 3
             elif t == "A":
-                cur = (float(toks[i + 6]), float(toks[i + 7])); pts.append(cur); i += 8
+                fine = (float(toks[i + 6]), float(toks[i + 7]))
+                pts += arco(cur, float(toks[i + 1]), int(float(toks[i + 4])), int(float(toks[i + 5])), fine)
+                cur = fine; i += 8
             elif t == "H":
                 cur = (float(toks[i + 1]), cur[1]); pts.append(cur); i += 2
             elif t == "V":
