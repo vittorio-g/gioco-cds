@@ -244,6 +244,15 @@ for vecchio in STAMPA.glob("collocamento_pnp_dorsi_*"):
 pdf = STAMPA / f"{NOME}.pdf"
 print(f"grafica/stampa/{NOME}.pdf: {len(fitz.open(pdf))} pagine, {pdf.stat().st_size / 1e6:.0f} MB")
 
+# il solo regolamento, da stampare a parte: sono gli ultimi fogli del print and play, già imposti
+tutto = fitz.open(pdf)
+facciate = len(fitz.open(REGOLAMENTO)) // 2
+solo = fitz.open()
+solo.insert_pdf(tutto, from_page=len(tutto) - facciate, to_page=len(tutto) - 1)
+solo.set_metadata({"title": "Collocamento - Regolamento, libretto A5 su A4 fronte e retro"})
+solo.save(STAMPA / "collocamento_regolamento_a4.pdf", garbage=3, deflate=True)
+print(f"grafica/stampa/collocamento_regolamento_a4.pdf: {facciate} pagine, {facciate // 2} fogli")
+
 
 # ---------------------------------------------------------------- i file di taglio
 # Convenzioni dell'archivio laser-designs: mm, viewBox = foglio A4 con l'origine in alto a sinistra,

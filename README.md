@@ -134,6 +134,8 @@ Scrive `grafica/stampa/collocamento_pnp.pdf`: 36 pagine, 18 fogli A4 da stampare
 | 15 | 4 carte riassunto (il turno; punti e poteri) e 4 token obiettivo, stampati sui due lati |
 | 16-18 | Il regolamento, già imposto: si piegano i tre fogli a metà, uno dentro l'altro, e viene il libretto A5 di 12 pagine |
 
+Lo script scrive anche `grafica/stampa/collocamento_regolamento_a4.pdf`, solo i tre fogli del regolamento, da stampare a parte con le stesse impostazioni.
+
 Carte, riassunti e token hanno un solo colore di fondo fino al bordo, 2 mm di abbondanza per lato su tutte e due le facciate e quattro crocini di registro per foglio: uno scarto del taglio non si vede. I profili di taglio sono in `grafica/stampa/taglio/` (SVG); i progetti LightBurn e le istruzioni sono nella repo `laser-designs`, cartella `designs/collocamento-print-and-play`. Senza laser si taglia a mano: lo spazio di 4 mm tra le carte basta per la taglierina.
 
 Le carte sono quelle di `grafica/carte_nuove.py` nello stile B, scelto da Vittorio il 28 ottobre 2026: titolo stretto e grande in Bahnschrift, Persone su bianco panna, Ambiti su petrolio, icone come adesivi in colonna accanto all'illustrazione. Se `grafica/carte_v3/` manca, `pnp.py` la rifà. Le illustrazioni delle Persone vengono dagli originali (`grafica/illustrazioni/lav`) e il ritaglio tiene dentro la testa: i riquadri dei volti sono in `grafica/dati/volti.json`, e lo script si ferma se un ritaglio ne taglia uno. Le icone in alta risoluzione (`grafica/dati/icone_hd/`) le fa `grafica/icone_hd.py`. Lo stesso script, con `proposte`, rifà le tre proposte di design (A Fanzine, B Manifesto, C Schedario).
