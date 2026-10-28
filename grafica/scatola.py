@@ -203,9 +203,9 @@ def incolla_centro(tela, im, cx, cy):
 
 
 COPERTINA = "03"  # la Persona del fronte: L'Archistar (scelta di Vittorio, al posto del ventaglio di carte)
-# Le informazioni del gioco sotto l'immagine: (valore grande, etichetta). Durata ed età minima non sono
-# ancora decise: quando ci sono si aggiungono qui, per esempio ("30'", "minuti") e ("10+", "anni").
-INFO_FRONTE = [("2-4", "partecipanti"), ("A TURNI", "gioco di carte")]
+# Le informazioni del gioco sotto l'immagine: (valore grande, etichetta). Durata decisa da Vittorio il
+# 28/10: 15 minuti. L'età minima non c'è ancora: si aggiunge qui, per esempio ("10+", "anni").
+INFO_FRONTE = [("2-4", "partecipanti"), ("15 MIN", "gioco di carte")]
 
 
 def fronte():
