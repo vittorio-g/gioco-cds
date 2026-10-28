@@ -5,7 +5,7 @@
   Segnaposto, tra doppie graffe: "potere N", "effetto N", "breve N" (N da 1 a 4, da grafica/dati/poteri.json),
   "ico XX" (un'icona), "terna per NN" e "terna amb NN" (le tre icone di una carta, da mazzi/).
   Ogni <section class="pagina"> è una pagina: devono essere 12, e niente deve uscire dal pannello.
-  Il bianco intorno al pannello (6 mm) è il margine per le stampanti che non arrivano al bordo.
+  Il fondo arriva al bordo; testi e figure stanno ad almeno 11 mm, per le stampanti che non arrivano al margine.
 -->
 <html lang="it">
 <head>
@@ -26,20 +26,17 @@ body {
 b, strong { font-weight: 700; }
 em { font-style: normal; font-weight: 700; color: var(--magenta); }
 
-/* ---------------------------------------------------------------- la pagina è una carta */
-.pagina { width: 148mm; height: 210mm; position: relative; overflow: hidden; break-after: page; background: #fff; }
-.pannello {
-  position: absolute; inset: 6mm; border-radius: 4mm; background: var(--panna);
-  padding: 14mm 9mm 11mm 9mm; overflow: hidden;
-}
+/* ---------------------------------------------------------------- la pagina: fondo pieno, contenuti lontani dal bordo */
+.pagina { width: 148mm; height: 210mm; position: relative; overflow: hidden; break-after: page; background: var(--panna); }
+.pannello { position: absolute; inset: 0; background: var(--panna); padding: 20mm 15mm 17mm 15mm; overflow: hidden; }
 .pannello.scuro { background: var(--petrolio); color: var(--panna); }
 .testata, .piede {
-  position: absolute; left: 9mm; right: 9mm; display: flex; justify-content: space-between;
+  position: absolute; left: 15mm; right: 15mm; display: flex; justify-content: space-between;
   font-weight: 600; font-stretch: 75%; text-transform: uppercase;
 }
-.testata { top: 5.4mm; font-size: 7.5pt; letter-spacing: .22em; }
+.testata { top: 11.4mm; font-size: 7.5pt; letter-spacing: .22em; }
 .testata .sx { color: var(--magenta); }
-.piede { bottom: 4.4mm; font-size: 6pt; letter-spacing: .16em; opacity: .7; }
+.piede { bottom: 10.4mm; font-size: 6pt; letter-spacing: .16em; opacity: .7; }
 
 /* ---------------------------------------------------------------- titoli e testo */
 .occhiello {
@@ -169,8 +166,8 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
 <body>
 
 <!-- ============================================================ 1. COPERTINA -->
-<section class="pagina"><div class="pannello scuro copertina">
-  <div class="testata"><span class="sx" style="color: var(--rosa)">CDS</span><span>Regolamento</span></div>
+<section class="pagina"><div class="pannello scuro copertina"><div style="position: absolute; inset: 6mm">
+  <div class="testata" style="top: 5.4mm; left: 9mm; right: 9mm"><span class="sx" style="color: var(--rosa)">CDS</span><span>Regolamento</span></div>
   <h1>COLLOCAMENTO</h1>
   <div class="barra"></div>
   <div class="motto">Forma le persone rispettando le loro ambizioni, trova a ciascuna il lavoro giusto e chiudi il collocamento prima del resto del tavolo.</div>
@@ -183,7 +180,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
   <img class="adesivo" src="img/adesivo_MA.png" style="left: 113mm; top: 68mm; transform: rotate(10deg)">
   <img class="adesivo" src="img/adesivo_RI.png" style="left: 104mm; top: 151mm; transform: rotate(-7deg)">
   <div class="chip">2-4 PARTECIPANTI · CARTE · A TURNI</div>
-</div></section>
+</div></div></section>
 
 <!-- ============================================================ 2. IL GIOCO IN BREVE -->
 <section class="pagina"><div class="pannello">
@@ -531,7 +528,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     <h3 style="margin-top: 3.4mm">Taglio al laser</h3>
     <p>Carte, carte riassunto e token hanno un solo colore di fondo e <b>2 mm di abbondanza</b> per lato: un piccolo scarto del laser non lascia bordi bianchi e non si vede. Agli angoli di ogni foglio ci sono quattro <b>crocini di registro</b> (cerchio e croce) per allineare il taglio alla stampa. I file di taglio stanno nell'archivio dei disegni laser, cartella <b>collocamento-print-and-play</b>. Cartoncino stampato: 80%, 1000 mm/min, una passata. Il foglio delle carte riassunto va tagliato col fronte in alto.</p>
     <h3 style="margin-top: 3.4mm">Il regolamento</h3>
-    <p>Piegate a metà i tre fogli del regolamento, uno dentro l'altro, con la copertina fuori. Una pinzatura sulla piega lo tiene insieme. Il bordo bianco intorno alle pagine serve alle stampanti che non arrivano fino al margine del foglio.</p>
+    <p>Piegate a metà i tre fogli del regolamento, uno dentro l'altro, con la copertina fuori. Una pinzatura sulla piega lo tiene insieme. Se la stampante lascia un filo bianco sul bordo del foglio, non tocca niente: testi e figure stanno ad almeno un centimetro dal margine.</p>
     <div class="nota scura dx">
       <div class="etichetta">Le immagini</div>
       <p>Le immagini di questo prototipo sono generate con l'intelligenza artificiale: servono a provare il gioco, non sono la sua veste definitiva. Per la versione finale vogliamo affidare grafica e illustrazioni, con un compenso, a chi fa design e illustrazione per professione.</p>
