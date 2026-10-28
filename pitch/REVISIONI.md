@@ -19,6 +19,7 @@ Testo di partenza: il regolamento dei designer del 5 ottobre 2026, con i 60 ambi
 | 5 | I poteri hanno solo un numero. | Hanno un nome tematico, scritto sulla carta: Passaparola (1), Colloquio (2), Corso intensivo (3), Chiamata diretta (4). Scelti da Vittorio il 28 ottobre 2026. | Per poterne parlare, e per leggerli sulla carta senza tabella. |
 | 6 | Non scritto. | Il potere si attiva quando inserisci il lavoratore, anche se era prenotato; prenotare non lo attiva; i prenotati non contano nel limite di mano; un potere non usato va perso; si possono aprire quante pile si vuole; chi non può fare azioni passa. | Erano le domande aperte del capitolo 7 di [BUCHI.md](../BUCHI.md). |
 | 7 | Esempio dei punti con un lavoratore "Digitale, Digitale, Comunicazione". | Esempio con carte vere: Il Tecnico Paziente, Logistica, Ristorazione, Direzione. | Una carta con quelle tre icone non esiste, e l'esempio serve anche alla figura. |
+| 8 | Carte "Lavoratore", e sulle carte "Lavoratore" o "Lavoratrice". | Carte **Persona**. Scelto da Vittorio il 28 ottobre 2026; vale anche per la Variante Carte, che usa le stesse carte. | Linguaggio neutro. Il dorso dice PERSONE (`grafica/dorso_persone.py`). |
 
 **Che cosa dicono le simulazioni delle regole riviste** (3.000 partite tra bot per riga; `node strumenti/analisi.mjs revisione`):
 
@@ -84,6 +85,30 @@ Testo di partenza: il PDF del prototipo v0.1 del 6 ottobre 2026. I numeri vengon
 **Non toccato:** i punti (+1 a carta, +3, +2, +1 per l'altezza, -1 a componente caduto), i componenti, la regola fondamentale, l'esempio di Marta e Luca (adattato alle revisioni).
 
 **Resta aperto,** e sta ai designer: vince quasi sempre il più veloce, correre conviene perché cadono pochi componenti, e il bonus altezza pesa quanto le carte in 4 senza che niente obblighi a salire. Dipendono dalla forma dei pezzi e dalla misura della pedana.
+
+## Linguaggio neutro e immagini (28 ottobre 2026)
+
+Su richiesta di Vittorio, nel documento, nel libretto A5 e sulle carte il linguaggio è neutro: giri di parole dove si può, l'asterisco solo dove non c'è altro modo (finora mai servito).
+
+- Chi gioca è "chi gioca", "ogni partecipante", "il resto del tavolo"; niente "giocatore", "il primo", "tutti", "gli altri" riferiti alle persone al tavolo. "2-4 giocatori" è diventato "2-4 partecipanti".
+- Le carte Lavoratore sono carte Persona (vedi sopra); in Mercato del Lavoro i meeple restano meeple, le persone da collocare sono "persone".
+- I nomi dei 60 personaggi restano come sono, al maschile o al femminile come il disegno: sono persone precise (scelta di Vittorio).
+- Le battute che usavano un maschile generico sono cambiate (in `grafica/dati/lavoratori.json` e `ambiti_v4.json`):
+
+| Carta | Prima | Ora |
+|---|---|---|
+| Il Capocantiere | Urla istruzioni che nessuno aveva chiesto. | Urla istruzioni mai richieste. |
+| L'Amico di Tutti | Sa il nome del tuo gatto. E di quello del capo. | Sa il nome del tuo gatto. E di quello di chi comanda. |
+| Il Professore | Ha una teoria. E quattro dottorandi per dimostrarla. | Ha una teoria. E un intero dottorato per dimostrarla. |
+| La Scenografa | Dammi un martello e quattro volontari. | Dammi un martello e quattro persone volenterose. |
+| La Torre di Controllo | Tu vai. Tu fermo. Tu... chi sei? | Tu vai. Tu aspetta. Tu... chi sei? |
+| Ristorazione | Il cliente ha sempre ragione. Purtroppo. | La clientela ha sempre ragione. Purtroppo. |
+| Sanità | Il prossimo, prego. | Numero 23, prego. |
+| Contabilità | Mancano tre centesimi. Nessuno va a casa. | Mancano tre centesimi. Da qui non si esce. |
+| Torre di controllo | Tutti fermi. Tu no. Anzi sì. | Si ferma tutto. Tu no. Anzi sì. |
+| Pubblicità | Il cliente vuole il logo più grande. | La clientela vuole il logo più grande. |
+
+Nel libretto e nel documento c'è una nota: le immagini sono generate con l'intelligenza artificiale perché si tratta di prototipi, e per le versioni finali grafica e illustrazioni andranno, con un compenso, a chi fa design e illustrazione per professione.
 
 ## Quello che nel documento non viene dai designer
 

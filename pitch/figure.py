@@ -9,7 +9,8 @@ Legge i .tex e produce solo le immagini che usano, in pitch/img/:
     lav_NN.jpg   la carta del lavoratore NN        (da grafica/carte_v2/lavoratori)
     amb_NN.jpg   la carta dell'ambito NN           (da grafica/carte_v2/ambiti)
     dorso_lav.jpg, dorso_amb.jpg                   i dorsi originali delle carte
-    dorsoB_lav.jpg, dorsoB_amb.jpg                 i dorsi della proposta B (grafica/dorsi_proposte)
+    dorsoB_lav.jpg, dorsoB_amb.jpg                 i dorsi della proposta B (grafica/dorsi_proposte; per le
+                                                   Persone B_persone.png, se c'è)
     ill_NN.jpg   l'illustrazione del lavoratore NN (da grafica/illustrazioni/lav)
     art_NN.jpg   l'illustrazione dell'ambito NN, ritagliata dalla carta
     ico_XX.png   le sei icone                      (da webapp/public/icone)
@@ -58,7 +59,11 @@ for nome in sorted(usate):
         salva(ridotta(Image.open(RADICE / "grafica" / "carte_v2" / mazzo / "dorso.png")), nome)
     elif tipo.startswith("dorso"):
         proposta = tipo[-1]
-        salva(ridotta(Image.open(RADICE / "grafica" / "dorsi_proposte" / f"{proposta}_{mazzo}.png")), nome)
+        file = RADICE / "grafica" / "dorsi_proposte" / f"{proposta}_{mazzo}.png"
+        persone = file.with_name(f"{proposta}_persone.png")  # il dorso riscritto da grafica/dorso_persone.py
+        if mazzo == "lavoratori" and persone.exists():
+            file = persone
+        salva(ridotta(Image.open(file)), nome)
     elif tipo in ("lav", "amb"):
         salva(ridotta(Image.open(RADICE / "grafica" / "carte_v2" / mazzo / f"{numero}.png")), nome)
     elif tipo == "ill":

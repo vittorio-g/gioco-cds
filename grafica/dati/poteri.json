@@ -1,5 +1,5 @@
 {
-  "_nota": "I nomi dei quattro poteri dei Lavoratori (set scelto da Vittorio il 28/10/2026). Li usano grafica/pnp.py (carte e carte riassunto) e pitch/figure.py (che scrive pitch/poteri.tex per i documenti). Il numero è solo interno: quale lavoratore ha quale potere lo calcolano gli script, col potere più utile ai lavoratori più difficili da formare.",
+  "_nota": "I nomi dei quattro poteri delle Persone, le carte che prima si chiamavano Lavoratori (set scelto da Vittorio il 28/10/2026). Li usano grafica/pnp.py (carte e carte riassunto) e pitch/figure.py (che scrive pitch/poteri.tex per i documenti). Il numero è solo interno: quale Persona ha quale potere lo calcolano gli script, col potere più utile alle Persone più difficili da formare.",
   "1": {
     "nome": "Passaparola",
     "breve": "pesca 1 Ambito.",
@@ -7,8 +7,8 @@
   },
   "2": {
     "nome": "Colloquio",
-    "breve": "prenota un lavoratore del mercato.",
-    "effetto": "Prendi un Lavoratore dal mercato e tienilo da parte, scoperto: è prenotato per te. Il mercato si ripristina."
+    "breve": "prenota una Persona del mercato.",
+    "effetto": "Prendi una Persona dal mercato e tienila da parte, scoperta: è prenotata per te. Il mercato si ripristina."
   },
   "3": {
     "nome": "Corso intensivo",
@@ -17,7 +17,7 @@
   },
   "4": {
     "nome": "Chiamata diretta",
-    "breve": "piazza un altro lavoratore ignorando un'ambizione (senza il suo potere).",
-    "effetto": "Metti subito un altro Lavoratore, dal mercato o tra i tuoi prenotati, su una tua pila libera, ignorando una delle sue tre ambizioni. Il suo potere non si attiva."
+    "breve": "piazza un'altra Persona ignorando un'ambizione (senza il suo potere).",
+    "effetto": "Metti subito un'altra Persona, dal mercato o tra quelle prenotate, su una tua pila libera, ignorando una delle sue tre ambizioni. Il suo potere non si attiva."
   }
 }

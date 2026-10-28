@@ -104,39 +104,39 @@
   \node[text=petrolio,font=\fontsize{29}{31}\selectfont\bfseries,inner sep=0] at (74,170) {COLLOCAMENTO};
   \draw[accento,line width=1.4pt] (44,159) -- (104,159);
   \node[text=petrolio,font=\fontsize{9}{11}\selectfont,inner sep=0] at (74,152) {\textls[200]{REGOLAMENTO}};
-  \node[text=petrolio,font=\fontsize{8.6}{12}\selectfont\itshape,align=center,text width=110mm,inner sep=0] at (74,139) {Forma i lavoratori rispettando le loro ambizioni,\\trova a ognuno il lavoro giusto e chiudi il collocamento\\prima degli altri.};
+  \node[text=petrolio,font=\fontsize{8.6}{12}\selectfont\itshape,align=center,text width=110mm,inner sep=0] at (74,139) {Forma le persone rispettando le loro ambizioni,\\trova a ciascuna il lavoro giusto e chiudi il collocamento\\prima del resto del tavolo.};
   \cartaAt{30,76}{12}{38}{lav_03}
   \cartaAt{118,76}{-12}{38}{lav_02}
   \cartaAt{52,84}{6}{40}{amb_27}
   \cartaAt{96,84}{-6}{40}{amb_17}
   \cartaAt{74,87}{0}{42}{lav_07}
-  \node[text=petrolio,font=\fontsize{7.4}{9}\selectfont\bfseries,inner sep=0] at (74,22) {\textls[200]{2-4 GIOCATORI · CARTE · A TURNI}};
+  \node[text=petrolio,font=\fontsize{7.4}{9}\selectfont\bfseries,inner sep=0] at (74,22) {\textls[200]{2-4 PARTECIPANTI · CARTE · A TURNI}};
 \end{tikzpicture}}}
 \null\clearpage\paginacartatrue
 
 % ================================================================ IL GIOCO IN BREVE
 \titolone{Il gioco in breve}
 
-\attacco{Ogni giocatore gestisce un piccolo ufficio di collocamento.}
+\attacco{Ogni partecipante gestisce un piccolo ufficio di collocamento.}
 
-Con le carte Ambito costruisce percorsi di \textbf{Formazione}. Quando un percorso offre ciò che un \textbf{Lavoratore} desidera, lo accoglie. Poi gli trova un \textbf{Lavoro} che quel percorso rende possibile. Formazione, Lavoratore e Lavoro formano un \textbf{set}: più il Lavoro somiglia alle ambizioni del Lavoratore, più punti vale.
+Con le carte Ambito costruisce percorsi di \textbf{Formazione}. Quando un percorso offre ciò che una \textbf{Persona} desidera, la accoglie. Poi le trova un \textbf{Lavoro} che quel percorso rende possibile. Formazione, Persona e Lavoro formano un \textbf{set}: più il Lavoro somiglia alle ambizioni della Persona, più punti vale.
 
-La fine della partita scatta quando qualcuno chiude il quinto set. Vince chi ha più punti.
+La fine della partita scatta al primo quinto set chiuso al tavolo. Vince chi ha più punti.
 
 \titolo{Materiale}
 
 \begin{itemize}
-  \item \textbf{60 carte Lavoratore.} Ognuna ha tre icone \textbf{ambizione} e un \textbf{potere}, scritto in basso a destra.
+  \item \textbf{60 carte Persona.} Ognuna ha tre icone \textbf{ambizione} e un \textbf{potere}, scritto sulla carta.
   \item \textbf{60 carte Ambito:} 30 ambiti, due copie di ognuno. Ogni carta ha tre icone \textbf{competenza} e appartiene a una di cinque \textbf{categorie}: Tecnica e produzione, Servizi e relazioni, Organizzazione e gestione, Creatività e comunicazione, Ricerca e innovazione.
   \item \textbf{4 token obiettivo:} due da 5 punti e due da 3.
-  \item \textbf{4 carte riassunto}, una per giocatore.
+  \item \textbf{4 carte riassunto}, una a testa.
 \end{itemize}
 
 \clearpage
 % ================================================================ COMPETENZE E CARTE
 \titolo{Le competenze}
 
-Sono sei, e sono il linguaggio del gioco: ogni Lavoratore e ogni Ambito ne mostra tre. La stessa icona può comparire più volte sulla stessa carta.
+Sono sei, e sono il linguaggio del gioco: ogni Persona e ogni Ambito ne mostra tre. La stessa icona può comparire più volte sulla stessa carta.
 
 \vspace{1mm}
 \newcommand{\competenza}[3]{\begin{minipage}[c]{.32\linewidth}\raisebox{-.45\height}{\includegraphics[width=7.5mm]{img/ico_#1}}\hspace{1.6mm}\begin{minipage}[c]{.62\linewidth}{\fontsize{8}{9}\selectfont\bfseries #2\par}{\fontsize{6.4}{8}\selectfont #3\par}\end{minipage}\end{minipage}}
@@ -159,7 +159,7 @@ Una carta Ambito si gioca come \textbf{Formazione} oppure come \textbf{Lavoro}. 
   \begin{scope}[font=\fontsize{6.2}{7.8}\selectfont\senzasillabe,line width=.4pt]
     \sullacarta{la}{38}{30}{38}{0}{36}\sullacarta{lb}{38}{30}{38}{0}{446}
     \draw ($(la)+(-.8,0)$) -- ($(la)+(-1.8,0)$) -- ($(lb)+(-1.8,0)$) -- ($(lb)+(-.8,0)$);
-    \node[anchor=east,align=right,text width=16mm,inner sep=0] at ($(la)!.5!(lb)+(-2.6,0)$) {\textbf{Tre ambizioni.}\\Quello che la formazione deve offrirgli.};
+    \node[anchor=east,align=right,text width=16mm,inner sep=0] at ($(la)!.5!(lb)+(-2.6,0)$) {\textbf{Tre ambizioni.}\\Quello che la formazione deve offrirle.};
     \sullacarta{ln}{38}{30}{38}{0}{748}
     \draw ($(ln)+(6.3,0)$) -- ($(ln)+(-1.8,0)$); \fill ($(ln)+(6.3,0)$) circle (.45);
     \node[anchor=east,align=right,text width=16mm,inner sep=0] at ($(ln)+(-2.6,0)$) {\textbf{Nome e battuta.}};
@@ -175,14 +175,13 @@ Una carta Ambito si gioca come \textbf{Formazione} oppure come \textbf{Lavoro}. 
   \end{scope}
 \end{tikzpicture}
 
-{\fontsize{7.2}{9}\selectfont Sulle carte la fascia dei Lavoratori dice «attitudini»: sono le ambizioni.\par}
 
 \clearpage
 \titolo{Preparazione}
 \daccapo
-\passo{Mescolate}{separatamente il mazzo dei Lavoratori e quello degli Ambiti.}
+\passo{Mescolate}{separatamente il mazzo delle Persone e quello degli Ambiti.}
 \passo{Pescate}{3 carte Ambito a testa: è la vostra mano.}
-\passo{Aprite il mercato.}{Rivelate in fila tanti Lavoratori quanti sono i giocatori. I nuovi entreranno sempre in coda alla fila.}
+\passo{Aprite il mercato.}{Rivelate in fila una Persona per ogni partecipante. Le nuove entreranno sempre in coda alla fila.}
 \passo{Preparate i token}{accanto ai mazzi e lasciate spazio per gli scarti degli Ambiti.}
 \passo{Prendete una carta riassunto}{a testa: da un lato il turno, dall'altro punti e poteri.}
 
@@ -200,10 +199,10 @@ Una carta Ambito si gioca come \textbf{Formazione} oppure come \textbf{Lavoro}. 
     \cartaAt{77,30}{0}{13}{lav_28}
     \cartaAt{92,30}{0}{13}{lav_54}
     \cartaAt{110,30}{0}{13}{dorsoB_lav}
-    \node[inner sep=0] at (77,42.8) {\textls[120]{IL MERCATO DEI LAVORATORI}};
-    \node[inner sep=0] at (110,18.6) {\textls[120]{LAVORATORI}};
+    \node[inner sep=0] at (77,42.8) {\textls[120]{IL MERCATO}};
+    \node[inner sep=0] at (110,18.6) {\textls[120]{PERSONE}};
     \draw[accento,line width=.8pt,-{Stealth[length=1.8mm]}] (100,15.4) -- (55,15.4);
-    \node[inner sep=0,font=\fontsize{5}{6}\selectfont] at (77.5,13) {i nuovi entrano a destra, il più vecchio esce a sinistra};
+    \node[inner sep=0,font=\fontsize{5}{6}\selectfont] at (77.5,13) {le nuove entrano a destra, quella in fila da più tempo esce a sinistra};
     \cartaAt{8,4}{10}{11}{amb_13}
     \cartaAt{16,5}{0}{11}{amb_08}
     \cartaAt{24,4}{-10}{11}{amb_17}
@@ -211,19 +210,19 @@ Una carta Ambito si gioca come \textbf{Formazione} oppure come \textbf{Lavoro}. 
   \end{scope}
 \end{tikzpicture}
 
-Inizia il giocatore più giovane, poi si procede in senso orario. Il limite di mano è \textbf{6 carte}.
+Inizia chi è più giovane, poi si procede in senso orario. Il limite di mano è \textbf{6 carte}.
 
 \clearpage
 % ================================================================ IL TURNO
 \titolo{Il turno}
 
-Nel tuo turno fai \textbf{una sola} di queste cinque azioni. I poteri dei Lavoratori possono concederne altre.
+Nel tuo turno fai \textbf{una sola} di queste cinque azioni. I poteri delle Persone possono concederne altre.
 \daccapo
 \passo{Aprire una formazione.}{Gioca una carta Ambito davanti a te: diventa una Formazione e apre una nuova pila. Puoi avere quante pile vuoi.}
-\passo{Migliorare una formazione.}{Gioca una carta Ambito sotto una tua Formazione: le sue tre competenze si sommano a quelle della pila. Puoi farlo anche dopo aver inserito un Lavoratore, finché il set non è chiuso.}
-\passo{Inserire un lavoratore.}{Prendi un Lavoratore dal mercato e mettilo sopra una tua pila che non ne ha ancora uno. Le competenze della pila devono comprendere \textbf{tutte e tre le sue ambizioni}, contate una per una: due icone Digitale ne chiedono due. Il mercato si ripristina subito, in coda. Poi \textbf{attivi il potere} del Lavoratore che hai preso.}
-\passo{Completare un set con un lavoro.}{Gioca dalla mano una carta Ambito, come Lavoro, sopra una tua pila che ha già un Lavoratore. Le Formazioni della pila devono comprendere \textbf{tutte e tre le icone del Lavoro}. Segna i punti, controlla i token obiettivo e metti negli scarti le Formazioni: Lavoratore e Lavoro restano davanti a te.}
-\passo{Pescare.}{Pesca 2 carte Ambito. Poi il mercato scorre: il Lavoratore che è in fila da più tempo va in fondo al mazzo e ne entra uno nuovo in coda.}
+\passo{Migliorare una formazione.}{Gioca una carta Ambito sotto una tua Formazione: le sue tre competenze si sommano a quelle della pila. Puoi farlo anche dopo aver inserito una Persona, finché il set non è chiuso.}
+\passo{Inserire una persona.}{Prendi una Persona dal mercato e mettila sopra una tua pila che non ne ha ancora una. Le competenze della pila devono comprendere \textbf{tutte e tre le sue ambizioni}, contate una per una: due icone Digitale ne chiedono due. Il mercato si ripristina subito, in coda. Poi \textbf{attivi il potere} della Persona che hai preso.}
+\passo{Completare un set con un lavoro.}{Gioca dalla mano una carta Ambito, come Lavoro, sopra una tua pila che ha già una Persona. Le Formazioni della pila devono comprendere \textbf{tutte e tre le icone del Lavoro}. Segna i punti, controlla i token obiettivo e metti negli scarti le Formazioni: Persona e Lavoro restano davanti a te.}
+\passo{Pescare.}{Pesca 2 carte Ambito. Poi il mercato scorre: la Persona in fila da più tempo va in fondo al mazzo e ne entra una nuova in coda.}
 
 Se non puoi fare nessuna azione, passi.
 
@@ -234,7 +233,7 @@ Se hai più di 6 carte in mano, scarta quelle in eccesso. È l'ultima cosa che f
 \clearpage
 \titolo{Come si costruisce un set}
 
-Le carte si sovrappongono lasciando visibili tutte le fasce delle icone. Ogni nuova Formazione va \textbf{sotto} le precedenti; il Lavoratore va sopra le Formazioni; il Lavoro va sopra il Lavoratore. In una pila le competenze in più, o ripetute, non danno fastidio.
+Le carte si sovrappongono lasciando visibili tutte le fasce delle icone. Ogni nuova Formazione va \textbf{sotto} le precedenti; la Persona va sopra le Formazioni; il Lavoro va sopra la Persona. In una pila le competenze in più, o ripetute, non danno fastidio.
 
 \vspace{2mm}
 \noindent\begin{tikzpicture}[x=1mm,y=1mm]
@@ -247,23 +246,23 @@ Le carte si sovrappongono lasciando visibili tutte le fasce delle icone. Ogni nu
   \begin{scope}[shift={(50,0)}]
     \newcommand{\riga}[4]{\node[anchor=north west,inner sep=0,text width=68mm,font=\fontsize{7}{9.6}\selectfont] at (0,#1) {{\fontsize{5.6}{7}\selectfont\bfseries\color{accento}\textls[150]{#2}}\\[-.2mm]\textbf{#3}\enspace #4};}
     \riga{49}{1 · 2\enspace FORMAZIONI}{Ristorazione e Logistica.}{La pila offre \terna{MA,CO,CO}\,\terna{MA,DI,OR}}
-    \riga{36.5}{3\enspace LAVORATORE}{Il Tecnico Paziente}{desidera \terna{MA,DI,CO}\,e la pila le ha tutte \spunta}
+    \riga{36.5}{3\enspace PERSONA}{Il Tecnico Paziente}{desidera \terna{MA,DI,CO}\,e la pila le ha tutte \spunta}
     \riga{24.5}{4\enspace LAVORO}{Direzione}{richiede \terna{CO,MA,OR}\,e la pila le ha tutte \spunta}
     \riga{12.5}{PUNTI}{Due ambizioni combaciano col Lavoro,}{\ico{MA} e \ico{CO}: il set vale \textbf{5 + 5 = 10 punti}. Con Assistenza clienti \terna{DI,CO,MA} varrebbe 16.}
   \end{scope}
 \end{tikzpicture}
 
 \vspace{1mm}
-Chiuso il set, le Formazioni vanno negli scarti. Davanti a te restano il Lavoratore e il suo Lavoro: un collocamento riuscito.
+Chiuso il set, le Formazioni vanno negli scarti. Davanti a te restano la Persona e il suo Lavoro: un collocamento riuscito.
 
 \begin{nota}{Quante formazioni servono}
-Di solito due. Ne basta una quando Formazione, Lavoratore e Lavoro hanno le stesse tre icone: succede, e vale il massimo dei punti.
+Di solito due. Ne basta una quando Formazione, Persona e Lavoro hanno le stesse tre icone: succede, e vale il massimo dei punti.
 \end{nota}
 
 \clearpage
 \titolo{Punti del collocamento}
 
-Ogni set vale \textbf{5 punti}, più un bonus per le ambizioni del Lavoratore che combaciano con le icone della carta giocata come Lavoro. Ogni icona si abbina una volta sola.
+Ogni set vale \textbf{5 punti}, più un bonus per le ambizioni della Persona che combaciano con le icone della carta giocata come Lavoro. Ogni icona si abbina una volta sola.
 
 \vspace{.5mm}
 \noindent{\arrayrulecolor{carta}\setlength{\arrayrulewidth}{1pt}%
@@ -284,18 +283,18 @@ Le ambizioni non devono per forza combaciare col Lavoro: un lavoro qualunque si 
 Per gli obiettivi conta la \textbf{categoria} della carta che ha chiuso ogni set come Lavoro.
 
 \sottotitolo{Tre set della stessa categoria}
-Il primo giocatore che chiude 3 set della stessa categoria prende il token da \textbf{5 punti}; il secondo che ci riesce prende quello da \textbf{3 punti}.
+Il token da \textbf{5 punti} va a chi chiude, prima del resto del tavolo, 3 set della stessa categoria; quello da \textbf{3 punti} a chi ci riesce subito dopo.
 
 \sottotitolo{Quattro set di categorie diverse}
-Il primo giocatore che chiude 4 set di quattro categorie diverse prende il token da \textbf{5 punti}; il secondo che ci riesce prende quello da \textbf{3 punti}.
+Il token da \textbf{5 punti} va a chi chiude, prima del resto del tavolo, 4 set di quattro categorie diverse; quello da \textbf{3 punti} a chi ci riesce subito dopo.
 
 \vspace{1mm}
-Ogni giocatore può prendere al massimo un token per obiettivo. I token si sommano al punteggio finale.
+Ogni partecipante può prendere al massimo un token per obiettivo. I token si sommano al punteggio finale.
 
 \clearpage
-\titolo{I poteri dei lavoratori}
+\titolo{I poteri delle persone}
 
-Ogni Lavoratore ha uno di quattro poteri, scritto in basso a destra sulla carta. Il potere si attiva \textbf{quando inserisci il Lavoratore} con l'azione 3.
+Ogni Persona ha uno di quattro poteri, scritto sulla carta. Il potere si attiva \textbf{quando inserisci la Persona} con l'azione 3.
 
 \vspace{.5mm}
 \noindent{\arrayrulecolor{carta}\setlength{\arrayrulewidth}{1pt}%
@@ -309,8 +308,8 @@ Ogni Lavoratore ha uno di quattro poteri, scritto in basso a destra sulla carta.
 
 \vspace{1.5mm}
 \begin{itemize}
-  \item \textbf{Un Lavoratore prenotato} con \potereDue{} si inserisce con l'azione 3, al posto di prenderne uno dal mercato: valgono gli stessi requisiti e il mercato non cambia. Il suo potere si attiva in quel momento, non quando lo prenoti.
-  \item I Lavoratori prenotati non contano nel limite di mano e può usarli solo chi li ha prenotati.
+  \item \textbf{Una Persona prenotata} con \potereDue{} si inserisce con l'azione 3, al posto di prenderne una dal mercato: valgono gli stessi requisiti e il mercato non cambia. Il suo potere si attiva in quel momento, non quando la prenoti.
+  \item Le Persone prenotate non contano nel limite di mano e può usarle solo chi le ha prenotate.
   \item Un potere che non puoi o non vuoi usare va perso.
 \end{itemize}
 
@@ -318,34 +317,34 @@ Ogni Lavoratore ha uno di quattro poteri, scritto in basso a destra sulla carta.
 % ================================================================ FINE
 \titolo{Fine della partita}
 
-La fine della partita scatta quando un giocatore completa il suo \textbf{quinto set}. Terminate il giro in corso, fino al giocatore alla destra di chi ha iniziato la partita; poi giocate \textbf{ancora un giro completo}. In questi turni si possono chiudere altri set e prendere i token rimasti.
+La fine della partita scatta al primo \textbf{quinto set} completato. Terminate il giro in corso, fino a chi siede alla destra di chi ha iniziato la partita; poi giocate \textbf{ancora un giro completo}. In questi turni si possono chiudere altri set e prendere i token rimasti.
 
 \begin{nota}{Esempio}
-Chi ha iniziato la partita chiude il quinto set. Gli altri terminano il giro; poi tutti, lui compreso, giocano un ultimo turno.
+Chi ha iniziato la partita chiude il quinto set. Il resto del tavolo termina il giro; poi ogni partecipante, compreso chi ha chiuso, gioca un ultimo turno.
 \end{nota}
 
 Quando il mazzo degli Ambiti finisce, rimescolate gli scarti. Se un mazzo finisce e non si può ricostituire, la fine della partita scatta allo stesso modo.
 
 \titolo{Vittoria}
 
-Ognuno somma i punti dei propri set e quelli dei token. Vince chi ha il punteggio più alto. In caso di parità, tra i giocatori a pari punti vince \textbf{il primo che urla «Lavoro!»}.
+Ogni partecipante somma i punti dei propri set e quelli dei token. Vince chi ha il punteggio più alto. In caso di parità, tra chi è a pari punti vince \textbf{la prima voce che urla «Lavoro!»}.
 
 \clearpage
 \titolo{Casi particolari}
 
 \begin{itemize}
   \item Chi non può fare nessuna azione passa il turno.
-  \item Si possono aprire quante pile si vuole, e migliorare una pila anche dopo averci messo il Lavoratore.
-  \item Il potere \potereQuattro{} piazza il secondo Lavoratore su una pila che ne è ancora senza; quel Lavoratore deve comunque avere coperte le altre due ambizioni.
-  \item Un Lavoratore messo in gioco da \potereQuattro{} non attiva il suo potere.
+  \item Si possono aprire quante pile si vuole, e migliorare una pila anche dopo averci messo la Persona.
+  \item Il potere \potereQuattro{} piazza la seconda Persona su una pila che ne è ancora senza; quella Persona deve comunque avere coperte le altre due ambizioni.
+  \item Una Persona messa in gioco da \potereQuattro{} non attiva il suo potere.
 \end{itemize}
 
 \titolo{Consigli per la prima partita}
 
 \begin{itemize}
-  \item \textbf{Non partire col primo set che ti riesce.} Tenere quattro o cinque carte in mano e cercare un Lavoro che somigli alle ambizioni del Lavoratore paga quasi sempre.
+  \item \textbf{Non partire col primo set che ti riesce.} Tenere quattro o cinque carte in mano e cercare un Lavoro che somigli alle ambizioni della Persona paga quasi sempre.
   \item \textbf{Ma non aspettare solo il set perfetto.} Chi rinuncia a un set intero per farne uno da 16 resta indietro, anche nei token.
-  \item \textbf{Guarda il mercato.} I Lavoratori con Ricerca sono i più difficili da formare: per questo hanno il potere più utile.
+  \item \textbf{Guarda il mercato.} Le Persone con Ricerca sono le più difficili da formare: per questo hanno il potere più utile.
   \item \textbf{Chi chiude la partita non prende punti in più:} conta quanto vale ogni set.
 \end{itemize}
 
@@ -354,7 +353,7 @@ Ognuno somma i punti dei propri set e quelli dei token. Vince chi ha il punteggi
 \titolo{Il turno in sintesi}
 
 \begin{nota}{Una sola azione}
-\textbf{1 Apri} una formazione · \textbf{2 Migliora} una formazione · \textbf{3 Inserisci} un lavoratore e attiva il suo potere · \textbf{4 Completa} un set: punti, token, formazioni negli scarti · \textbf{5 Pesca} 2 Ambiti, poi il mercato scorre. Alla fine: al massimo 6 carte in mano.
+\textbf{1 Apri} una formazione · \textbf{2 Migliora} una formazione · \textbf{3 Inserisci} una Persona e attiva il suo potere · \textbf{4 Completa} un set: punti, token, formazioni negli scarti · \textbf{5 Pesca} 2 Ambiti, poi il mercato scorre. Alla fine: al massimo 6 carte in mano.
 \end{nota}
 
 \begin{nota}{Punti}
@@ -369,7 +368,7 @@ Ambizioni che combaciano col Lavoro: nessuna 5, una 7, due 10, tre 16. Token: 3 
 \end{nota}
 
 \begin{nota}{Fine}
-Al quinto set di qualcuno si chiude il giro, poi si gioca un giro in più. Parità: vince chi urla per primo «Lavoro!».
+Al primo quinto set si chiude il giro, poi si gioca un giro in più. Parità: vince la prima voce che urla «Lavoro!».
 \end{nota}
 
 \clearpage
@@ -379,7 +378,7 @@ Al quinto set di qualcuno si chiude il giro, poi si gioca un giro in più. Parit
 Questo print and play si stampa in una volta sola: \textbf{A4, a colori, fronte e retro sul lato lungo, al 100\%} (dimensioni effettive, non "adatta alla pagina").
 
 \begin{itemize}
-  \item \textbf{Fogli 1-7:} i 60 Lavoratori. \textbf{Fogli 8-14:} i 60 Ambiti.
+  \item \textbf{Fogli 1-7:} le 60 Persone. \textbf{Fogli 8-14:} i 60 Ambiti.
   \item \textbf{Foglio 15:} 4 carte riassunto e 4 token, stampati sui due lati.
   \item \textbf{Fogli 16-18:} questo regolamento.
 \end{itemize}
@@ -393,6 +392,10 @@ Carte, carte riassunto e token hanno \textbf{2 mm di abbondanza} per lato: un pi
 Piegate a metà i tre fogli del regolamento, uno dentro l'altro, con la copertina fuori. Una pinzatura sulla piega lo tiene insieme.
 
 \vfill
+\begin{nota}{Le immagini}
+Le immagini di questo prototipo sono generate con l'intelligenza artificiale: servono a provare il gioco, non sono la sua veste definitiva. Per la versione finale vogliamo affidare grafica e illustrazioni, con un compenso, a chi fa design e illustrazione per professione.
+\end{nota}
+
 {\fontsize{7}{9}\selectfont Collocamento è un prototipo di gioco di carte sul mercato del lavoro. Regolamento rivisto, ottobre 2026.\par}
 
 \end{document}

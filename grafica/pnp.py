@@ -113,7 +113,7 @@ for n in lavoratori:
     ImageDraw.Draw(img).text((721, 1008), NOMI[CHI[n]]["nome"].upper(), font=scritta, fill=MAGENTA, anchor="rs")
     fronti_lav.append(salva(con_abbondanza(img, "edge"), f"lav_{n}"))
 fronti_amb = [salva(con_abbondanza(Image.open(CARTE / "ambiti" / f"{n}.png"), "edge"), f"amb_{n}") for n in ambiti]
-dorso_lav = salva(con_abbondanza(Image.open(QUI / "dorsi_proposte" / f"{DORSI}_lavoratori.png"), "reflect"), "dorso_lav")
+dorso_lav = salva(con_abbondanza(Image.open(QUI / "dorsi_proposte" / f"{DORSI}_persone.png"), "reflect"), "dorso_lav")
 dorso_amb = salva(con_abbondanza(Image.open(QUI / "dorsi_proposte" / f"{DORSI}_ambiti.png"), "reflect"), "dorso_amb")
 for vecchia in IMG.glob("*.jpg"):  # le immagini delle versioni precedenti
     if f"pnp_img/{vecchia.name}" not in fronti_lav + fronti_amb + [dorso_lav, dorso_amb]:
@@ -200,17 +200,17 @@ def token(cx, cy_su, valore, testo):
 TURNO = r"""\textbf{Una sola azione per turno:}\\[1mm]
 \textbf{1 Apri} una formazione: un Ambito davanti a te.\\[.7mm]
 \textbf{2 Migliora} una formazione: un Ambito sotto una tua pila.\\[.7mm]
-\textbf{3 Inserisci} un lavoratore su una pila che copre le sue 3 ambizioni. Il mercato si ripristina in coda. \textbf{Attivi il suo potere.}\\[.7mm]
-\textbf{4 Completa} un set: un Ambito come Lavoro su una pila con lavoratore; la pila copre le 3 icone del Lavoro. Punti, token, formazioni negli scarti.\\[.7mm]
-\textbf{5 Pesca} 2 Ambiti; il lavoratore in fila da più tempo va in fondo al mazzo e ne entra uno nuovo.\\[1.4mm]
+\textbf{3 Inserisci} una Persona su una pila che copre le sue 3 ambizioni. Il mercato si ripristina in coda. \textbf{Attivi il suo potere.}\\[.7mm]
+\textbf{4 Completa} un set: un Ambito come Lavoro su una pila con una Persona; la pila copre le 3 icone del Lavoro. Punti, token, formazioni negli scarti.\\[.7mm]
+\textbf{5 Pesca} 2 Ambiti; la Persona in fila da più tempo va in fondo al mazzo e ne entra una nuova.\\[1.4mm]
 Fine turno: al massimo 6 carte in mano."""
 
 PUNTI = (r"""\textbf{Ambizioni che combaciano col Lavoro}\\
 nessuna 5 · una 7 · due 10 · tre 16\\[1.6mm]
-\textbf{Poteri}, quando inserisci il lavoratore:\\[.4mm]
+\textbf{Poteri}, quando inserisci la Persona:\\[.4mm]
 """ + "\\\\[.4mm]\n".join(rf"\textbf{{{p['nome']}}}: {p['breve']}" for _, p in sorted(NOMI.items())) + r"""\\[1.6mm]
 \textbf{Token}: 3 set della stessa categoria 5 / 3; 4 categorie diverse 5 / 3.\\[1.6mm]
-\textbf{Fine}: al quinto set di qualcuno si chiude il giro, poi un giro in più.""")
+\textbf{Fine}: al primo quinto set si chiude il giro, poi un giro in più.""")
 
 
 def foglio_riassunti():

@@ -26,3 +26,5 @@ pitch/*.log
 # Le immagini del print and play: si rifanno con grafica/pnp.py
 grafica/stampa/pnp_img/
 grafica/dorsi_proposte/
+grafica/proposte_carte/
+grafica/carte_v3/
