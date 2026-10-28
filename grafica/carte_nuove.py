@@ -515,6 +515,96 @@ def pdf_proposte(out, chiavi, nome_file):
     print(out / f"{nome_file}.pdf")
 
 
+# ---------------------------------------------------------------- le carte riassunto, nello stile B
+
+def testo_ricco(d, x, y, largo, pezzi, interlinea, colore=PETROLIO):
+    """Un paragrafo fatto di pezzi (testo, font, colore), mandato a capo parola per parola.
+
+    Restituisce la linea di base dell'ultima riga.
+    """
+    parole = []
+    for testo, f, c in pezzi:
+        for i, p in enumerate(testo.split(" ")):
+            if p:
+                parole.append((p, f, c or colore, i == 0 and not testo.startswith(" ")))
+    righe, riga, w = [], [], 0
+    for p, f, c, attaccata in parole:
+        spazio = 0 if not riga or attaccata else f.getlength(" ")
+        lp = f.getlength(p)
+        if riga and w + spazio + lp > largo:
+            righe.append(riga)
+            riga, w, spazio = [], 0, 0
+        riga.append((p, f, c, spazio))
+        w += spazio + lp
+    righe.append(riga)
+    for k, riga in enumerate(righe):
+        xx = x
+        for p, f, c, spazio in riga:
+            xx += spazio
+            d.text((xx, y + k * interlinea), p, font=f, fill=c, anchor="ls")
+            xx += f.getlength(p)
+    return y + (len(righe) - 1) * interlinea
+
+
+def riassunto_B(lato):
+    """La carta riassunto: sul fronte il turno, sul retro punti e poteri. Fondo panna, come le Persone."""
+    tela = Image.new("RGBA", (LARGO, ALTO), PANNA)
+    d = ImageDraw.Draw(tela)
+    f_et = font(BAHN, 8.5, "SemiBold Condensed")
+    scrivi(d, X(5.5), X(7.6), "RIASSUNTO", f_et, MAGENTA, PT(8.5) * 0.22)
+    scrivi(d, X(57.5), X(7.6), "COLLOCAMENTO", f_et, PETROLIO, PT(8.5) * 0.12, "rs")
+    titolo = "IL TURNO" if lato == "fronte" else "PUNTI E POTERI"
+    f_t = font(BAHN, 21, "Bold Condensed")
+    scrivi(d, X(5.5), X(10.2) + PT(21) * 0.74, titolo, f_t, PETROLIO)
+    corpo, grassetto = font(BAHN, 8.5, "SemiCondensed"), font(BAHN, 8.5, "Bold SemiCondensed")
+    stretto = font(BAHN, 9.5, "Bold Condensed")
+    riga = PT(8.5) * 1.16
+    if lato == "fronte":
+        y = X(23.5)
+        d.text((X(5.5), y), "Una sola azione per turno:", font=grassetto, fill=PETROLIO, anchor="ls")
+        y += riga * 1.55
+        azioni = [("APRI", " una formazione: un Ambito davanti a te."),
+                  ("MIGLIORA", " una formazione: un Ambito sotto una tua pila."),
+                  ("INSERISCI", " una Persona su una pila che copre le sue 3 ambizioni. Il mercato si ripristina "
+                                "in coda. Attivi il suo potere."),
+                  ("COMPLETA", " un set: un Ambito come Lavoro su una pila con una Persona; la pila copre le 3 icone "
+                               "del Lavoro. Punti, token, formazioni negli scarti."),
+                  ("PESCA", " 2 Ambiti; la Persona in fila da più tempo va in fondo al mazzo e ne entra una nuova.")]
+        lato_q = L(4.4)
+        for i, (verbo, resto) in enumerate(azioni, 1):
+            # il numero in un quadratino petrolio, come nel regolamento
+            d.rectangle([X(5.5), y - L(3.4), X(5.5) + lato_q, y - L(3.4) + lato_q], fill=PETROLIO)
+            d.text((X(5.5) + lato_q / 2, y - L(3.4) + lato_q / 2), str(i), font=stretto, fill=BIANCO, anchor="mm")
+            y = testo_ricco(d, X(11.4), y, L(46.4), [(verbo, stretto, MAGENTA), (resto, corpo, None)], riga)
+            y += riga * 1.38
+        testo_ricco(d, X(5.5), y, L(52), [("Fine turno:", grassetto, None), (" al massimo 6 carte in mano.", corpo, None)],
+                    riga)
+    else:
+        y = X(23.5)
+        y = testo_ricco(d, X(5.5), y, L(52), [("Ambizioni che combaciano col Lavoro", grassetto, None)], riga)
+        y += riga
+        d.text((X(5.5), y), "nessuna 5  ·  una 7  ·  due 10  ·  tre 16", font=stretto, fill=PETROLIO, anchor="ls")
+        y += riga * 1.9
+        y = testo_ricco(d, X(5.5), y, L(52), [("Poteri", grassetto, None), (", quando inserisci la Persona:", corpo, None)],
+                        riga)
+        y += riga * 1.25
+        for _, p in sorted(POTERI.items()):
+            y = testo_ricco(d, X(5.5), y, L(52), [(p["nome"].upper(), stretto, MAGENTA), (" " + p["breve"], corpo, None)],
+                            riga)
+            y += riga * 1.2
+        y += riga * 0.6
+        y = testo_ricco(d, X(5.5), y, L(52), [("Token:", grassetto, None),
+                                               (" 3 set della stessa categoria 5 e 3; 4 categorie diverse 5 e 3.", corpo, None)],
+                        riga)
+        y += riga * 1.7
+        testo_ricco(d, X(5.5), y, L(52), [("Fine:", grassetto, None),
+                                           (" al primo quinto set si chiude il giro, poi un giro in più.", corpo, None)], riga)
+    return tela.convert("RGB")
+
+
+STILE = "B"  # la proposta scelta da Vittorio il 28/10/2026, con le Persone su bianco panna
+
+
 def mazzo(chiave):
     _, _, fn, rapporto = PROPOSTE[chiave]
     controlla_volti(rapporto)
@@ -524,6 +614,10 @@ def mazzo(chiave):
         for n in numeri:
             fn(tipo, n).save(out / cartella / f"{n}.png")
         print(out / cartella, len(numeri))
+    if chiave == "B":
+        for lato in ("fronte", "retro"):
+            riassunto_B(lato).save(out / f"riassunto_{lato}.png")
+        print(out / "riassunto_fronte.png, riassunto_retro.png")
 
 
 if __name__ == "__main__":

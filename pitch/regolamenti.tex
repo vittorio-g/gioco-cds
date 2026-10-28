@@ -285,28 +285,33 @@ La fine della partita scatta al primo quinto set chiuso al tavolo. Vince chi ha 
 
 \vspace{2mm}
 \noindent\begin{tikzpicture}[x=1mm,y=1mm]
-  \useasboundingbox (0,0) rectangle (165,84);
-  \cartaAt{56,39}{0}{54}{lav_17}
-  \cartaAt{137,39}{0}{54}{amb_17}
+  \useasboundingbox (0,0) rectangle (165,78);
+  \cartaAt{27,39}{0}{54}{lav_17}
+  \cartaAt{110,39}{0}{54}{amb_17}
+  \coordinate (colp) at (57,0); \coordinate (cola) at (140,0);
   \begin{scope}[font=\fontsize{7.8}{10.4}\selectfont\senzasillabe,line width=.5pt]
-    % la persona: le ambizioni, il nome, il numero
-    \sullacarta{la}{56}{39}{54}{0}{36}\sullacarta{lb}{56}{39}{54}{0}{446}
-    \draw ($(la)+(-1,0)$) -- ($(la)+(-2.2,0)$) -- ($(lb)+(-2.2,0)$) -- ($(lb)+(-1,0)$);
-    \draw ($(la)!.5!(lb)+(-2.2,0)$) -- ($(la)!.5!(lb)+(-4.4,0)$);
-    \node[anchor=east,align=right,text width=22.5mm,inner sep=0] at ($(la)!.5!(lb)+(-5.4,0)$) {\textbf{Tre ambizioni.}\\Quello che la formazione deve offrirle.};
-    \sullacarta{ln}{56}{39}{54}{0}{748}
-    \draw ($(ln)+(8.4,0)$) -- ($(ln)+(-4.4,0)$); \fill ($(ln)+(8.4,0)$) circle (.6);
-    \node[anchor=east,align=right,text width=22.5mm,inner sep=0] at ($(ln)+(-5.4,0)$) {\textbf{Nome e battuta.}};
-    \sullacarta{lp}{56}{39}{54}{712}{50}
-    \draw ($(lp)+(0,1.4)$) -- ($(lp)+(0,5.4)$) -- ($(lp)+(6.6,5.4)$); \fill ($(lp)+(0,1.4)$) circle (.6);
-    \node[anchor=west,inner sep=0] at ($(lp)+(7.6,5.4)$) {\textbf{Numero} della carta.};
+    % la persona: il nome, le ambizioni, la battuta, il potere
+    \sullacarta{ln}{27}{39}{54}{672}{157}
+    \draw (ln) -- (ln -| colp); \fill (ln) circle (.6);
+    \node[anchor=west,inner sep=0] at ($(ln -| colp)+(1.2,0)$) {\textbf{Nome.}};
+    \sullacarta{la}{27}{39}{54}{756}{234}\sullacarta{lb}{27}{39}{54}{756}{684}\coordinate (lm) at ($(la)!.5!(lb)$);
+    \draw ($(la)+(.8,0)$) -- ($(la)+(2,0)$) -- ($(lb)+(2,0)$) -- ($(lb)+(.8,0)$);
+    \draw ($(la)!.5!(lb)+(2,0)$) -- (lm -| colp);
+    \node[anchor=west,inner sep=0] at (lm -| colp) {\hspace{1.2mm}\parbox[c]{22mm}{\raggedright\textbf{Tre ambizioni.}\\Quello che la formazione deve offrirle.}};
+    \sullacarta{lt}{27}{39}{54}{660}{815}
+    \draw (lt) -- (lt -| colp); \fill (lt) circle (.6);
+    \node[anchor=west,inner sep=0] at ($(lt -| colp)+(1.2,0)$) {\textbf{Battuta.}};
+    \sullacarta{lp}{27}{39}{54}{408}{935}
+    \draw (lp) -- (lp -| colp); \fill (lp) circle (.6);
+    \node[anchor=west,inner sep=0] at ($(lp -| colp)+(1.2,0)$) {\parbox[c]{22mm}{\raggedright\textbf{Il suo potere} e che cosa fa.}};
     % l'ambito: le competenze, la categoria
-    \sullacarta{aa}{137}{39}{54}{0}{36}\sullacarta{ab}{137}{39}{54}{0}{446}
-    \draw ($(aa)+(-1,0)$) -- ($(aa)+(-2.2,0)$) -- ($(ab)+(-2.2,0)$) -- ($(ab)+(-1,0)$);
-    \node[anchor=east,align=right,text width=22mm,inner sep=0] at ($(aa)!.5!(ab)+(-3.4,0)$) {\textbf{Tre competenze.}\\Offerte come Formazione, richieste come Lavoro.};
-    \sullacarta{ac}{137}{39}{54}{0}{962}
-    \draw ($(ac)+(4,0)$) -- ($(ac)+(-2.4,0)$); \fill ($(ac)+(4,0)$) circle (.6);
-    \node[anchor=east,align=right,text width=22mm,inner sep=0] at ($(ac)+(-3.4,0)$) {\textbf{Categoria.}\\Serve per i token.};
+    \sullacarta{aa}{110}{39}{54}{756}{234}\sullacarta{ab}{110}{39}{54}{756}{684}\coordinate (am) at ($(aa)!.5!(ab)$);
+    \draw ($(aa)+(.8,0)$) -- ($(aa)+(2,0)$) -- ($(ab)+(2,0)$) -- ($(ab)+(.8,0)$);
+    \draw ($(aa)!.5!(ab)+(2,0)$) -- (am -| cola);
+    \node[anchor=west,inner sep=0] at (am -| cola) {\hspace{1.2mm}\parbox[c]{23mm}{\raggedright\textbf{Tre competenze.}\\Offerte come Formazione, richieste come Lavoro.}};
+    \sullacarta{ac}{110}{39}{54}{690}{970}
+    \draw (ac) -- (ac -| cola); \fill (ac) circle (.6);
+    \node[anchor=west,inner sep=0] at ($(ac -| cola)+(1.2,0)$) {\parbox[c]{23mm}{\raggedright\textbf{Categoria.}\\Serve per i token.}};
   \end{scope}
 \end{tikzpicture}
 
@@ -369,17 +374,17 @@ Se non puoi fare nessuna azione, passi. \textbf{Alla fine del turno}, se hai pi�
 % ---------------------------------------------------------------- il set e i punti
 \titolo{Come si costruisce un set}
 
-Le carte si sovrappongono lasciando visibili tutte le fasce delle icone. Ogni nuova Formazione va \textbf{sotto} le precedenti; la Persona va sopra le Formazioni; il Lavoro va sopra la Persona. In una pila le competenze in più, o ripetute, non danno fastidio.
+Le carte si sovrappongono sfalsate: ognuna sporge a destra di quella che ha sopra, così resta visibile la colonna di icone di tutte. Ogni nuova Formazione va \textbf{sotto} le precedenti; la Persona va sopra le Formazioni; il Lavoro va sopra la Persona. In una pila le competenze in più, o ripetute, non danno fastidio.
 
 \vspace{2mm}
 \noindent\begin{tikzpicture}[x=1mm,y=1mm]
   \useasboundingbox (0,0) rectangle (165,60);
-  \cartaAt{19,26}{0}{36}{amb_08}
-  \cartaAt{25.57,26}{0}{36}{amb_13}
-  \cartaAt{32.14,26}{0}{36}{lav_17}
-  \cartaAt{38.71,26}{0}{36}{amb_17}
-  \foreach \x/\n in {4.3/1,10.87/2,17.44/3,24.01/4}{\fill[petrolio] (\x,56.4) circle (2.2);\node[text=white,font=\fontsize{7.5}{8}\selectfont\bfseries,inner sep=0] at (\x,56.4) {\n};\draw[petrolio,line width=.4pt] (\x,54.2) -- (\x,52);}
-  \begin{scope}[shift={(66,0)}]
+  \cartaAt{44.8,26}{0}{36}{amb_08}
+  \cartaAt{36.1,26}{0}{36}{amb_13}
+  \cartaAt{27.4,26}{0}{36}{lav_17}
+  \cartaAt{18.7,26}{0}{36}{amb_17}
+  \foreach \x/\n in {57.8/1,49.1/2,40.4/3,31.8/4}{\fill[petrolio] (\x,56.4) circle (2.2);\node[text=white,font=\fontsize{7.5}{8}\selectfont\bfseries,inner sep=0] at (\x,56.4) {\n};\draw[petrolio,line width=.4pt] (\x,54.2) -- (\x,52);}
+  \begin{scope}[shift={(68,0)}]
     \newcommand{\riga}[4]{% y, numeri, titolo, testo
       \node[anchor=north west,inner sep=0,text width=97mm,font=\fontsize{8.6}{12}\selectfont] at (0,#1) {{\fontsize{7}{9}\selectfont\bfseries\color{accento}\textls[160]{#2}}\\[-.2mm]\textbf{#3}\enspace #4};}
     \riga{59}{1 · 2\enspace FORMAZIONI}{Ristorazione e Logistica.}{La pila offre \terna{MA,CO,CO}\,\terna{MA,DI,OR}}

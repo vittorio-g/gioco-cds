@@ -6,20 +6,21 @@ regolamenti.tex (il documento del pitch) e regolamento_a5.tex (il libretto del p
 
 Legge i .tex e produce solo le immagini che usano, in pitch/img/:
 
-    lav_NN.jpg   la carta del lavoratore NN        (da grafica/carte_v2/lavoratori)
-    amb_NN.jpg   la carta dell'ambito NN           (da grafica/carte_v2/ambiti)
+    lav_NN.jpg   la carta della Persona NN          (da grafica/carte_v3/persone, senza abbondanza)
+    amb_NN.jpg   la carta dell'ambito NN            (da grafica/carte_v3/ambiti, senza abbondanza)
     dorso_lav.jpg, dorso_amb.jpg                   i dorsi originali delle carte
     dorsoB_lav.jpg, dorsoB_amb.jpg                 i dorsi della proposta B (grafica/dorsi_proposte; per le
                                                    Persone B_persone.png, se c'è)
     ill_NN.jpg   l'illustrazione del lavoratore NN (da grafica/illustrazioni/lav)
     art_NN.jpg   l'illustrazione dell'ambito NN, ritagliata dalla carta
-    ico_XX.png   le sei icone                      (da webapp/public/icone)
+    ico_XX.png   le sei icone                      (da grafica/dati/icone_hd)
 
 e scrive pitch/poteri.tex, coi nomi dei poteri (grafica/dati/poteri.json) e i
-numeri dei lavoratori che hanno ciascun potere.
+numeri delle Persone che hanno ciascun potere.
 
-Le carte a piena misura e le illustrazioni non stanno su GitHub ma su Drive
-(vedi README): vanno rimesse in grafica/ prima di lanciare lo script.
+Le carte nuove si fanno con py -3 grafica/carte_nuove.py B (o con grafica/pnp.py). Le
+illustrazioni e le carte dei designer non stanno su GitHub ma su Drive (vedi README): vanno
+rimesse in grafica/ prima di lanciare lo script.
 Servono Python 3 e Pillow.
 """
 import re
@@ -38,7 +39,8 @@ IMG.mkdir(exist_ok=True)
 
 LARGA_CARTA = 620  # punti: a 50 mm di larghezza sono più di 300 punti per pollice
 LATO_ILLUSTRAZIONE = 900
-RIQUADRO_AMBITO = (161, 129, 733, 701)  # l'illustrazione dentro una carta da 756 x 1056
+RIQUADRO_AMBITO = (161, 129, 733, 701)  # l'illustrazione dentro una carta dei designer da 756 x 1056
+ABBONDANZA = 24  # 2 mm a 12 pixel per millimetro, intorno alle carte nuove
 
 tex = "\n".join(f.read_text(encoding="utf-8") for f in QUI.glob("*.tex") if f.name != "poteri.tex")
 usate = set(re.findall(r"\b((?:lav|amb|ill|art)_\d\d|dorso[ABC]?_(?:lav|amb))\b", tex))
@@ -64,8 +66,9 @@ for nome in sorted(usate):
         if mazzo == "lavoratori" and persone.exists():
             file = persone
         salva(ridotta(Image.open(file)), nome)
-    elif tipo in ("lav", "amb"):
-        salva(ridotta(Image.open(RADICE / "grafica" / "carte_v2" / mazzo / f"{numero}.png")), nome)
+    elif tipo in ("lav", "amb"):  # le carte di grafica/carte_nuove.py, tolti i 2 mm di abbondanza
+        carta = Image.open(RADICE / "grafica" / "carte_v3" / ("persone" if tipo == "lav" else "ambiti") / f"{numero}.png")
+        salva(ridotta(carta.crop((ABBONDANZA, ABBONDANZA, carta.width - ABBONDANZA, carta.height - ABBONDANZA))), nome)
     elif tipo == "ill":
         img = Image.open(RADICE / "grafica" / "illustrazioni" / "lav" / f"{numero}.png")
         salva(img.resize((LATO_ILLUSTRAZIONE, LATO_ILLUSTRAZIONE), Image.LANCZOS), nome, 86)
@@ -74,8 +77,8 @@ for nome in sorted(usate):
         salva(img.resize((LATO_ILLUSTRAZIONE, LATO_ILLUSTRAZIONE), Image.LANCZOS), nome, 86)
 
 for sigla in ("MA", "DI", "CO", "OR", "CR", "RI"):
-    icona = Image.open(RADICE / "webapp" / "public" / "icone" / f"{sigla}.png").convert("RGBA")
-    icona.resize((icona.width * 3, icona.height * 3), Image.LANCZOS).save(IMG / f"ico_{sigla}.png", optimize=True)
+    icona = Image.open(RADICE / "grafica" / "dati" / "icone_hd" / f"{sigla}.png").convert("RGBA")
+    icona.resize((300, 300), Image.LANCZOS).save(IMG / f"ico_{sigla}.png", optimize=True)
 
 # toglie le immagini che i documenti non usano più
 for f in IMG.glob("*.jpg"):

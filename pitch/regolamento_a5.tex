@@ -153,25 +153,33 @@ Una carta Ambito si gioca come \textbf{Formazione} oppure come \textbf{Lavoro}. 
 
 \vspace{1mm}
 \noindent\begin{tikzpicture}[x=1mm,y=1mm]
-  \useasboundingbox (0,-6) rectangle (118,60);
-  \cartaAt{38,30}{0}{38}{lav_17}
-  \cartaAt{99,30}{0}{38}{amb_17}
+  \useasboundingbox (0,-1) rectangle (118,49);
+  \cartaAt{17,24}{0}{34}{lav_17}
+  \cartaAt{77,24}{0}{34}{amb_17}
+  \coordinate (colp) at (36.5,0); \coordinate (cola) at (96.5,0);
   \begin{scope}[font=\fontsize{6.2}{7.8}\selectfont\senzasillabe,line width=.4pt]
-    \sullacarta{la}{38}{30}{38}{0}{36}\sullacarta{lb}{38}{30}{38}{0}{446}
-    \draw ($(la)+(-.8,0)$) -- ($(la)+(-1.8,0)$) -- ($(lb)+(-1.8,0)$) -- ($(lb)+(-.8,0)$);
-    \node[anchor=east,align=right,text width=16mm,inner sep=0] at ($(la)!.5!(lb)+(-2.6,0)$) {\textbf{Tre ambizioni.}\\Quello che la formazione deve offrirle.};
-    \sullacarta{ln}{38}{30}{38}{0}{748}
-    \draw ($(ln)+(6.3,0)$) -- ($(ln)+(-1.8,0)$); \fill ($(ln)+(6.3,0)$) circle (.45);
-    \node[anchor=east,align=right,text width=16mm,inner sep=0] at ($(ln)+(-2.6,0)$) {\textbf{Nome e battuta.}};
-    \sullacarta{lp}{38}{30}{38}{600}{1000}
-    \draw ($(lp)+(0,-.8)$) -- ($(lp)+(0,-6.6)$); \fill ($(lp)+(0,-.8)$) circle (.45);
-    \node[anchor=north,inner sep=0] at ($(lp)+(0,-7.3)$) {\textbf{Il suo potere}};
-    \sullacarta{aa}{99}{30}{38}{0}{36}\sullacarta{ab}{99}{30}{38}{0}{446}
-    \draw ($(aa)+(-.8,0)$) -- ($(aa)+(-1.8,0)$) -- ($(ab)+(-1.8,0)$) -- ($(ab)+(-.8,0)$);
-    \node[anchor=east,align=right,text width=17mm,inner sep=0] at ($(aa)!.5!(ab)+(-2.6,0)$) {\textbf{Tre competenze.}\\Offerte come Formazione, richieste come Lavoro.};
-    \sullacarta{ac}{99}{30}{38}{0}{962}
-    \draw ($(ac)+(3,0)$) -- ($(ac)+(-1.8,0)$); \fill ($(ac)+(3,0)$) circle (.45);
-    \node[anchor=east,align=right,text width=17mm,inner sep=0] at ($(ac)+(-2.6,0)$) {\textbf{Categoria.}\\Serve per i token.};
+    % la persona: il nome, le ambizioni, la battuta, il potere
+    \sullacarta{ln}{17}{24}{34}{672}{157}
+    \draw (ln) -- (ln -| colp); \fill (ln) circle (.45);
+    \node[anchor=west,inner sep=0,text width=19mm] at ($(ln -| colp)+(1,0)$) {\textbf{Nome.}};
+    \sullacarta{la}{17}{24}{34}{756}{234}\sullacarta{lb}{17}{24}{34}{756}{684}\coordinate (lm) at ($(la)!.5!(lb)$);
+    \draw ($(la)+(.6,0)$) -- ($(la)+(1.6,0)$) -- ($(lb)+(1.6,0)$) -- ($(lb)+(.6,0)$);
+    \draw ($(la)!.5!(lb)+(1.6,0)$) -- (lm -| colp);
+    \node[anchor=west,inner sep=0,text width=19mm] at (lm -| colp) {\hspace{1mm}\parbox[c]{18mm}{\raggedright\textbf{Tre ambizioni.}\\Quello che la formazione deve offrirle.}};
+    \sullacarta{lt}{17}{24}{34}{660}{815}
+    \draw (lt) -- (lt -| colp); \fill (lt) circle (.45);
+    \node[anchor=west,inner sep=0,text width=19mm] at ($(lt -| colp)+(1,0)$) {\textbf{Battuta.}};
+    \sullacarta{lp}{17}{24}{34}{408}{935}
+    \draw (lp) -- (lp -| colp); \fill (lp) circle (.45);
+    \node[anchor=west,inner sep=0,text width=19mm] at ($(lp -| colp)+(1,0)$) {\textbf{Il suo potere} e che cosa fa.};
+    % l'ambito: le competenze, la categoria
+    \sullacarta{aa}{77}{24}{34}{756}{234}\sullacarta{ab}{77}{24}{34}{756}{684}\coordinate (am) at ($(aa)!.5!(ab)$);
+    \draw ($(aa)+(.6,0)$) -- ($(aa)+(1.6,0)$) -- ($(ab)+(1.6,0)$) -- ($(ab)+(.6,0)$);
+    \draw ($(aa)!.5!(ab)+(1.6,0)$) -- (am -| cola);
+    \node[anchor=west,inner sep=0] at (am -| cola) {\hspace{1mm}\parbox[c]{20mm}{\raggedright\textbf{Tre competenze.}\\Offerte come Formazione, richieste come Lavoro.}};
+    \sullacarta{ac}{77}{24}{34}{690}{970}
+    \draw (ac) -- (ac -| cola); \fill (ac) circle (.45);
+    \node[anchor=west,inner sep=0] at ($(ac -| cola)+(1,0)$) {\parbox[c]{20mm}{\raggedright\textbf{Categoria.}\\Serve per i token.}};
   \end{scope}
 \end{tikzpicture}
 
@@ -233,18 +241,18 @@ Se hai più di 6 carte in mano, scarta quelle in eccesso. È l'ultima cosa che f
 \clearpage
 \titolo{Come si costruisce un set}
 
-Le carte si sovrappongono lasciando visibili tutte le fasce delle icone. Ogni nuova Formazione va \textbf{sotto} le precedenti; la Persona va sopra le Formazioni; il Lavoro va sopra la Persona. In una pila le competenze in più, o ripetute, non danno fastidio.
+Le carte si sovrappongono sfalsate: ognuna sporge a destra di quella che ha sopra, così resta visibile la colonna di icone di tutte. Ogni nuova Formazione va \textbf{sotto} le precedenti; la Persona va sopra le Formazioni; il Lavoro va sopra la Persona. In una pila le competenze in più, o ripetute, non danno fastidio.
 
 \vspace{2mm}
 \noindent\begin{tikzpicture}[x=1mm,y=1mm]
   \useasboundingbox (0,0) rectangle (118,50);
-  \cartaAt{15,22}{0}{30}{amb_08}
-  \cartaAt{20.475,22}{0}{30}{amb_13}
-  \cartaAt{25.95,22}{0}{30}{lav_17}
-  \cartaAt{31.425,22}{0}{30}{amb_17}
-  \foreach \x/\n in {2.74/1,8.21/2,13.69/3,19.16/4}{\fill[petrolio] (\x,46.6) circle (1.8);\node[text=white,font=\fontsize{6}{6}\selectfont\bfseries,inner sep=0] at (\x,46.6) {\n};\draw[petrolio,line width=.3pt] (\x,44.8) -- (\x,43.2);}
-  \begin{scope}[shift={(50,0)}]
-    \newcommand{\riga}[4]{\node[anchor=north west,inner sep=0,text width=68mm,font=\fontsize{7}{9.6}\selectfont] at (0,#1) {{\fontsize{5.6}{7}\selectfont\bfseries\color{accento}\textls[150]{#2}}\\[-.2mm]\textbf{#3}\enspace #4};}
+  \cartaAt{34.4,21}{0}{28}{amb_08}
+  \cartaAt{27.6,21}{0}{28}{amb_13}
+  \cartaAt{20.8,21}{0}{28}{lav_17}
+  \cartaAt{14,21}{0}{28}{amb_17}
+  \foreach \x/\n in {44.6/1,37.8/2,31/3,24.2/4}{\fill[petrolio] (\x,46.4) circle (1.8);\node[text=white,font=\fontsize{6}{6}\selectfont\bfseries,inner sep=0] at (\x,46.4) {\n};\draw[petrolio,line width=.3pt] (\x,44.6) -- (\x,42.9);}
+  \begin{scope}[shift={(51,0)}]
+    \newcommand{\riga}[4]{\node[anchor=north west,inner sep=0,text width=67mm,font=\fontsize{7}{9.6}\selectfont] at (0,#1) {{\fontsize{5.6}{7}\selectfont\bfseries\color{accento}\textls[150]{#2}}\\[-.2mm]\textbf{#3}\enspace #4};}
     \riga{49}{1 · 2\enspace FORMAZIONI}{Ristorazione e Logistica.}{La pila offre \terna{MA,CO,CO}\,\terna{MA,DI,OR}}
     \riga{36.5}{3\enspace PERSONA}{Il Tecnico Paziente}{desidera \terna{MA,DI,CO}\,e la pila le ha tutte \spunta}
     \riga{24.5}{4\enspace LAVORO}{Direzione}{richiede \terna{CO,MA,OR}\,e la pila le ha tutte \spunta}
