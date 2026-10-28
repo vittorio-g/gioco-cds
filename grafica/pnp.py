@@ -16,12 +16,16 @@ Dopo ogni pagina di fronti viene quella dei dorsi, già specchiata per il fronte
 e retro sul lato lungo. I dorsi hanno 1,5 mm di colore in più per lato, così un
 piccolo disallineamento della stampante non lascia bordi bianchi.
 
+Con una lettera (py -3 grafica/pnp.py A) usa i dorsi della proposta A, B o C di
+grafica/dorsi_proposte/ (li fa genera_dorsi.mjs) e scrive collocamento_pnp_dorsi_A.pdf.
+
 Servono le carte a piena misura in grafica/carte_v2/ (da Drive), Pillow, PyMuPDF
 e pdflatex con TikZ e pdfpages.
 """
 import csv
 import json
 import subprocess
+import sys
 from collections import Counter
 from pathlib import Path
 
@@ -37,6 +41,8 @@ IMG.mkdir(parents=True, exist_ok=True)
 REGOLE = RADICE / "pitch" / "regolamenti.pdf"
 PAGINE_REGOLE = "5-8"  # le pagine di Collocamento nel documento del pitch, senza l'apertura
 
+PROPOSTA = sys.argv[1].upper() if len(sys.argv) > 1 else None
+NOME_PDF = f"collocamento_pnp_dorsi_{PROPOSTA}" if PROPOSTA else "collocamento_pnp"
 PETROLIO = (23, 71, 77)
 CARTA = (243, 236, 221)
 NOMI_POTERI = {1: "PESCA", 2: "PRENOTA", 3: "FORMA", 4: "PIAZZA"}
@@ -112,6 +118,25 @@ for lettera, larga in zip(testo, larghezze):
     d.text((x, 639), lettera, font=regolare, fill=CARTA)
     x += larga
 dorso_amb = salva(dorso, "dorso_amb")
+
+
+def senza_angoli_bianchi(img):
+    """Alcuni dorsi generati hanno gli angoli arrotondati su fondo bianco: dopo il taglio si vedrebbero.
+    Li riempie col colore più comune lungo il bordo."""
+    img = img.convert("RGB")
+    bordo = [img.getpixel((x, y)) for x in range(0, img.width, 7) for y in (12, img.height - 13)]
+    bordo += [img.getpixel((x, y)) for y in range(0, img.height, 7) for x in (12, img.width - 13)]
+    pieni = [p for p in bordo if sum(p) < 690]
+    fondo = Counter((r // 8 * 8, g // 8 * 8, b // 8 * 8) for r, g, b in pieni).most_common(1)[0][0]
+    for angolo in ((0, 0), (img.width - 1, 0), (0, img.height - 1), (img.width - 1, img.height - 1)):
+        if sum(img.getpixel(angolo)) > 690:
+            ImageDraw.floodfill(img, angolo, fondo, thresh=60)
+    return img
+
+
+if PROPOSTA:
+    dorso_lav = salva(senza_angoli_bianchi(Image.open(QUI / "dorsi_proposte" / f"{PROPOSTA}_lavoratori.png")), f"dorso_lav_{PROPOSTA}")
+    dorso_amb = salva(senza_angoli_bianchi(Image.open(QUI / "dorsi_proposte" / f"{PROPOSTA}_ambiti.png")), f"dorso_amb_{PROPOSTA}")
 
 # ---------------------------------------------------------------------------
 # Il PDF
@@ -277,14 +302,16 @@ else:
     print(f"attenzione: manca {REGOLE}, il PDF esce senza le regole (rifarlo con pdflatex in pitch/)")
 testo += "\\end{document}\n"
 
-(STAMPA / "collocamento_pnp.tex").write_text(testo, encoding="utf-8")
+if PROPOSTA:
+    testo = testo.replace("i dorsi rosa devono", f"i dorsi (proposta {PROPOSTA}) devono").replace("con i dorsi rosa", "col dorso dei Lavoratori").replace("con i dorsi petrolio", "col dorso degli Ambiti")
+(STAMPA / f"{NOME_PDF}.tex").write_text(testo, encoding="utf-8")
 for _ in range(2):  # due passate: la pagina dei token usa le coordinate della pagina
-    esito = subprocess.run(["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "collocamento_pnp.tex"],
+    esito = subprocess.run(["pdflatex", "-interaction=nonstopmode", "-halt-on-error", f"{NOME_PDF}.tex"],
                            cwd=STAMPA, capture_output=True, text=True, errors="replace")
     if esito.returncode:
         raise SystemExit(f"pdflatex non è riuscito:\n{esito.stdout[-2000:]}")
 for avanzo in ("aux", "log"):
-    (STAMPA / f"collocamento_pnp.{avanzo}").unlink(missing_ok=True)
-pdf = STAMPA / "collocamento_pnp.pdf"
-print(f"grafica/stampa/collocamento_pnp.pdf: {len(fitz.open(pdf))} pagine, {pdf.stat().st_size / 1e6:.0f} MB")
+    (STAMPA / f"{NOME_PDF}.{avanzo}").unlink(missing_ok=True)
+pdf = STAMPA / f"{NOME_PDF}.pdf"
+print(f"grafica/stampa/{NOME_PDF}.pdf: {len(fitz.open(pdf))} pagine, {pdf.stat().st_size / 1e6:.0f} MB")
 print("poteri:", {p: sorted(n for n, q in potere.items() if q == p) for p in (1, 2, 3, 4)})
