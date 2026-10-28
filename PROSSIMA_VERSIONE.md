@@ -15,3 +15,4 @@ nuovi da `grafica/stampa/taglio/` va rilanciato `crocini_due_versioni.py` in que
 | Data | Cambiamento | Dove | Stato |
 |---|---|---|---|
 | 28/10/2026 | Il potere 2, Colloquio, si chiama **Ho un amico**. | `grafica/dati/poteri.json`: lo prendono carte, carte riassunto, libretto e pitch | nei sorgenti |
+| 28/10/2026 | Scatola più profonda: interno **65 x 90 x 44 mm** invece di 40. Le 124 carte plastificate misurano circa 40 mm (0,32 mm a carta, più delle stime), più circa 1,3 mm di token. Linguette da 11 mm invece di 14, per restare nell'A4. | `grafica/scatola.py` (`PROFONDITA`, `LINGUETTA`); poi il progetto LightBurn in laser-designs, `designs/collocamento-scatola` | nei sorgenti |
