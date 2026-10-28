@@ -16,7 +16,7 @@ Testo di partenza: il regolamento dei designer del 5 ottobre 2026, con i 60 ambi
 | 2 | Il mercato dei lavoratori è un gruppo di carte. | È una fila: i nuovi entrano in coda, e chi sceglie "Pescare" fa uscire quello che c'è da più tempo. | Il mercato poteva bloccarsi senza via d'uscita, e i lavoratori difficili restavano lì per giri. |
 | 3 | Potere 1: pesca 2 carte Ambito. | Pesca 1 carta. | Con 2 carte chi lo aveva da solo vinceva l'84% delle partite a tre. |
 | 4 | Quali lavoratori hanno quale potere: da definire. | 15 per potere, il più utile ai lavoratori più difficili da formare. L'elenco per numero di carta è nel documento. | Senza un'assegnazione non si gioca. Messo sui lavoratori più difficili, il potere più forte è anche quello che si attiva meno: 2,8 volte a partita in 3, contro 3,2-3,7 degli altri. |
-| 5 | I poteri hanno solo un numero. | Hanno anche un nome: Pesca, Prenota, Forma, Piazza. | Per poterne parlare. |
+| 5 | I poteri hanno solo un numero. | Hanno un nome tematico, scritto sulla carta: Passaparola (1), Colloquio (2), Corso intensivo (3), Chiamata diretta (4). Scelti da Vittorio il 28 ottobre 2026. | Per poterne parlare, e per leggerli sulla carta senza tabella. |
 | 6 | Non scritto. | Il potere si attiva quando inserisci il lavoratore, anche se era prenotato; prenotare non lo attiva; i prenotati non contano nel limite di mano; un potere non usato va perso; si possono aprire quante pile si vuole; chi non può fare azioni passa. | Erano le domande aperte del capitolo 7 di [BUCHI.md](../BUCHI.md). |
 | 7 | Esempio dei punti con un lavoratore "Digitale, Digitale, Comunicazione". | Esempio con carte vere: Il Tecnico Paziente, Logistica, Ristorazione, Direzione. | Una carta con quelle tre icone non esiste, e l'esempio serve anche alla figura. |
 
@@ -31,13 +31,13 @@ Testo di partenza: il regolamento dei designer del 5 ottobre 2026, con i 60 ambi
 | Attesa di un lavoratore al mercato: scritte, riviste | 3,6 e 1,9 giri | 3,4 e 1,7 | 3,2 e 1,7 |
 | Vittorie per posto al tavolo, regole riviste | 49% · 51% | 32% · 34% · 33% | 24% · 25% · 25% · 26% |
 
-In 2 e in 3 la partita resta quella di prima. I quattro poteri, misurati dando ognuno a un giocatore solo, in 3: Pesca 60% di vittorie, Prenota 52%, Forma 39%, Piazza 38% (alla pari 33%). Prima erano 84%, 51%, 41%, 42%.
+In 2 e in 3 la partita resta quella di prima. I quattro poteri, misurati dando ognuno a un giocatore solo, in 3: Passaparola 60% di vittorie, Colloquio 52%, Corso intensivo 39%, Chiamata diretta 38% (alla pari 33%). Prima erano 84%, 51%, 41%, 42%.
 
 **Non toccato:** punti 5, 7, 10, 16; token obiettivo; fine al quinto set più un giro; spareggio «Lavoro!».
 
 **Resta aperto:**
 
-- Forma e Piazza vanno a vuoto circa una volta su due anche con le regole riviste.
+- Corso intensivo e Chiamata diretta vanno a vuoto circa una volta su due anche con le regole riviste.
 - I 60 ambiti li ho intesi come due copie di ognuno dei 30: va confermato.
 - Il regolamento chiama "ambizioni" le icone dei lavoratori, le carte le chiamano "attitudini". Nel documento ho tenuto "ambizioni", con una nota.
 

@@ -1,0 +1,23 @@
+{
+  "_nota": "I nomi dei quattro poteri dei Lavoratori (set scelto da Vittorio il 28/10/2026). Li usano grafica/pnp.py (carte e carte riassunto) e pitch/figure.py (che scrive pitch/poteri.tex per i documenti). Il numero è solo interno: quale lavoratore ha quale potere lo calcolano gli script, col potere più utile ai lavoratori più difficili da formare.",
+  "1": {
+    "nome": "Passaparola",
+    "breve": "pesca 1 Ambito.",
+    "effetto": "Pesca 1 carta Ambito."
+  },
+  "2": {
+    "nome": "Colloquio",
+    "breve": "prenota un lavoratore del mercato.",
+    "effetto": "Prendi un Lavoratore dal mercato e tienilo da parte, scoperto: è prenotato per te. Il mercato si ripristina."
+  },
+  "3": {
+    "nome": "Corso intensivo",
+    "breve": "gioca fino a 2 Ambiti come formazioni.",
+    "effetto": "Gioca subito fino a 2 carte Ambito dalla mano come Formazioni: per aprire pile nuove o per migliorarne di tue."
+  },
+  "4": {
+    "nome": "Chiamata diretta",
+    "breve": "piazza un altro lavoratore ignorando un'ambizione (senza il suo potere).",
+    "effetto": "Metti subito un altro Lavoratore, dal mercato o tra i tuoi prenotati, su una tua pila libera, ignorando una delle sue tre ambizioni. Il suo potere non si attiva."
+  }
+}

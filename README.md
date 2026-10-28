@@ -23,7 +23,7 @@ Gioco di carte competitivo: formi dei lavoratori e li mandi a lavorare. Due mazz
 | `variante-carte/` | Il prototipo di carte in tempo reale: le regole dei designer. |
 | `mercato-del-lavoro/` | Il prototipo di destrezza: le regole dei designer, un modello della partita e i risultati. |
 | `pitch/` | Il documento per il pitch: i tre regolamenti (Collocamento, Variante Carte, Mercato del Lavoro) rivisti e impaginati nello stile delle carte. Sorgente LaTeX, script delle figure ed elenco delle revisioni. |
-| `grafica/` | `da_pdf.py`, che dai PDF della grafica ricava tutte le immagini, e i dati delle carte (`dati/`). In `stampa/` i sorgenti dei PDF da stampare. Gli altri script sono quelli della prima grafica. |
+| `grafica/` | `da_pdf.py`, che dai PDF della grafica ricava tutte le immagini, e i dati delle carte (`dati/`, con i nomi dei poteri in `poteri.json`). `pnp.py` fa il print and play; `poteri.py` decide quale lavoratore ha quale potere. In `stampa/` i sorgenti dei PDF da stampare e, in `stampa/taglio/`, i profili per il laser. Gli altri script sono quelli della prima grafica. |
 | `carte/` | Il PDF del primo mazzo a due facce, superato. |
 
 ## Le immagini che non stanno qui
@@ -37,8 +37,8 @@ Le immagini pesanti della grafica sono su Google Drive, non su GitHub:
 | `pdf/` | I due PDF originali della grafica, con le terne a 10 simboli: `lavoratori_A4.pdf` e `ambiti_A4.pdf`. Da qui si rifà tutto. |
 | `carte_v2/` | Le carte in uso, a sei simboli, una per file in PNG: `lavoratori/` (60 più il dorso) e `ambiti/` (30 più il dorso). |
 | `stampa/` | I PDF da stampare, con le carte in uso: nove per pagina, fronte e retro, con i segni di taglio. |
-| `stampa/collocamento_pnp.pdf` | Il print and play di Collocamento in un file solo: 60 Lavoratori col potere scritto, 60 Ambiti, token, carte riassunto e regole; fronte e retro su A4. |
-| `pitch/` | Il documento per il pitch, `regolamenti.pdf`, e le immagini che gli servono (`img/`). |
+| `stampa/collocamento_pnp.pdf` | Il print and play di Collocamento in un file solo: 18 fogli A4 da stampare fronte e retro in una volta. 60 Lavoratori col nome del potere, 60 Ambiti, carte riassunto e token pronti per il taglio laser, e il regolamento da piegare in un libretto A5. |
+| `pitch/` | Il documento per il pitch, `regolamenti.pdf`, il regolamento di Collocamento in libretto A5 (`regolamento_a5.pdf`) e le immagini che gli servono (`img/`). |
 | `illustrazioni/` | Le illustrazioni originali della prima grafica: 60 lavoratori e 24 ambiti. |
 | `carte/` | Le carte della prima grafica. |
 | `prove_stile/` | Le prove dei quattro stili fatte prima di scegliere. |
@@ -124,7 +124,20 @@ Un modello della partita del prototipo di destrezza ([regole](mercato-del-lavoro
 py -3 grafica/pnp.py
 ```
 
-Scrive `grafica/stampa/collocamento_pnp.pdf` (34 pagine, 17 fogli A4 fronte e retro sul lato lungo), coi dorsi della proposta B di `grafica/dorsi_proposte/` (generati da `grafica/genera_dorsi.mjs`, su Drive): istruzioni con token e carte riassunto sul retro, i 60 Lavoratori col potere scritto nel piede, i 60 Ambiti (due copie dei 30) col dorso corretto a "60 carte", e le regole prese da `pitch/regolamenti.pdf`. Servono `grafica/carte_v2/` da Drive e il PDF del pitch già compilato.
+Scrive `grafica/stampa/collocamento_pnp.pdf`: 36 pagine, 18 fogli A4 da stampare in una volta, fronte e retro sul lato lungo, al 100%.
+
+| Fogli | Contenuto |
+|---|---|
+| 1-7 | I 60 Lavoratori col nome del potere nel piede, dorsi rosa |
+| 8-14 | I 60 Ambiti (due copie dei 30), dorsi petrolio |
+| 15 | 4 carte riassunto (il turno; punti e poteri) e 4 token obiettivo, stampati sui due lati |
+| 16-18 | Il regolamento, già imposto: si piegano i tre fogli a metà, uno dentro l'altro, e viene il libretto A5 di 12 pagine |
+
+Carte, riassunti e token hanno 2 mm di abbondanza per lato su tutte e due le facciate e quattro crocini di registro per foglio. I profili di taglio sono in `grafica/stampa/taglio/` (SVG); i progetti LightBurn e le istruzioni sono nella repo `laser-designs`, cartella `designs/collocamento-print-and-play`. Senza laser si taglia a mano: lo spazio di 4 mm tra le carte basta per la taglierina.
+
+I dorsi sono quelli della proposta B di `grafica/dorsi_proposte/` (generati da `grafica/genera_dorsi.mjs`, su Drive). Il regolamento viene da `pitch/regolamento_a5.tex`: lo script lo ricompila se il sorgente è più nuovo del PDF. Servono `grafica/carte_v2/` e `pitch/img/` da Drive (o `py -3 pitch/figure.py`).
+
+I nomi dei poteri stanno in `grafica/dati/poteri.json`; quale lavoratore ha quale potere lo calcola `grafica/poteri.py`, col potere più utile ai lavoratori più difficili da formare. Li leggono sia `pnp.py` sia `pitch/figure.py`, che scrive `pitch/poteri.tex` per i documenti LaTeX.
 
 ### Documento per il pitch
 
@@ -132,7 +145,7 @@ Scrive `grafica/stampa/collocamento_pnp.pdf` (34 pagine, 17 fogli A4 fronte e re
 py -3 pitch/figure.py
 ```
 
-prepara in `pitch/img/` le immagini che il documento usa, partendo da `grafica/carte_v2/` e `grafica/illustrazioni/` (da Drive). In alternativa si scarica da Drive la cartella `pitch/img`. Poi, da dentro `pitch/`, `pdflatex regolamenti.tex`. Serve una distribuzione LaTeX con TikZ, tcolorbox, TeX Gyre Heros e qrcode.
+prepara in `pitch/img/` le immagini che il documento usa, partendo da `grafica/carte_v2/` e `grafica/illustrazioni/` (da Drive), e scrive `pitch/poteri.tex` coi nomi dei poteri. In alternativa si scarica da Drive la cartella `pitch/img`. Poi, da dentro `pitch/`, `pdflatex regolamenti.tex` (il documento del pitch) e `pdflatex regolamento_a5.tex` (il libretto di Collocamento). Serve una distribuzione LaTeX con TikZ, tcolorbox, TeX Gyre Heros e qrcode.
 
 ### Grafica
 
