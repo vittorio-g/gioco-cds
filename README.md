@@ -138,7 +138,7 @@ Carte, riassunti e token hanno un solo colore di fondo fino al bordo, 2 mm di ab
 
 Le carte sono quelle di `grafica/carte_nuove.py` nello stile B, scelto da Vittorio il 28 ottobre 2026: titolo stretto e grande in Bahnschrift, Persone su bianco panna, Ambiti su petrolio, icone come adesivi in colonna accanto all'illustrazione. Se `grafica/carte_v3/` manca, `pnp.py` la rifà. Le illustrazioni delle Persone vengono dagli originali (`grafica/illustrazioni/lav`) e il ritaglio tiene dentro la testa: i riquadri dei volti sono in `grafica/dati/volti.json`, e lo script si ferma se un ritaglio ne taglia uno. Le icone in alta risoluzione (`grafica/dati/icone_hd/`) le fa `grafica/icone_hd.py`. Lo stesso script, con `proposte`, rifà le tre proposte di design (A Fanzine, B Manifesto, C Schedario).
 
-I dorsi sono quelli della proposta B di `grafica/dorsi_proposte/` (generati da `grafica/genera_dorsi.mjs`, su Drive); sul dorso delle Persone la fascia dice PERSONE (`grafica/dorso_persone.py`). Il regolamento viene da `pitch/regolamento_a5.tex`: lo script lo ricompila se il sorgente è più nuovo del PDF. Servono da Drive `grafica/illustrazioni/`, `grafica/carte_v2/` e `pitch/img/` (o `py -3 pitch/figure.py`).
+I dorsi sono quelli della proposta B di `grafica/dorsi_proposte/` (generati da `grafica/genera_dorsi.mjs`, su Drive); sul dorso delle Persone la fascia dice PERSONE (`grafica/dorso_persone.py`). Il regolamento è `pitch/regolamento_a5.html`, nello stile delle carte: `pitch/libretto.py` lo stampa in PDF con Microsoft Edge (carattere Bahnschrift, di Windows), e `pnp.py` lo rifà ogni volta. Ogni pagina è un pannello panna con 6 mm di bianco intorno, per le stampanti che non arrivano al bordo; anche crocini e intestazioni dei fogli di carte stanno ad almeno 4,5 mm dal bordo. Servono da Drive `grafica/illustrazioni/`, `grafica/carte_v2/` e `pitch/img/` (o `py -3 pitch/figure.py`).
 
 I nomi dei poteri stanno in `grafica/dati/poteri.json`; quale Persona ha quale potere lo calcola `grafica/poteri.py`, col potere più utile alle Persone più difficili da formare. Li leggono sia `pnp.py` sia `pitch/figure.py`, che scrive `pitch/poteri.tex` per i documenti LaTeX.
 
@@ -148,7 +148,7 @@ I nomi dei poteri stanno in `grafica/dati/poteri.json`; quale Persona ha quale p
 py -3 pitch/figure.py
 ```
 
-prepara in `pitch/img/` le immagini che il documento usa, partendo da `grafica/carte_v3/` (le carte nuove), `grafica/carte_v2/` e `grafica/illustrazioni/` (da Drive), e scrive `pitch/poteri.tex` coi nomi dei poteri. In alternativa si scarica da Drive la cartella `pitch/img`. Poi, da dentro `pitch/`, `pdflatex regolamenti.tex` (il documento del pitch) e `pdflatex regolamento_a5.tex` (il libretto di Collocamento). Serve una distribuzione LaTeX con TikZ, tcolorbox, TeX Gyre Heros e qrcode.
+prepara in `pitch/img/` le immagini che il documento usa, partendo da `grafica/carte_v3/` (le carte nuove), `grafica/carte_v2/` e `grafica/illustrazioni/` (da Drive), e scrive `pitch/poteri.tex` coi nomi dei poteri. In alternativa si scarica da Drive la cartella `pitch/img`. Poi, da dentro `pitch/`, `pdflatex regolamenti.tex` (il documento del pitch); il libretto di Collocamento si fa con `py -3 pitch/libretto.py`. Serve una distribuzione LaTeX con TikZ, tcolorbox, TeX Gyre Heros e qrcode.
 
 ### Grafica
 

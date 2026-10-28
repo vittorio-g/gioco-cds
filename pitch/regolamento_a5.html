@@ -1,0 +1,559 @@
+<!doctype html>
+<!--
+  Collocamento: il regolamento in libretto A5, nello stile delle carte (proposta B).
+  È il sorgente: py -3 pitch/libretto.py riempie i segnaposto e lo stampa in PDF con Edge.
+  Segnaposto, tra doppie graffe: "potere N", "effetto N", "breve N" (N da 1 a 4, da grafica/dati/poteri.json),
+  "ico XX" (un'icona), "terna per NN" e "terna amb NN" (le tre icone di una carta, da mazzi/).
+  Ogni <section class="pagina"> è una pagina: devono essere 12, e niente deve uscire dal pannello.
+  Il bianco intorno al pannello (6 mm) è il margine per le stampanti che non arrivano al bordo.
+-->
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Collocamento - Regolamento</title>
+<style>
+@page { size: 148mm 210mm; margin: 0; }
+:root {
+  --panna: #f5efe3; --petrolio: #17474d; --magenta: #d53883; --rosa: #ff3d8b; --bianco: #fffaf0;
+  --ombra: 0 .5mm 1.6mm rgba(23, 71, 77, .28);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  font-family: Bahnschrift, sans-serif; font-weight: 400; font-stretch: 100%;
+  color: var(--petrolio); font-size: 9.2pt; line-height: 1.36;
+}
+b, strong { font-weight: 700; }
+em { font-style: normal; font-weight: 700; color: var(--magenta); }
+
+/* ---------------------------------------------------------------- la pagina è una carta */
+.pagina { width: 148mm; height: 210mm; position: relative; overflow: hidden; break-after: page; background: #fff; }
+.pannello {
+  position: absolute; inset: 6mm; border-radius: 4mm; background: var(--panna);
+  padding: 14mm 9mm 11mm 9mm; overflow: hidden;
+}
+.pannello.scuro { background: var(--petrolio); color: var(--panna); }
+.testata, .piede {
+  position: absolute; left: 9mm; right: 9mm; display: flex; justify-content: space-between;
+  font-weight: 600; font-stretch: 75%; text-transform: uppercase;
+}
+.testata { top: 5.4mm; font-size: 7.5pt; letter-spacing: .22em; }
+.testata .sx { color: var(--magenta); }
+.piede { bottom: 4.4mm; font-size: 6pt; letter-spacing: .16em; opacity: .7; }
+
+/* ---------------------------------------------------------------- titoli e testo */
+.occhiello {
+  font-weight: 600; font-stretch: 75%; font-size: 7.5pt; letter-spacing: .22em;
+  color: var(--magenta); text-transform: uppercase; margin: 0 0 .4mm;
+}
+h2 {
+  font-weight: 700; font-stretch: 75%; font-size: 24pt; line-height: .95;
+  text-transform: uppercase; margin: 0 0 3.2mm;
+}
+h3 { font-weight: 700; font-stretch: 75%; font-size: 12pt; text-transform: uppercase; margin: 0 0 1mm; }
+.sezione + .sezione { margin-top: 6.5mm; }
+p { margin: 0 0 2.2mm; }
+.attacco { font-weight: 600; font-stretch: 87.5%; font-size: 11.5pt; line-height: 1.25; margin-bottom: 3mm; }
+ul { margin: 0 0 2.2mm; padding: 0; list-style: none; }
+li { position: relative; padding-left: 4.8mm; margin-bottom: 1.5mm; }
+li::before {
+  content: ""; position: absolute; left: .5mm; top: 1.25mm; width: 2.1mm; height: 2.1mm;
+  background: var(--rosa); border-radius: .3mm; transform: rotate(-9deg);
+}
+.piccolo { font-size: 7.6pt; line-height: 1.3; }
+
+/* le icone come adesivi, appena storte */
+.ico { display: inline-block; height: 1.6em; vertical-align: -.45em; margin: 0 .04em; transform: rotate(-5deg); }
+.ico + .ico { transform: rotate(4deg); }
+.ico + .ico + .ico { transform: rotate(-2deg); }
+.spunta { color: var(--magenta); font-weight: 700; }
+
+/* le note: cartoncini bianchi con l'ombra, o petrolio come un Ambito */
+.nota {
+  background: var(--bianco); border-radius: 1.6mm; box-shadow: var(--ombra);
+  padding: 3.2mm 4mm; margin: 3.6mm .8mm; transform: rotate(-.6deg);
+}
+.nota.dx { transform: rotate(.5deg); }
+.nota.scura { background: var(--petrolio); color: var(--panna); }
+.etichetta {
+  font-weight: 600; font-stretch: 75%; font-size: 7.5pt; letter-spacing: .2em;
+  color: var(--magenta); text-transform: uppercase; margin-bottom: 1mm;
+}
+.nota.scura .etichetta { color: var(--rosa); }
+.nota p:last-child { margin-bottom: 0; }
+
+/* i passi numerati, come sulla carta riassunto */
+.passo { display: flex; gap: 2.8mm; margin: 0 0 2.5mm; align-items: flex-start; }
+.passo .n {
+  flex: 0 0 5.6mm; height: 5.6mm; margin-top: .1mm; border-radius: .5mm; background: var(--petrolio);
+  color: var(--bianco); font-weight: 700; font-stretch: 75%; font-size: 10.5pt;
+  display: flex; align-items: center; justify-content: center; transform: rotate(-4deg);
+}
+.passo:nth-child(even) .n { transform: rotate(3deg); }
+.passo .v { font-weight: 700; font-stretch: 75%; color: var(--magenta); text-transform: uppercase; font-size: 10.5pt; }
+
+/* figure */
+.figura { position: relative; width: 118mm; margin: 2mm 0 3mm; }
+.carta { position: absolute; border-radius: 1.7mm; box-shadow: 0 .5mm 1.4mm rgba(23, 71, 77, .38); }
+.linee { position: absolute; left: 0; top: 0; overflow: visible; }
+.didascalia { position: absolute; transform: translateY(-50%); font-size: 7pt; line-height: 1.25; }
+.didascalia b { display: block; }
+.marchio {
+  position: absolute; font-weight: 600; font-stretch: 75%; font-size: 6.4pt; letter-spacing: .16em;
+  text-transform: uppercase; white-space: nowrap;
+}
+.numero {
+  position: absolute; width: 3.8mm; height: 3.8mm; margin: -1.9mm 0 0 -1.9mm; border-radius: 50%;
+  background: var(--petrolio); color: var(--bianco); font-weight: 700; font-stretch: 75%; font-size: 7pt;
+  display: flex; align-items: center; justify-content: center;
+}
+.disco {
+  position: absolute; border-radius: 50%; background: var(--petrolio); color: var(--panna);
+  font-weight: 700; font-stretch: 75%; display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 .4mm 1.2mm rgba(23, 71, 77, .35);
+}
+
+/* competenze */
+.competenze { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.2mm 2mm; margin: 2.6mm 0 1mm; }
+.competenza { display: flex; align-items: center; gap: 2.2mm; }
+.competenza img { width: 10mm; transform: rotate(-5deg); }
+.competenza:nth-child(even) img { transform: rotate(4deg); }
+.competenza b { display: block; font-size: 9pt; }
+.competenza span { font-size: 7.4pt; opacity: .85; }
+
+/* tabella dei punti */
+table.punti { width: 100%; border-collapse: separate; border-spacing: 0 .9mm; margin: .6mm 0 2mm; }
+table.punti th {
+  background: var(--petrolio); color: var(--panna); font-weight: 600; font-stretch: 75%; font-size: 7.4pt;
+  letter-spacing: .16em; text-transform: uppercase; padding: 1.6mm 1mm; text-align: center;
+}
+table.punti td { background: var(--bianco); text-align: center; padding: .8mm 1mm; font-size: 9.5pt; }
+table.punti td:last-child { font-weight: 700; font-stretch: 75%; font-size: 11.5pt; color: var(--magenta); line-height: 1.2; }
+table.punti tr > :first-child { border-radius: 1.2mm 0 0 1.2mm; }
+table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
+
+/* token */
+.obiettivi { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin: 1.6mm 0 2mm; }
+.obiettivo { position: relative; padding-top: 1mm; }
+.obiettivo .coppia { position: relative; height: 13.5mm; margin-bottom: 1.2mm; }
+
+/* poteri */
+.poteri { display: grid; grid-template-columns: 1fr 1fr; gap: 3.6mm; margin: 3mm .6mm 4.4mm; }
+.potere { background: var(--bianco); border-radius: 1.6mm; box-shadow: var(--ombra); padding: 3mm 3.4mm 3.2mm; }
+.potere:nth-child(1) { transform: rotate(-1deg); }
+.potere:nth-child(2) { transform: rotate(.8deg); }
+.potere:nth-child(3) { transform: rotate(.6deg); }
+.potere:nth-child(4) { transform: rotate(-.7deg); }
+.potere .nome { font-weight: 700; font-stretch: 75%; font-size: 13pt; color: var(--magenta); text-transform: uppercase; line-height: 1; margin-bottom: 1.4mm; }
+.potere p { font-size: 8.6pt; line-height: 1.3; margin: 0; }
+
+/* copertina */
+.copertina { padding: 0; }
+.copertina h1 {
+  position: absolute; left: 0; right: 0; top: 22mm; margin: 0; text-align: center;
+  font-weight: 700; font-stretch: 75%; font-size: 47pt; line-height: 1; letter-spacing: .01em;
+}
+.copertina .barra { position: absolute; left: 50%; top: 43.5mm; width: 34mm; height: 1.6mm; margin-left: -17mm; background: var(--rosa); transform: rotate(-2deg); }
+.copertina .motto {
+  position: absolute; left: 16mm; right: 16mm; top: 50mm; text-align: center;
+  font-weight: 600; font-stretch: 87.5%; font-size: 10.5pt; line-height: 1.32; opacity: .92;
+}
+.copertina .adesivo { position: absolute; width: 14mm; }
+.copertina .chip {
+  position: absolute; left: 50%; bottom: 13mm; transform: translateX(-50%) rotate(-1.5deg);
+  background: var(--rosa); color: #fff; padding: 2mm 4.4mm; border-radius: 1.2mm; white-space: nowrap;
+  font-weight: 700; font-stretch: 75%; font-size: 9pt; letter-spacing: .18em;
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================ 1. COPERTINA -->
+<section class="pagina"><div class="pannello scuro copertina">
+  <div class="testata"><span class="sx" style="color: var(--rosa)">CDS</span><span>Regolamento</span></div>
+  <h1>COLLOCAMENTO</h1>
+  <div class="barra"></div>
+  <div class="motto">Forma le persone rispettando le loro ambizioni, trova a ciascuna il lavoro giusto e chiudi il collocamento prima del resto del tavolo.</div>
+  <img class="carta" src="img/lav_03.jpg" style="left: 8mm; top: 90mm; width: 38mm; transform: rotate(-14deg)">
+  <img class="carta" src="img/lav_02.jpg" style="left: 90mm; top: 90mm; width: 38mm; transform: rotate(14deg)">
+  <img class="carta" src="img/amb_27.jpg" style="left: 28mm; top: 84mm; width: 38mm; transform: rotate(-7deg)">
+  <img class="carta" src="img/amb_17.jpg" style="left: 70mm; top: 84mm; width: 38mm; transform: rotate(7deg)">
+  <img class="carta" src="img/lav_07.jpg" style="left: 49mm; top: 80mm; width: 38mm">
+  <img class="adesivo" src="img/adesivo_CO.png" style="left: 9mm; top: 70mm; transform: rotate(-12deg)">
+  <img class="adesivo" src="img/adesivo_MA.png" style="left: 113mm; top: 68mm; transform: rotate(10deg)">
+  <img class="adesivo" src="img/adesivo_RI.png" style="left: 104mm; top: 151mm; transform: rotate(-7deg)">
+  <div class="chip">2-4 PARTECIPANTI · CARTE · A TURNI</div>
+</div></section>
+
+<!-- ============================================================ 2. IL GIOCO IN BREVE -->
+<section class="pagina"><div class="pannello">
+  <div class="testata"><span class="sx">Regolamento</span><span>02</span></div>
+  <div class="sezione">
+    <div class="occhiello">Il gioco</div>
+    <h2>Il gioco in breve</h2>
+    <p class="attacco">Ogni partecipante gestisce un piccolo ufficio di collocamento.</p>
+    <p>Con le carte Ambito costruisce percorsi di <b>Formazione</b>. Quando un percorso offre ciò che una <b>Persona</b> desidera, la accoglie. Poi le trova un <b>Lavoro</b> che quel percorso rende possibile. Formazione, Persona e Lavoro formano un <b>set</b>: più il Lavoro somiglia alle ambizioni della Persona, più punti vale.</p>
+    <p>La fine della partita scatta al primo quinto set chiuso al tavolo. Vince chi ha più punti.</p>
+  </div>
+  <div class="sezione">
+    <div class="occhiello">Nella scatola</div>
+    <h2>Materiale</h2>
+    <ul>
+      <li><b>60 carte Persona.</b> Ognuna ha tre icone <b>ambizione</b> e un <b>potere</b>, scritto sulla carta.</li>
+      <li><b>60 carte Ambito:</b> 30 ambiti, due copie di ognuno. Ogni carta ha tre icone <b>competenza</b> e appartiene a una di cinque <b>categorie</b>: Tecnica e produzione, Servizi e relazioni, Organizzazione e gestione, Creatività e comunicazione, Ricerca e innovazione.</li>
+      <li><b>4 token obiettivo:</b> due da 5 punti e due da 3.</li>
+      <li><b>4 carte riassunto</b>, una a testa.</li>
+    </ul>
+    <div class="figura" style="height: 40mm; margin-top: 4mm">
+      <img class="carta" src="img/lav_41.jpg" style="left: 4mm; top: 3mm; width: 25mm; transform: rotate(-6deg)">
+      <img class="carta" src="img/amb_22.jpg" style="left: 33mm; top: 2mm; width: 25mm; transform: rotate(3deg)">
+      <div class="disco" style="left: 66mm; top: 6mm; width: 13mm; height: 13mm; font-size: 17pt">5</div>
+      <div class="disco" style="left: 70mm; top: 21mm; width: 13mm; height: 13mm; font-size: 17pt">3</div>
+      <img class="carta" src="img/riassunto.jpg" style="left: 89mm; top: 2mm; width: 25mm; transform: rotate(5deg)">
+    </div>
+  </div>
+  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+</div></section>
+
+<!-- ============================================================ 3. COMPETENZE E CARTE -->
+<section class="pagina"><div class="pannello">
+  <div class="testata"><span class="sx">Regolamento</span><span>03</span></div>
+  <div class="sezione">
+    <div class="occhiello">Il linguaggio del gioco</div>
+    <h2>Le competenze</h2>
+    <p>Sono sei: ogni Persona e ogni Ambito ne mostra tre. La stessa icona può comparire più volte sulla stessa carta.</p>
+    <div class="competenze">
+      <div class="competenza"><img src="img/adesivo_MA.png"><div><b>Manualità</b><span>comune</span></div></div>
+      <div class="competenza"><img src="img/adesivo_DI.png"><div><b>Digitale</b><span>comune</span></div></div>
+      <div class="competenza"><img src="img/adesivo_CO.png"><div><b>Comunicazione</b><span>comune</span></div></div>
+      <div class="competenza"><img src="img/adesivo_OR.png"><div><b>Organizzazione</b><span>non comune</span></div></div>
+      <div class="competenza"><img src="img/adesivo_CR.png"><div><b>Creatività</b><span>non comune</span></div></div>
+      <div class="competenza"><img src="img/adesivo_RI.png"><div><b>Ricerca</b><span>rara</span></div></div>
+    </div>
+    <div class="nota scura dx">
+      <div class="etichetta">Una carta, due usi</div>
+      <p>Una carta Ambito si gioca come <b>Formazione</b> oppure come <b>Lavoro</b>. Come Formazione <em>offre</em> le sue tre competenze; come Lavoro le <em>richiede</em>.</p>
+    </div>
+  </div>
+  <div class="sezione">
+    <div class="occhiello">Come si leggono</div>
+    <h2>Le carte</h2>
+    <div class="figura" style="height: 51mm">
+      <img class="carta" src="img/lav_17.jpg" style="left: 0; top: 2mm; width: 34mm">
+      <img class="carta" src="img/amb_17.jpg" style="left: 62mm; top: 2mm; width: 34mm">
+      <svg class="linee" width="118mm" height="51mm" viewBox="0 0 118 51">
+        <g stroke="#d53883" stroke-width=".32" fill="none">
+          <line x1="30.2" y1="9.07" x2="36.5" y2="9.07"/>
+          <polyline points="34.4,12.5 35.4,12.5 35.4,32.8 34.4,32.8"/>
+          <line x1="35.4" y1="22.65" x2="36.5" y2="22.65"/>
+          <line x1="29.7" y1="38.6" x2="36.5" y2="38.6"/>
+          <line x1="18.4" y1="44.0" x2="36.5" y2="44.0"/>
+          <polyline points="96.4,12.5 97.4,12.5 97.4,32.8 96.4,32.8"/>
+          <line x1="97.4" y1="22.65" x2="98.5" y2="22.65"/>
+          <line x1="93.0" y1="45.6" x2="98.5" y2="45.6"/>
+        </g>
+        <g fill="#d53883" stroke="#fffaf0" stroke-width=".15">
+          <circle cx="30.2" cy="9.07" r=".55"/><circle cx="29.7" cy="38.6" r=".55"/>
+          <circle cx="18.4" cy="44.0" r=".55"/><circle cx="93.0" cy="45.6" r=".55"/>
+        </g>
+      </svg>
+      <div class="didascalia" style="left: 37.3mm; top: 9.07mm; width: 22mm"><b>Nome.</b></div>
+      <div class="didascalia" style="left: 37.3mm; top: 22.65mm; width: 22mm"><b>Tre ambizioni.</b>Quello che la formazione deve offrirle.</div>
+      <div class="didascalia" style="left: 37.3mm; top: 38.6mm; width: 22mm"><b>Battuta.</b></div>
+      <div class="didascalia" style="left: 37.3mm; top: 44.6mm; width: 22mm"><b>Il suo potere</b>e che cosa fa.</div>
+      <div class="didascalia" style="left: 99.3mm; top: 22.65mm; width: 19mm"><b>Tre competenze.</b>Offerte come Formazione, richieste come Lavoro.</div>
+      <div class="didascalia" style="left: 99.3mm; top: 45.6mm; width: 19mm"><b>Categoria.</b>Serve per i token.</div>
+    </div>
+  </div>
+  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+</div></section>
+
+<!-- ============================================================ 4. PREPARAZIONE -->
+<section class="pagina"><div class="pannello">
+  <div class="testata"><span class="sx">Regolamento</span><span>04</span></div>
+  <div class="sezione">
+    <div class="occhiello">Prima di iniziare</div>
+    <h2>Preparazione</h2>
+    <div class="passo"><div class="n">1</div><div><span class="v">Mescolate</span> separatamente il mazzo delle Persone e quello degli Ambiti.</div></div>
+    <div class="passo"><div class="n">2</div><div><span class="v">Pescate</span> 3 carte Ambito a testa: è la vostra mano.</div></div>
+    <div class="passo"><div class="n">3</div><div><span class="v">Aprite il mercato.</span> Rivelate in fila una Persona per ogni partecipante. Le nuove entreranno sempre in coda alla fila.</div></div>
+    <div class="passo"><div class="n">4</div><div><span class="v">Preparate i token</span> accanto ai mazzi e lasciate spazio per gli scarti degli Ambiti.</div></div>
+    <div class="passo"><div class="n">5</div><div><span class="v">Prendete una carta riassunto</span> a testa: da un lato il turno, dall'altro punti e poteri.</div></div>
+    <div class="figura" style="height: 52mm; margin-top: 4mm">
+      <img class="carta" src="img/dorsoB_amb.jpg" style="left: 0; top: 6mm; width: 14mm">
+      <div class="marchio" style="left: 0; top: 26.6mm; width: 14mm; text-align: center">Ambiti</div>
+      <div style="position: absolute; left: 17mm; top: 6mm; width: 14mm; height: 19.6mm; border: .3mm dashed var(--petrolio); border-radius: 1.4mm"></div>
+      <div class="marchio" style="left: 17mm; top: 26.6mm; width: 14mm; text-align: center">Scarti</div>
+      <div class="disco" style="left: 34mm; top: 6.5mm; width: 8mm; height: 8mm; font-size: 11pt">5</div>
+      <div class="disco" style="left: 43mm; top: 6.5mm; width: 8mm; height: 8mm; font-size: 11pt">5</div>
+      <div class="disco" style="left: 34mm; top: 16mm; width: 8mm; height: 8mm; font-size: 11pt">3</div>
+      <div class="disco" style="left: 43mm; top: 16mm; width: 8mm; height: 8mm; font-size: 11pt">3</div>
+      <div class="marchio" style="left: 34mm; top: 26.6mm; width: 17mm; text-align: center">Token</div>
+      <div class="marchio" style="left: 56mm; top: 1mm; width: 46mm; text-align: center">Il mercato</div>
+      <img class="carta" src="img/lav_06.jpg" style="left: 56mm; top: 6mm; width: 14mm">
+      <img class="carta" src="img/lav_28.jpg" style="left: 72mm; top: 6mm; width: 14mm">
+      <img class="carta" src="img/lav_54.jpg" style="left: 88mm; top: 6mm; width: 14mm">
+      <img class="carta" src="img/dorsoB_lav.jpg" style="left: 104mm; top: 6mm; width: 14mm">
+      <div class="marchio" style="left: 104mm; top: 26.6mm; width: 14mm; text-align: center">Persone</div>
+      <svg class="linee" width="118mm" height="52mm" viewBox="0 0 118 52">
+        <line x1="101" y1="31.5" x2="58.5" y2="31.5" stroke="#d53883" stroke-width=".55"/>
+        <polygon points="56,31.5 59.4,30 59.4,33" fill="#d53883"/>
+      </svg>
+      <div class="piccolo" style="position: absolute; left: 56mm; top: 32.6mm; width: 46mm; text-align: center">le nuove entrano a destra, quella in fila da più tempo esce a sinistra</div>
+      <img class="carta" src="img/amb_13.jpg" style="left: 1mm; top: 35.5mm; width: 11mm; transform: rotate(-10deg)">
+      <img class="carta" src="img/amb_08.jpg" style="left: 8.5mm; top: 34.5mm; width: 11mm">
+      <img class="carta" src="img/amb_17.jpg" style="left: 16mm; top: 35.5mm; width: 11mm; transform: rotate(10deg)">
+      <div class="marchio" style="left: 31mm; top: 43mm">La tua mano: 3 Ambiti</div>
+    </div>
+    <p>Inizia chi è più giovane, poi si procede in senso orario. Il limite di mano è <b>6 carte</b>.</p>
+  </div>
+  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+</div></section>
+
+<!-- ============================================================ 5. IL TURNO -->
+<section class="pagina"><div class="pannello">
+  <div class="testata"><span class="sx">Regolamento</span><span>05</span></div>
+  <div class="sezione">
+    <div class="occhiello">Una sola azione</div>
+    <h2>Il turno</h2>
+    <p>Nel tuo turno fai <b>una sola</b> di queste cinque azioni. I poteri delle Persone possono concederne altre.</p>
+    <div class="passo"><div class="n">1</div><div><span class="v">Aprire una formazione.</span> Gioca una carta Ambito davanti a te: diventa una Formazione e apre una nuova pila. Puoi avere quante pile vuoi.</div></div>
+    <div class="passo"><div class="n">2</div><div><span class="v">Migliorare una formazione.</span> Gioca una carta Ambito sotto una tua Formazione: le sue tre competenze si sommano a quelle della pila. Puoi farlo anche dopo aver inserito una Persona, finché il set non è chiuso.</div></div>
+    <div class="passo"><div class="n">3</div><div><span class="v">Inserire una persona.</span> Prendi una Persona dal mercato e mettila sopra una tua pila che non ne ha ancora una. Le competenze della pila devono comprendere <b>tutte e tre le sue ambizioni</b>, contate una per una: due icone Digitale ne chiedono due. Il mercato si ripristina subito, in coda. Poi <b>attivi il potere</b> della Persona che hai preso.</div></div>
+    <div class="passo"><div class="n">4</div><div><span class="v">Completare un set con un lavoro.</span> Gioca dalla mano una carta Ambito, come Lavoro, sopra una tua pila che ha già una Persona. Le Formazioni della pila devono comprendere <b>tutte e tre le icone del Lavoro</b>. Segna i punti, controlla i token obiettivo e metti negli scarti le Formazioni: Persona e Lavoro restano davanti a te.</div></div>
+    <div class="passo"><div class="n">5</div><div><span class="v">Pescare.</span> Pesca 2 carte Ambito. Poi il mercato scorre: la Persona in fila da più tempo va in fondo al mazzo e ne entra una nuova in coda.</div></div>
+    <p>Se non puoi fare nessuna azione, passi.</p>
+    <div class="nota">
+      <div class="etichetta">Fine del turno</div>
+      <p>Se hai più di 6 carte in mano, scarta quelle in eccesso. È l'ultima cosa che fai nel turno.</p>
+    </div>
+  </div>
+  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+</div></section>
+
+<!-- ============================================================ 6. COME SI COSTRUISCE UN SET -->
+<section class="pagina"><div class="pannello">
+  <div class="testata"><span class="sx">Regolamento</span><span>06</span></div>
+  <div class="sezione">
+    <div class="occhiello">Formazione, Persona, Lavoro</div>
+    <h2>Come si costruisce un set</h2>
+    <p>Le carte si sovrappongono sfalsate: ognuna sporge a destra di quella che ha sopra, così resta visibile la colonna di icone di tutte. Ogni nuova Formazione va <b>sotto</b> le precedenti; la Persona va sopra le Formazioni; il Lavoro va sopra la Persona. In una pila le competenze in più, o ripetute, non danno fastidio.</p>
+    <div class="figura" style="height: 57mm">
+      <img class="carta" src="img/amb_08.jpg" style="left: 20.4mm; top: 8mm; width: 28mm">
+      <img class="carta" src="img/amb_13.jpg" style="left: 13.6mm; top: 8mm; width: 28mm">
+      <img class="carta" src="img/lav_17.jpg" style="left: 6.8mm; top: 8mm; width: 28mm">
+      <img class="carta" src="img/amb_17.jpg" style="left: 0; top: 8mm; width: 28mm">
+      <svg class="linee" width="118mm" height="50mm" viewBox="0 0 118 50">
+        <g stroke="#17474d" stroke-width=".3">
+          <line x1="44.6" y1="4.8" x2="44.6" y2="7.4"/><line x1="37.8" y1="4.8" x2="37.8" y2="7.4"/>
+          <line x1="31" y1="4.8" x2="31" y2="7.4"/><line x1="24.2" y1="4.8" x2="24.2" y2="7.4"/>
+        </g>
+      </svg>
+      <div class="numero" style="left: 44.6mm; top: 2.9mm">1</div>
+      <div class="numero" style="left: 37.8mm; top: 2.9mm">2</div>
+      <div class="numero" style="left: 31mm; top: 2.9mm">3</div>
+      <div class="numero" style="left: 24.2mm; top: 2.9mm">4</div>
+      <div style="position: absolute; left: 52.5mm; top: 0; width: 65.5mm; font-size: 7.8pt; line-height: 1.32">
+        <div class="etichetta" style="margin-bottom: .3mm">1 · 2 Formazioni</div>
+        <p style="margin-bottom: 2.2mm"><b>Ristorazione e Logistica.</b> La pila offre {{terna amb 08}} {{terna amb 13}}</p>
+        <div class="etichetta" style="margin-bottom: .3mm">3 Persona</div>
+        <p style="margin-bottom: 2.2mm"><b>Il Tecnico Paziente</b> desidera {{terna per 17}} e la pila le ha tutte <span class="spunta">✓</span></p>
+        <div class="etichetta" style="margin-bottom: .3mm">4 Lavoro</div>
+        <p style="margin-bottom: 2.2mm"><b>Direzione</b> richiede {{terna amb 17}} e la pila le ha tutte <span class="spunta">✓</span></p>
+        <div class="etichetta" style="margin-bottom: .3mm">Punti</div>
+        <p style="margin-bottom: 0"><b>Due ambizioni combaciano col Lavoro,</b> {{ico MA}} e {{ico CO}}: il set vale <b>5 + 5 = 10 punti</b>. Con Assistenza clienti {{terna amb 07}} varrebbe 16.</p>
+      </div>
+    </div>
+    <p>Chiuso il set, le Formazioni vanno negli scarti. Davanti a te restano la Persona e il suo Lavoro: un collocamento riuscito.</p>
+    <div class="nota dx">
+      <div class="etichetta">Quante formazioni servono</div>
+      <p>Di solito due. Ne basta una quando Formazione, Persona e Lavoro hanno le stesse tre icone: succede, e vale il massimo dei punti.</p>
+    </div>
+  </div>
+  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+</div></section>
+
+<!-- ============================================================ 7. PUNTI E TOKEN -->
+<section class="pagina"><div class="pannello">
+  <div class="testata"><span class="sx">Regolamento</span><span>07</span></div>
+  <div class="sezione">
+    <div class="occhiello">Il conto</div>
+    <h2>Punti del collocamento</h2>
+    <p>Ogni set vale <b>5 punti</b>, più un bonus per le ambizioni della Persona che combaciano con le icone della carta giocata come Lavoro. Ogni icona si abbina una volta sola.</p>
+    <table class="punti">
+      <tr><th>Corrispondenze</th><th>Base</th><th>Bonus</th><th>Totale</th></tr>
+      <tr><td>nessuna</td><td>5</td><td>0</td><td>5</td></tr>
+      <tr><td>1</td><td>5</td><td>2</td><td>7</td></tr>
+      <tr><td>2</td><td>5</td><td>5</td><td>10</td></tr>
+      <tr><td>3</td><td>5</td><td>11</td><td>16</td></tr>
+    </table>
+    <p>Le ambizioni non devono per forza combaciare col Lavoro: un lavoro qualunque si trova sempre. È il lavoro dei sogni che fa la differenza.</p>
+  </div>
+  <div class="sezione">
+    <div class="occhiello">Bonus di fine partita</div>
+    <h2>I token obiettivo</h2>
+    <p>Per gli obiettivi conta la <b>categoria</b> della carta che ha chiuso ogni set come Lavoro.</p>
+    <div class="obiettivi">
+      <div class="obiettivo">
+        <div class="coppia">
+          <div class="disco" style="left: 0; top: 0; width: 13mm; height: 13mm; font-size: 17pt; transform: rotate(-6deg)">5</div>
+          <div class="disco" style="left: 10.5mm; top: 2mm; width: 11mm; height: 11mm; font-size: 14pt; transform: rotate(5deg)">3</div>
+        </div>
+        <h3>Tre set della stessa categoria</h3>
+        <p>Il token da <b>5 punti</b> va a chi chiude, prima del resto del tavolo, 3 set della stessa categoria; quello da <b>3 punti</b> a chi ci riesce subito dopo.</p>
+      </div>
+      <div class="obiettivo">
+        <div class="coppia">
+          <div class="disco" style="left: 0; top: 0; width: 13mm; height: 13mm; font-size: 17pt; transform: rotate(4deg)">5</div>
+          <div class="disco" style="left: 10.5mm; top: 2mm; width: 11mm; height: 11mm; font-size: 14pt; transform: rotate(-5deg)">3</div>
+        </div>
+        <h3>Quattro set di categorie diverse</h3>
+        <p>Il token da <b>5 punti</b> va a chi chiude, prima del resto del tavolo, 4 set di quattro categorie diverse; quello da <b>3 punti</b> a chi ci riesce subito dopo.</p>
+      </div>
+    </div>
+    <p>Ogni partecipante può prendere al massimo un token per obiettivo. I token si sommano al punteggio finale.</p>
+  </div>
+  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+</div></section>
+
+<!-- ============================================================ 8. POTERI -->
+<section class="pagina"><div class="pannello">
+  <div class="testata"><span class="sx">Regolamento</span><span>08</span></div>
+  <div class="sezione">
+    <div class="occhiello">Quando inserisci una Persona</div>
+    <h2>I poteri delle persone</h2>
+    <p>Ogni Persona ha uno di quattro poteri, scritto sulla carta. Il potere si attiva <b>quando inserisci la Persona</b> con l'azione 3.</p>
+    <div class="poteri">
+      <div class="potere"><div class="nome">{{potere 1}}</div><p>{{effetto 1}}</p></div>
+      <div class="potere"><div class="nome">{{potere 2}}</div><p>{{effetto 2}}</p></div>
+      <div class="potere"><div class="nome">{{potere 3}}</div><p>{{effetto 3}}</p></div>
+      <div class="potere"><div class="nome">{{potere 4}}</div><p>{{effetto 4}}</p></div>
+    </div>
+    <ul>
+      <li><b>Una Persona prenotata</b> con {{potere 2}} si inserisce con l'azione 3, al posto di prenderne una dal mercato: valgono gli stessi requisiti e il mercato non cambia. Il suo potere si attiva in quel momento, non quando la prenoti.</li>
+      <li>Le Persone prenotate non contano nel limite di mano e può usarle solo chi le ha prenotate.</li>
+      <li>Un potere che non puoi o non vuoi usare va perso.</li>
+    </ul>
+  </div>
+  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+</div></section>
+
+<!-- ============================================================ 9. FINE E VITTORIA -->
+<section class="pagina"><div class="pannello">
+  <div class="testata"><span class="sx">Regolamento</span><span>09</span></div>
+  <div class="sezione">
+    <div class="occhiello">Il quinto set</div>
+    <h2>Fine della partita</h2>
+    <p>La fine della partita scatta al primo <b>quinto set</b> completato. Terminate il giro in corso, fino a chi siede alla destra di chi ha iniziato la partita; poi giocate <b>ancora un giro completo</b>. In questi turni si possono chiudere altri set e prendere i token rimasti.</p>
+    <div class="nota">
+      <div class="etichetta">Esempio</div>
+      <p>Chi ha iniziato la partita chiude il quinto set. Il resto del tavolo termina il giro; poi ogni partecipante, compreso chi ha chiuso, gioca un ultimo turno.</p>
+    </div>
+    <p>Quando il mazzo degli Ambiti finisce, rimescolate gli scarti. Se un mazzo finisce e non si può ricostituire, la fine della partita scatta allo stesso modo.</p>
+  </div>
+  <div class="sezione">
+    <div class="occhiello">Il conto finale</div>
+    <h2>Vittoria</h2>
+    <p>Ogni partecipante somma i punti dei propri set e quelli dei token. Vince chi ha il punteggio più alto.</p>
+    <div class="nota scura dx">
+      <div class="etichetta">In caso di parità</div>
+      <p>Tra chi è a pari punti vince <b>la prima voce che urla «Lavoro!»</b>.</p>
+    </div>
+  </div>
+  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+</div></section>
+
+<!-- ============================================================ 10. CASI PARTICOLARI E CONSIGLI -->
+<section class="pagina"><div class="pannello">
+  <div class="testata"><span class="sx">Regolamento</span><span>10</span></div>
+  <div class="sezione">
+    <div class="occhiello">Se succede che</div>
+    <h2>Casi particolari</h2>
+    <ul>
+      <li>Chi non può fare nessuna azione passa il turno.</li>
+      <li>Si possono aprire quante pile si vuole, e migliorare una pila anche dopo averci messo la Persona.</li>
+      <li>Il potere {{potere 4}} piazza la seconda Persona su una pila che ne è ancora senza; quella Persona deve comunque avere coperte le altre due ambizioni.</li>
+      <li>Una Persona messa in gioco da {{potere 4}} non attiva il suo potere.</li>
+    </ul>
+  </div>
+  <div class="sezione">
+    <div class="occhiello">Per cominciare bene</div>
+    <h2>Consigli per la prima partita</h2>
+    <ul>
+      <li><b>Non partire col primo set che ti riesce.</b> Tenere quattro o cinque carte in mano e cercare un Lavoro che somigli alle ambizioni della Persona paga quasi sempre.</li>
+      <li><b>Ma non aspettare solo il set perfetto.</b> Chi rinuncia a un set intero per farne uno da 16 resta indietro, anche nei token.</li>
+      <li><b>Guarda il mercato.</b> Le Persone con Ricerca {{ico RI}} sono le più difficili da formare: per questo hanno il potere più utile.</li>
+      <li><b>Chi chiude la partita non prende punti in più:</b> conta quanto vale ogni set.</li>
+    </ul>
+  </div>
+  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+</div></section>
+
+<!-- ============================================================ 11. IN SINTESI -->
+<section class="pagina"><div class="pannello">
+  <div class="testata"><span class="sx">Regolamento</span><span>11</span></div>
+  <div class="sezione">
+    <div class="occhiello">Da tenere sott'occhio</div>
+    <h2>Il turno in sintesi</h2>
+    <div class="nota">
+      <div class="etichetta">Una sola azione</div>
+      <p><b>1 Apri</b> una formazione · <b>2 Migliora</b> una formazione · <b>3 Inserisci</b> una Persona e attiva il suo potere · <b>4 Completa</b> un set: punti, token, formazioni negli scarti · <b>5 Pesca</b> 2 Ambiti, poi il mercato scorre. Alla fine: al massimo 6 carte in mano.</p>
+    </div>
+    <div class="nota dx">
+      <div class="etichetta">Punti</div>
+      <p>Ambizioni che combaciano col Lavoro: nessuna 5, una 7, due 10, tre 16. Token: 3 set della stessa categoria 5 e 3; 4 categorie diverse 5 e 3.</p>
+    </div>
+    <div class="nota scura">
+      <div class="etichetta">Poteri</div>
+      <p><b>{{potere 1}}:</b> {{breve 1}}<br><b>{{potere 2}}:</b> {{breve 2}}<br><b>{{potere 3}}:</b> {{breve 3}}<br><b>{{potere 4}}:</b> {{breve 4}}</p>
+    </div>
+    <div class="nota dx">
+      <div class="etichetta">Fine</div>
+      <p>Al primo quinto set si chiude il giro, poi si gioca un giro in più. Parità: vince la prima voce che urla «Lavoro!».</p>
+    </div>
+  </div>
+  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+</div></section>
+
+<!-- ============================================================ 12. PRINT AND PLAY (retro) -->
+<section class="pagina"><div class="pannello">
+  <div class="testata"><span class="sx">Regolamento</span><span>12</span></div>
+  <div class="sezione">
+    <div class="occhiello">Fai da te</div>
+    <h2>Print and play</h2>
+    <p>Questo print and play si stampa in una volta sola: <b>A4, a colori, fronte e retro sul lato lungo, al 100%</b> (dimensioni effettive, non "adatta alla pagina").</p>
+    <ul>
+      <li><b>Fogli 1-7:</b> le 60 Persone. <b>Fogli 8-14:</b> i 60 Ambiti.</li>
+      <li><b>Foglio 15:</b> 4 carte riassunto e 4 token, stampati sui due lati.</li>
+      <li><b>Fogli 16-18:</b> questo regolamento.</li>
+    </ul>
+    <p><b>Prova prima un foglio.</b> Stampate solo le prime due pagine e guardate il foglio controluce: i dorsi devono cadere dietro le carte.</p>
+    <h3 style="margin-top: 3.4mm">Taglio al laser</h3>
+    <p>Carte, carte riassunto e token hanno un solo colore di fondo e <b>2 mm di abbondanza</b> per lato: un piccolo scarto del laser non lascia bordi bianchi e non si vede. Agli angoli di ogni foglio ci sono quattro <b>crocini di registro</b> (cerchio e croce) per allineare il taglio alla stampa. I file di taglio stanno nell'archivio dei disegni laser, cartella <b>collocamento-print-and-play</b>. Cartoncino stampato: 80%, 1000 mm/min, una passata. Il foglio delle carte riassunto va tagliato col fronte in alto.</p>
+    <h3 style="margin-top: 3.4mm">Il regolamento</h3>
+    <p>Piegate a metà i tre fogli del regolamento, uno dentro l'altro, con la copertina fuori. Una pinzatura sulla piega lo tiene insieme. Il bordo bianco intorno alle pagine serve alle stampanti che non arrivano fino al margine del foglio.</p>
+    <div class="nota scura dx">
+      <div class="etichetta">Le immagini</div>
+      <p>Le immagini di questo prototipo sono generate con l'intelligenza artificiale: servono a provare il gioco, non sono la sua veste definitiva. Per la versione finale vogliamo affidare grafica e illustrazioni, con un compenso, a chi fa design e illustrazione per professione.</p>
+    </div>
+    <p class="piccolo" style="margin-top: 3mm">Collocamento è un prototipo di gioco di carte sul mercato del lavoro. Regolamento rivisto, ottobre 2026.</p>
+  </div>
+  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+</div></section>
+
+<script>
+// Se il contenuto esce dal pannello, scrive TRABOCCA nel margine bianco della pagina:
+// libretto.py lo cerca nel testo del PDF e si ferma.
+window.addEventListener("load", () => {
+  document.querySelectorAll(".pannello").forEach((p) => {
+    if (p.scrollHeight > p.clientHeight + 1) {
+      const segno = document.createElement("div");
+      segno.textContent = "TRABOCCA";
+      segno.style.cssText = "position:absolute;left:8mm;top:.5mm;font-size:6pt;color:red";
+      p.parentElement.appendChild(segno);
+    }
+  });
+});
+</script>
+</body>
+</html>

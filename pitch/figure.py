@@ -1,6 +1,7 @@
 """
 Prepara le immagini e i nomi dei poteri che servono ai documenti di pitch/:
-regolamenti.tex (il documento del pitch) e regolamento_a5.tex (il libretto del print and play).
+regolamenti.tex (il documento del pitch) e regolamento_a5.html (il libretto del print and play,
+stampato da libretto.py), con le icone come adesivi (img/adesivo_XX.png).
 
     py -3 pitch/figure.py
 
@@ -32,6 +33,7 @@ from PIL import Image
 QUI = Path(__file__).resolve().parent
 RADICE = QUI.parent
 sys.path.insert(0, str(RADICE / "grafica"))
+import carte_nuove  # noqa: E402
 import poteri  # noqa: E402
 
 IMG = QUI / "img"
@@ -42,8 +44,9 @@ LATO_ILLUSTRAZIONE = 900
 RIQUADRO_AMBITO = (161, 129, 733, 701)  # l'illustrazione dentro una carta dei designer da 756 x 1056
 ABBONDANZA = 24  # 2 mm a 12 pixel per millimetro, intorno alle carte nuove
 
-tex = "\n".join(f.read_text(encoding="utf-8") for f in QUI.glob("*.tex") if f.name != "poteri.tex")
-usate = set(re.findall(r"\b((?:lav|amb|ill|art)_\d\d|dorso[ABC]?_(?:lav|amb))\b", tex))
+sorgenti = [f for f in QUI.glob("*.tex") if f.name != "poteri.tex"] + [QUI / "regolamento_a5.html"]
+tex = "\n".join(f.read_text(encoding="utf-8") for f in sorgenti)
+usate = set(re.findall(r"\b((?:lav|amb|ill|art)_\d\d|dorso[ABC]?_(?:lav|amb)|riassunto)\b", tex))
 
 
 def salva(img, nome, qualita=88):
@@ -55,6 +58,10 @@ def ridotta(img):
 
 
 for nome in sorted(usate):
+    if nome == "riassunto":  # il fronte della carta riassunto, senza abbondanza
+        carta = Image.open(RADICE / "grafica" / "carte_v3" / "riassunto_fronte.png")
+        salva(ridotta(carta.crop((ABBONDANZA, ABBONDANZA, carta.width - ABBONDANZA, carta.height - ABBONDANZA))), nome)
+        continue
     tipo, _, numero = nome.partition("_")
     mazzo = "lavoratori" if numero == "lav" or tipo == "lav" else "ambiti"
     if tipo == "dorso":
@@ -79,6 +86,8 @@ for nome in sorted(usate):
 for sigla in ("MA", "DI", "CO", "OR", "CR", "RI"):
     icona = Image.open(RADICE / "grafica" / "dati" / "icone_hd" / f"{sigla}.png").convert("RGBA")
     icona.resize((300, 300), Image.LANCZOS).save(IMG / f"ico_{sigla}.png", optimize=True)
+    # l'icona come adesivo, col bordo chiaro delle carte, per il libretto
+    carte_nuove.adesivo(sigla, 24, 0, 1.6).save(IMG / f"adesivo_{sigla}.png", optimize=True)
 
 # toglie le immagini che i documenti non usano più
 for f in IMG.glob("*.jpg"):

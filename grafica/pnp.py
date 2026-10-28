@@ -12,16 +12,18 @@ grafica/stampa/taglio/. Le immagini che servono le prepara in grafica/stampa/pnp
 - Fogli 8-14: i 60 Ambiti, cioè due copie di ognuno dei 30.
 - Foglio 15: 4 carte riassunto (da un lato il turno, dall'altro punti e poteri) e 4 token,
   stampati sui due lati.
+- Fogli 16-18: il regolamento A5 (pitch/regolamento_a5.pdf), due pagine per facciata,
+  da piegare a metà. Lo rifà ogni volta pitch/libretto.py (HTML stampato da Edge), dopo
+  pitch/figure.py per le immagini.
 
 Le carte sono quelle di grafica/carte_nuove.py nello stile scelto (STILE, la proposta B): un solo
 colore di fondo, abbondanza compresa, così uno scarto del taglio non si vede. Se grafica/carte_v3/
 manca, lo script le rifà.
-- Fogli 16-18: il regolamento A5 (pitch/regolamento_a5.pdf), due pagine per facciata,
-  da piegare a metà.
 
 Per il laser: ogni carta ha 2 mm di abbondanza per lato (anche i dorsi), le carte di un foglio
 stanno a 4 mm l'una dall'altra e agli angoli del foglio ci sono quattro crocini di registro
-(cerchio da 5 mm e croce), stampati su tutte e due le facciate. Griglia e crocini sono
+(cerchio da 4 mm e croce da 6 mm), stampati su tutte e due le facciate. Crocini e
+intestazioni stanno ad almeno 4,5 mm dal bordo del foglio, per le stampanti che non ci arrivano. Griglia e crocini sono
 simmetrici, quindi il file di taglio delle carte vale col fronte o col retro in alto; quello
 delle carte riassunto si usa col fronte in alto. I dorsi sono già specchiati per il lato lungo.
 
@@ -31,7 +33,7 @@ lato corto, e piegando i fogli a metà le pagine vanno in ordine.
 
 Servono le illustrazioni in grafica/illustrazioni/, le carte dei designer in grafica/carte_v2/
 (per i disegni degli Ambiti) e i dorsi in grafica/dorsi_proposte/, tutto da Drive; Pillow, NumPy,
-OpenCV, PyMuPDF e pdflatex con TikZ.
+OpenCV, PyMuPDF, pdflatex con TikZ e Microsoft Edge (per il libretto).
 """
 import subprocess
 import sys
@@ -62,7 +64,8 @@ PASSO_X, PASSO_Y = W + 2 * ABB, H + 2 * ABB
 X0 = (210 - (3 * W + 4 * ABB)) / 2  # 6.5: il bordo di taglio della prima colonna
 Y0 = (297 - (3 * H + 4 * ABB)) / 2  # 12.5: il bordo di taglio della prima riga, dall'alto
 R_ANGOLI = 3
-CROCINI = [(14, 6.5), (196, 6.5), (14, 290.5), (196, 290.5)]  # (x, y dall'alto)
+CROCINI = [(14, 7.5), (196, 7.5), (14, 289.5), (196, 289.5)]  # (x, y dall'alto)
+R_CROCINO, BRACCIO = 2, 3  # il cerchio e mezza croce: tutto tra 4,5 e 10,5 mm dal bordo, fuori dall'abbondanza
 R_TOKEN = 14
 
 
@@ -134,15 +137,18 @@ def y(su):
     return 297 - su
 
 
-def apri(intestazione):
-    return (r"\noindent\begin{tikzpicture}[remember picture,overlay,x=1mm,y=1mm,shift={(current page.south west)}]" + "\n"
-            + rf"\node[font=\fontsize{{6}}{{7}}\selectfont,text=petrolio] at (105,{y(4)}) {{{intestazione}}};" + "\n")
+def apri(intestazione=None):
+    """Una facciata; l'intestazione sta tra i crocini, lontana dal bordo che la stampante può tagliare."""
+    testo = r"\noindent\begin{tikzpicture}[remember picture,overlay,x=1mm,y=1mm,shift={(current page.south west)}]" + "\n"
+    if intestazione:
+        testo += rf"\node[font=\fontsize{{6}}{{7}}\selectfont,text=petrolio] at (105,{y(7.5)}) {{{intestazione}}};" + "\n"
+    return testo
 
 
 def crocini():
     righe = []
     for cx, cy in CROCINI:
-        righe.append(rf"\draw[black,line width=.25mm] ({cx},{y(cy)}) circle (2.5) ({cx - 3.5},{y(cy)}) -- ({cx + 3.5},{y(cy)}) ({cx},{y(cy) - 3.5}) -- ({cx},{y(cy) + 3.5});")
+        righe.append(rf"\draw[black,line width=.25mm] ({cx},{y(cy)}) circle ({R_CROCINO}) ({cx - BRACCIO},{y(cy)}) -- ({cx + BRACCIO},{y(cy)}) ({cx},{y(cy) - BRACCIO}) -- ({cx},{y(cy) + BRACCIO});")
     return "\n".join(righe) + "\n"
 
 
@@ -196,27 +202,24 @@ def fogli_libretto():
     testo = ""
     for s in range(n // 4):
         sinistra, destra = n - 2 * s, 2 * s + 1  # fronte, visto in orizzontale
-        testo += apri(rf"REGOLAMENTO · FOGLIO {s + 1} DI {n // 4} · FRONTE")
+        testo += apri()  # niente intestazione: finirebbe sul margine delle pagine del libretto
         testo += rf"\node[inner sep=0] at (105,{y(74.25)}) {{\includegraphics[page={sinistra},angle=-90]{{{file}}}}};" + "\n"
         testo += rf"\node[inner sep=0] at (105,{y(222.75)}) {{\includegraphics[page={destra},angle=-90]{{{file}}}}};" + "\n"
-        testo += rf"\draw[black!50,line width=.2mm] (0,{y(148.5)}) -- (3,{y(148.5)}) (207,{y(148.5)}) -- (210,{y(148.5)});" + "\n"
         testo += chiudi()
         sinistra, destra = 2 * s + 2, n - 2 * s - 1  # retro, visto in orizzontale
-        testo += apri(rf"REGOLAMENTO · FOGLIO {s + 1} DI {n // 4} · RETRO")
+        testo += apri()
         testo += rf"\node[inner sep=0] at (105,{y(74.25)}) {{\includegraphics[page={destra},angle=90]{{{file}}}}};" + "\n"
         testo += rf"\node[inner sep=0] at (105,{y(222.75)}) {{\includegraphics[page={sinistra},angle=90]{{{file}}}}};" + "\n"
         testo += chiudi()
     return testo
 
 
-# ---------------------------------------------------------------- il regolamento A5, se manca o è vecchio
-sorgente = RADICE / "pitch" / "regolamento_a5.tex"
-if not REGOLAMENTO.exists() or REGOLAMENTO.stat().st_mtime < sorgente.stat().st_mtime:
-    for _ in range(2):
-        esito = subprocess.run(["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "regolamento_a5.tex"],
-                               cwd=RADICE / "pitch", capture_output=True, text=True, errors="replace")
-        if esito.returncode:
-            raise SystemExit(f"pdflatex non è riuscito sul regolamento A5:\n{esito.stdout[-2000:]}")
+# ---------------------------------------------------------------- il regolamento A5, sempre rifatto
+subprocess.run([sys.executable, str(RADICE / "pitch" / "figure.py")], check=True)
+sys.path.insert(0, str(RADICE / "pitch"))
+import libretto  # noqa: E402
+
+libretto.main()
 
 testo = TESTA
 for nome, fronti, dorso in (("PERSONE", fronti_per, dorso_per), ("AMBITI", fronti_amb + fronti_amb, dorso_amb)):
@@ -257,8 +260,8 @@ def cerchio(cx, cy, r):
 
 
 def svg(tagli):
-    segni = [cerchio(cx, cy, 2.5) for cx, cy in CROCINI]
-    segni += [f"M {cx - 3.5} {cy} H {cx + 3.5} M {cx} {cy - 3.5} V {cy + 3.5}" for cx, cy in CROCINI]
+    segni = [cerchio(cx, cy, R_CROCINO) for cx, cy in CROCINI]
+    segni += [f"M {cx - BRACCIO} {cy} H {cx + BRACCIO} M {cx} {cy - BRACCIO} V {cy + BRACCIO}" for cx, cy in CROCINI]
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 210 297">\n'
             '  <rect id="A4_riferimento" x="0" y="0" width="210" height="297" fill="none" stroke="#00AA00" stroke-width="0.1" stroke-dasharray="2 2"/>\n'
