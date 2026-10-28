@@ -37,6 +37,7 @@ Le immagini pesanti della grafica sono su Google Drive, non su GitHub:
 | `pdf/` | I due PDF originali della grafica, con le terne a 10 simboli: `lavoratori_A4.pdf` e `ambiti_A4.pdf`. Da qui si rifà tutto. |
 | `carte_v2/` | Le carte in uso, a sei simboli, una per file in PNG: `lavoratori/` (60 più il dorso) e `ambiti/` (30 più il dorso). |
 | `stampa/` | I PDF da stampare, con le carte in uso: nove per pagina, fronte e retro, con i segni di taglio. |
+| `stampa/collocamento_pnp.pdf` | Il print and play di Collocamento in un file solo: 60 Lavoratori col potere scritto, 60 Ambiti, token, carte riassunto e regole; fronte e retro su A4. |
 | `pitch/` | Il documento per il pitch, `regolamenti.pdf`, e le immagini che gli servono (`img/`). |
 | `illustrazioni/` | Le illustrazioni originali della prima grafica: 60 lavoratori e 24 ambiti. |
 | `carte/` | Le carte della prima grafica. |
@@ -116,6 +117,14 @@ node mercato-del-lavoro/analisi.mjs
 ```
 
 Un modello della partita del prototipo di destrezza ([regole](mercato-del-lavoro/REGOLAMENTO.md)), scritto in `mercato-del-lavoro/modello.mjs`. La fisica (quanto spesso cade qualcosa, quanto è grande la pedana) è fatta di ipotesi dichiarate in cima al file; [mercato-del-lavoro/BUCHI.md](mercato-del-lavoro/BUCHI.md) dice quali conclusioni reggono quando cambiano. Tutto insieme ci mette una decina di minuti; `node mercato-del-lavoro/analisi.mjs conti base` lancia solo alcune parti.
+
+### Print and play di Collocamento
+
+```bash
+py -3 grafica/pnp.py
+```
+
+Scrive `grafica/stampa/collocamento_pnp.pdf` (34 pagine, 17 fogli A4 fronte e retro sul lato lungo): istruzioni con token e carte riassunto sul retro, i 60 Lavoratori col potere scritto nel piede, i 60 Ambiti (due copie dei 30) col dorso corretto a "60 carte", e le regole prese da `pitch/regolamenti.pdf`. Servono `grafica/carte_v2/` da Drive e il PDF del pitch già compilato.
 
 ### Documento per il pitch
 
