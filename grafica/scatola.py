@@ -203,11 +203,14 @@ def incolla_centro(tela, im, cx, cy):
 
 
 COPERTINA = "03"  # la Persona del fronte: L'Archistar (scelta di Vittorio, al posto del ventaglio di carte)
+# Le informazioni del gioco sotto l'immagine: (valore grande, etichetta). Durata ed età minima non sono
+# ancora decise: quando ci sono si aggiungono qui, per esempio ("30'", "minuti") e ("10+", "anni").
+INFO_FRONTE = [("2-4", "partecipanti"), ("A TURNI", "gioco di carte")]
 
 
 def fronte():
     """Petrolio, titolo grande; sotto la stampa dell'Archistar con le sue tre ambizioni come adesivi
-    sul bordo, come sulle carte, e la sua battuta."""
+    sul bordo, come sulle carte, e le informazioni del gioco divise da filetti rosa."""
     im, d = pannello(LARGO, ALTO)
     f_et = font(BAHN, 7, "SemiBold Condensed")
     scrivi(d, P(4.5), P(6.5), "CDS", f_et, ROSA, cn.PT(7) * 0.24)
@@ -222,12 +225,17 @@ def fronte():
     incolla_centro(im, stampa_illustrazione(COPERTINA, lato, 2), P(cx), P(cy))
     for i, (k, ang) in enumerate(zip(cn.AMBIZIONI[COPERTINA], (6, -5, 4))):
         incolla_centro(im, cn.adesivo(k, 9.5, ang, 0.8), P(cx + lato / 2 + 2.2), P(cy - 12.5 + i * 12.5))
-    # la battuta, tra virgolette, e chi la dice
-    persona = cn.PERSONE[COPERTINA]
-    f_b = font(BAHN, 8.6, "SemiBold SemiCondensed")
-    scrivi(d, P(LARGO / 2), P(78.2), f"«{persona['battuta']}»", f_b, PANNA, 0, "ms")
-    f_n = font(BAHN, 6.4, "SemiBold Condensed")
-    scrivi(d, P(LARGO / 2), P(82.4), persona["nome"].upper(), f_n, ROSA, cn.PT(6.4) * 0.24, "ms")
+    # le informazioni del gioco: valore grande, etichetta piccola in rosa, colonne divise da un filetto
+    f_v = font(BAHN, 14, "Bold Condensed")
+    f_e = font(BAHN, 6, "SemiBold Condensed")
+    colonna = (LARGO - 10) / len(INFO_FRONTE)
+    for i, (valore, etichetta) in enumerate(INFO_FRONTE):
+        x = 5 + colonna * (i + 0.5)
+        scrivi(d, P(x), P(80.2), valore, f_v, PANNA, cn.PT(14) * 0.02, "ms")
+        scrivi(d, P(x), P(84.6), etichetta.upper(), f_e, ROSA, cn.PT(6) * 0.22, "ms")
+        if i:
+            xs = P(5 + colonna * i)
+            d.line([xs, P(76.2), xs, P(85.2)], fill=ROSA, width=P(0.3))
     return im
 
 
