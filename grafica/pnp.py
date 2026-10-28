@@ -16,8 +16,9 @@ Dopo ogni pagina di fronti viene quella dei dorsi, già specchiata per il fronte
 e retro sul lato lungo. I dorsi hanno 1,5 mm di colore in più per lato, così un
 piccolo disallineamento della stampante non lascia bordi bianchi.
 
-Con una lettera (py -3 grafica/pnp.py A) usa i dorsi della proposta A, B o C di
-grafica/dorsi_proposte/ (li fa genera_dorsi.mjs) e scrive collocamento_pnp_dorsi_A.pdf.
+I dorsi sono quelli della proposta B di grafica/dorsi_proposte/ (li fa genera_dorsi.mjs),
+scelta da Vittorio. Con un argomento si provano gli altri: A o C per le altre proposte,
+CARTE per i dorsi originali; il PDF si chiama allora collocamento_pnp_dorsi_<scelta>.pdf.
 
 Servono le carte a piena misura in grafica/carte_v2/ (da Drive), Pillow, PyMuPDF
 e pdflatex con TikZ e pdfpages.
@@ -41,8 +42,13 @@ IMG.mkdir(parents=True, exist_ok=True)
 REGOLE = RADICE / "pitch" / "regolamenti.pdf"
 PAGINE_REGOLE = "5-8"  # le pagine di Collocamento nel documento del pitch, senza l'apertura
 
-PROPOSTA = sys.argv[1].upper() if len(sys.argv) > 1 else None
-NOME_PDF = f"collocamento_pnp_dorsi_{PROPOSTA}" if PROPOSTA else "collocamento_pnp"
+# I dorsi: quelli scelti da Vittorio il 28/10/2026 sono la proposta B. "CARTE" usa i dorsi
+# originali delle carte dei designer, A e C le altre due proposte.
+DORSI_SCELTI = "B"
+PROPOSTA = sys.argv[1].upper() if len(sys.argv) > 1 else DORSI_SCELTI
+if PROPOSTA == "CARTE":
+    PROPOSTA = None
+NOME_PDF = "collocamento_pnp" if PROPOSTA == DORSI_SCELTI else f"collocamento_pnp_dorsi_{PROPOSTA or 'carte'}"
 PETROLIO = (23, 71, 77)
 CARTA = (243, 236, 221)
 NOMI_POTERI = {1: "PESCA", 2: "PRENOTA", 3: "FORMA", 4: "PIAZZA"}
@@ -302,7 +308,7 @@ else:
     print(f"attenzione: manca {REGOLE}, il PDF esce senza le regole (rifarlo con pdflatex in pitch/)")
 testo += "\\end{document}\n"
 
-if PROPOSTA:
+if PROPOSTA and PROPOSTA != DORSI_SCELTI:
     testo = testo.replace("i dorsi rosa devono", f"i dorsi (proposta {PROPOSTA}) devono").replace("con i dorsi rosa", "col dorso dei Lavoratori").replace("con i dorsi petrolio", "col dorso degli Ambiti")
 (STAMPA / f"{NOME_PDF}.tex").write_text(testo, encoding="utf-8")
 for _ in range(2):  # due passate: la pagina dei token usa le coordinate della pagina

@@ -124,7 +124,7 @@ Un modello della partita del prototipo di destrezza ([regole](mercato-del-lavoro
 py -3 grafica/pnp.py
 ```
 
-Scrive `grafica/stampa/collocamento_pnp.pdf` (34 pagine, 17 fogli A4 fronte e retro sul lato lungo): istruzioni con token e carte riassunto sul retro, i 60 Lavoratori col potere scritto nel piede, i 60 Ambiti (due copie dei 30) col dorso corretto a "60 carte", e le regole prese da `pitch/regolamenti.pdf`. Servono `grafica/carte_v2/` da Drive e il PDF del pitch già compilato.
+Scrive `grafica/stampa/collocamento_pnp.pdf` (34 pagine, 17 fogli A4 fronte e retro sul lato lungo), coi dorsi della proposta B di `grafica/dorsi_proposte/` (generati da `grafica/genera_dorsi.mjs`, su Drive): istruzioni con token e carte riassunto sul retro, i 60 Lavoratori col potere scritto nel piede, i 60 Ambiti (due copie dei 30) col dorso corretto a "60 carte", e le regole prese da `pitch/regolamenti.pdf`. Servono `grafica/carte_v2/` da Drive e il PDF del pitch già compilato.
 
 ### Documento per il pitch
 
