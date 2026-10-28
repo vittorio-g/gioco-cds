@@ -291,7 +291,9 @@ def grafica():
     tela = Image.new("RGBA", (P(FOGLIO[0]), P(FOGLIO[1])), "white")
     d = ImageDraw.Draw(tela)
     a, b = yb0 - ALETTA, yb1 + ALETTA
-    # prima le alette e le linguette, poi i pannelli: dove si toccano vince il pannello
+    # prima le alette e le linguette con la loro abbondanza, poi i pannelli, poi di nuovo le alette
+    # senza abbondanza: così l'abbondanza di un pannello non entra nell'aletta accanto, oltre il taglio
+    # (l'aletta bassa del fianco rosa veniva per due millimetri petrolio come il fondo)
     campitura(d, xs1, a, xf, yb0, ROSA, "sda")
     campitura(d, xs1, yb1, xf, b, ROSA, "sdb")
     campitura(d, xs2, a, xe, yb0, PETROLIO, "sda")
@@ -304,6 +306,9 @@ def grafica():
     campitura(d, xs1, yb0, xf, yb1, ROSA, "")             # fianco sinistro
     campitura(d, xf, yb0, xs2, yb1, PETROLIO, "a")        # fronte
     campitura(d, xs2, yb0, xe, yb1, PETROLIO, "d")        # fianco destro
+    for x0, y0, x1, y1, colore in ((xs1, a, xf, yb0, ROSA), (xs1, yb1, xf, b, ROSA),
+                                   (xs2, a, xe, yb0, PETROLIO), (xs2, yb1, xe, b, PETROLIO)):
+        campitura(d, x0, y0, x1, y1, colore)
     tela.alpha_composite(retro(), (P(xb), P(yb0)))
     tela.alpha_composite(titolo_verticale(PROFONDITA, ALTO, ROSA, PETROLIO, "CDS · 2-4 PARTECIPANTI"), (P(xs1), P(yb0)))
     tela.alpha_composite(fronte(), (P(xf), P(yb0)))
