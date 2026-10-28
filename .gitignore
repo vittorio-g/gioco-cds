@@ -28,3 +28,4 @@ grafica/stampa/pnp_img/
 grafica/dorsi_proposte/
 grafica/proposte_carte/
 grafica/carte_v3/
+__pycache__/
