@@ -142,6 +142,8 @@ Le carte sono quelle di `grafica/carte_nuove.py` nello stile B, scelto da Vittor
 
 I dorsi sono quelli della proposta B di `grafica/dorsi_proposte/` (generati da `grafica/genera_dorsi.mjs`, su Drive); sul dorso delle Persone la fascia dice PERSONE (`grafica/dorso_persone.py`). Il regolamento è `pitch/regolamento_a5.html`, nello stile delle carte: `pitch/libretto.py` lo stampa in PDF con Microsoft Edge (carattere Bahnschrift, di Windows), e `pnp.py` lo rifà ogni volta. Il fondo arriva al bordo della pagina, ma testi e figure stanno ad almeno 11 mm, per le stampanti che non arrivano al margine; anche crocini e intestazioni dei fogli di carte stanno ad almeno 4,5 mm dal bordo. Servono da Drive `grafica/illustrazioni/`, `grafica/carte_v2/` e `pitch/img/` (o `py -3 pitch/figure.py`).
 
+Le proposte di logo (A il timbro, B l'incastro, C la coppia di carte) le genera `grafica/genera_logo.mjs` in `grafica/logo_proposte/`, fuori da git e su Drive; la chiave si legge da `OPENAI_API_KEY`. Il logo non è ancora stato scelto.
+
 I nomi dei poteri stanno in `grafica/dati/poteri.json`; quale Persona ha quale potere lo calcola `grafica/poteri.py`, col potere più utile alle Persone più difficili da formare. Li leggono sia `pnp.py` sia `pitch/figure.py`, che scrive `pitch/poteri.tex` per i documenti LaTeX.
 
 ### Scatola di Collocamento
