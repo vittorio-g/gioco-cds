@@ -2,8 +2,8 @@
 // grafica/logo_proposte/ (fuori da git: stanno su Drive). La chiave si legge da OPENAI_API_KEY e non va
 // mai scritta qui.
 //
-// Uso:  node grafica/genera_logo.mjs [A B C]
-import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
+// Uso:  node grafica/genera_logo.mjs [A B C ...]   (le chiavi di PROPOSTE e di MODIFICHE)
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -29,6 +29,16 @@ export const PROPOSTE = {
   A4: 'Proposal A4, "doppia timbratura": the word stamped twice in a hurry. A rectangular rubber stamp with rounded corners and a double border with "COLLOCAMENTO" in big bold condensed capitals, printed once in fluorescent pink and once again in petrol teal on top of it, the second impression shifted a few millimetres and rotated a couple of degrees, so the pink peeks out along the edges like a misregistered risograph print. Uneven rubber-stamp ink, small gaps and grain. A small hand-drawn pink tick mark next to the stamp, like a clerk approving a file.',
   B: 'Proposal B, "l\'incastro": a symbol above the wordmark. The symbol is a simple person silhouette (round head, shoulders) in petrol teal being lowered into a rectangular slot in a fluorescent pink block, like a piece fitting into its place, with a short hand-drawn arrow pointing down into the slot. Below it "COLLOCAMENTO" in bold condensed petrol teal capitals with a small offset shadow in fluorescent pink, a little hand-drawn star at one end. Clean and iconic, like a game publisher logo with a fanzine touch.',
   C: 'Proposal C, "la coppia di carte": two playing cards overlapping at an angle, as in a set being formed: behind, an off-white card with a petrol teal border showing a simple person silhouette; in front, a petrol teal card showing a simple wrench-and-briefcase pictogram in off-white. The two cards together sit to the left of the wordmark, or above it, whichever reads better. "COLLOCAMENTO" in bold condensed capitals, petrol teal, set on a slightly tilted fluorescent pink tape strip like a strip of masking tape stuck on a fanzine page, with a few scribbled marker stars around.',
+};
+
+// modifiche di una proposta già generata: l'immagine di partenza più eventuali riferimenti, tutti in USCITA
+export const MODIFICHE = {
+  // il timbro tondo è piaciuto (30/10/2026): al posto delle cinque stelline i simboli delle cinque categorie
+  // di Ambiti; il riferimento lo scrive grafica/dati/icone_hd (cat_01..05) in rif_categorie_ambiti.png
+  A2_categorie: {
+    da: ['A2.png', 'rif_categorie_ambiti.png'],
+    prompt: 'Edit the first image, a round rubber-stamp logo. Keep everything exactly as it is: the two teal rings, the word "COLLOCAMENTO" along the upper arc with the same letters and spacing, the big fluorescent pink person in the centre, the tilt, the ink texture and the off-white background. Change only the five small stars along the lower arc: replace them, one for one and in the same positions, with the five symbols shown in the second image, in this order from left to right: a gear, a heart, a file folder, a pencil, a laboratory flask. Draw them in the same petrol teal rubber-stamp ink as the stars, with the same uneven ink and grain, about the same size as the stars or slightly bigger, each one upright and clearly recognisable. No other changes, no new text.',
+  },
 };
 
 const chiave = (process.env.OPENAI_API_KEY ?? '').trim();
@@ -64,6 +74,20 @@ async function chiedi(nome, fai) {
 await Promise.all(scelte.map(async (id) => {
   const file = join(USCITA, `${id}.png`);
   if (existsSync(file)) return;
+  if (MODIFICHE[id]) {
+    const { da, prompt } = MODIFICHE[id];
+    const png = await chiedi(`logo ${id}`, () => {
+      const modulo = new FormData();
+      modulo.append('model', MODELLO);
+      modulo.append('prompt', prompt);
+      modulo.append('size', DIMENSIONE);
+      modulo.append('quality', QUALITA);
+      for (const nome of da) modulo.append('image[]', new Blob([readFileSync(join(USCITA, nome))], { type: 'image/png' }), nome);
+      return fetch('https://api.openai.com/v1/images/edits', { method: 'POST', headers: { Authorization: `Bearer ${chiave}` }, body: modulo });
+    });
+    if (png) writeFileSync(file, png);
+    return;
+  }
   const png = await chiedi(`logo ${id}`, () => fetch('https://api.openai.com/v1/images/generations', {
     method: 'POST',
     headers: { Authorization: `Bearer ${chiave}`, 'Content-Type': 'application/json' },
