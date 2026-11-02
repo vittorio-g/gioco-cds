@@ -75,11 +75,20 @@ def _csv(nome):
 
 
 PERSONE = {x["n"]: x for x in json.loads((QUI / "dati" / "lavoratori.json").read_text(encoding="utf-8"))}
-AMBIZIONI = {n: [r["a1"], r["a2"], r["a3"]] for n, r in _csv("lavoratori.csv").items()}
+# le icone di ogni carta si mostrano sempre nello stesso ordine, dalle comuni alla rara, così si confrontano
+# a colpo d'occhio (chiesto da Vittorio dopo il playtest di novembre 2026)
+ORDINE_ICONE = ("MA", "DI", "CO", "OR", "CR", "RI")
+
+
+def in_ordine(codici):
+    return sorted(codici, key=ORDINE_ICONE.index)
+
+
+AMBIZIONI = {n: in_ordine([r["a1"], r["a2"], r["a3"]]) for n, r in _csv("lavoratori.csv").items()}
 _amb = json.loads((QUI / "dati" / "ambiti_v4.json").read_text(encoding="utf-8"))
 AMBITI = {x["n"]: x for x in _amb["ambiti"]}
 CATEGORIE = _amb["categorie"]
-COMPETENZE = {n: [r["l1"], r["l2"], r["l3"]] for n, r in _csv("ambiti.csv").items()}
+COMPETENZE = {n: in_ordine([r["l1"], r["l2"], r["l3"]]) for n, r in _csv("ambiti.csv").items()}
 CATEGORIA = {n: r["cat"] for n, r in _csv("ambiti.csv").items()}
 POTERI = poteri.nomi()
 CHI = poteri.assegnazione()
@@ -573,7 +582,7 @@ def riassunto_B(lato):
                   ("INSERISCI", " una Persona su una pila che copre le sue 3 ambizioni. Il mercato si ripristina. "
                                 "Attivi il suo potere."),
                   ("COMPLETA", " un set: un Ambito come Lavoro su una pila con una Persona; la pila copre le 3 icone "
-                               "del Lavoro. Punti, token, formazioni negli scarti, set in orizzontale."),
+                               "del Lavoro. Formazioni negli scarti, set in orizzontale."),
                   ("PESCA", " 2 Ambiti.")]
         lato_q = L(4.4)
         for i, (verbo, resto) in enumerate(azioni, 1):
@@ -598,10 +607,6 @@ def riassunto_B(lato):
                             riga)
             y += riga * 1.12
         y += riga * 0.45
-        y = testo_ricco(d, X(5.5), y, L(52), [("Token:", grassetto, None),
-                                               (" 2 set della stessa categoria 5 e 3; 3 categorie diverse 5 e 3.", corpo, None)],
-                        riga)
-        y += riga * 1.55
         testo_ricco(d, X(5.5), y, L(52), [("Fine:", grassetto, None),
                                            (" alla terza Persona al lavoro, ogni altro partecipante gioca un ultimo turno.",
                                             corpo, None)], riga)

@@ -129,11 +129,6 @@ table.punti td:last-child { font-weight: 700; font-stretch: 75%; font-size: 11.5
 table.punti tr > :first-child { border-radius: 1.2mm 0 0 1.2mm; }
 table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
 
-/* token */
-.obiettivi { display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin: 1.6mm 0 2mm; }
-.obiettivo { position: relative; padding-top: 1mm; }
-.obiettivo .coppia { position: relative; height: 13.5mm; margin-bottom: 1.2mm; }
-
 /* poteri */
 .poteri { display: grid; grid-template-columns: 1fr 1fr; gap: 3.6mm; margin: 3mm .6mm 4.4mm; }
 .potere { background: var(--bianco); border-radius: 1.6mm; box-shadow: var(--ombra); padding: 3mm 3.4mm 3.2mm; }
@@ -200,15 +195,12 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     <ul>
       <li><b>60 carte Persona.</b> Ognuna ha tre icone <b>ambizione</b> e un <b>potere</b>, scritto sulla carta.</li>
       <li><b>60 carte Ambito:</b> 30 ambiti, due copie di ognuno. Ogni carta ha tre icone <b>competenza</b> e appartiene a una di cinque <b>categorie</b>: Tecnica e produzione, Servizi e relazioni, Organizzazione e gestione, Creatività e comunicazione, Ricerca e innovazione.</li>
-      <li><b>4 token obiettivo:</b> due da 5 punti e due da 3.</li>
       <li><b>4 carte riassunto</b>, una a testa.</li>
     </ul>
     <div class="figura" style="height: 40mm; margin-top: 4mm">
-      <img class="carta" src="img/lav_41.jpg" style="left: 4mm; top: 3mm; width: 25mm; transform: rotate(-6deg)">
-      <img class="carta" src="img/amb_22.jpg" style="left: 33mm; top: 2mm; width: 25mm; transform: rotate(3deg)">
-      <div class="disco" style="left: 66mm; top: 6mm; width: 13mm; height: 13mm; font-size: 17pt">5</div>
-      <div class="disco" style="left: 70mm; top: 21mm; width: 13mm; height: 13mm; font-size: 17pt">3</div>
-      <img class="carta" src="img/riassunto.jpg" style="left: 89mm; top: 2mm; width: 25mm; transform: rotate(5deg)">
+      <img class="carta" src="img/lav_41.jpg" style="left: 12mm; top: 3mm; width: 25mm; transform: rotate(-6deg)">
+      <img class="carta" src="img/amb_22.jpg" style="left: 46.5mm; top: 2mm; width: 25mm; transform: rotate(3deg)">
+      <img class="carta" src="img/riassunto.jpg" style="left: 81mm; top: 2mm; width: 25mm; transform: rotate(5deg)">
     </div>
   </div>
   <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
@@ -261,7 +253,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
       <div class="didascalia" style="left: 37.3mm; top: 38.6mm; width: 22mm"><b>Battuta.</b></div>
       <div class="didascalia" style="left: 37.3mm; top: 44.6mm; width: 22mm"><b>Il suo potere</b>e che cosa fa.</div>
       <div class="didascalia" style="left: 99.3mm; top: 5.2mm; width: 19mm"><b>Tre competenze.</b>Offerte come Formazione, richieste come Lavoro.</div>
-      <div class="didascalia" style="left: 99.3mm; top: 45.6mm; width: 19mm"><b>Categoria.</b>Serve per i token.</div>
+      <div class="didascalia" style="left: 99.3mm; top: 45.6mm; width: 19mm"><b>Categoria.</b>Il settore di lavoro.</div>
     </div>
   </div>
   <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
@@ -276,18 +268,13 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     <div class="passo"><div class="n">1</div><div><span class="v">Mescolate</span> separatamente il mazzo delle Persone e quello degli Ambiti.</div></div>
     <div class="passo"><div class="n">2</div><div><span class="v">Pescate</span> 3 carte Ambito a testa: è la vostra mano.</div></div>
     <div class="passo"><div class="n">3</div><div><span class="v">Aprite il mercato.</span> Rivelate una Persona per ogni partecipante. Quando qualcuno ne prende una, se ne rivela subito un'altra.</div></div>
-    <div class="passo"><div class="n">4</div><div><span class="v">Preparate i token</span> accanto ai mazzi e lasciate spazio per gli scarti degli Ambiti.</div></div>
+    <div class="passo"><div class="n">4</div><div><span class="v">Lasciate spazio</span> accanto ai mazzi per gli scarti degli Ambiti.</div></div>
     <div class="passo"><div class="n">5</div><div><span class="v">Prendete una carta riassunto</span> a testa: da un lato il turno, dall'altro punti e poteri.</div></div>
     <div class="figura" style="height: 52mm; margin-top: 4mm">
       <img class="carta" src="img/dorsoB_amb.jpg" style="left: 0; top: 6mm; width: 14mm">
       <div class="marchio" style="left: 0; top: 26.6mm; width: 14mm; text-align: center">Ambiti</div>
       <div style="position: absolute; left: 17mm; top: 6mm; width: 14mm; height: 19.6mm; border: .3mm dashed var(--petrolio); border-radius: 1.4mm"></div>
       <div class="marchio" style="left: 17mm; top: 26.6mm; width: 14mm; text-align: center">Scarti</div>
-      <div class="disco" style="left: 34mm; top: 6.5mm; width: 8mm; height: 8mm; font-size: 11pt">5</div>
-      <div class="disco" style="left: 43mm; top: 6.5mm; width: 8mm; height: 8mm; font-size: 11pt">5</div>
-      <div class="disco" style="left: 34mm; top: 16mm; width: 8mm; height: 8mm; font-size: 11pt">3</div>
-      <div class="disco" style="left: 43mm; top: 16mm; width: 8mm; height: 8mm; font-size: 11pt">3</div>
-      <div class="marchio" style="left: 34mm; top: 26.6mm; width: 17mm; text-align: center">Token</div>
       <div class="marchio" style="left: 56mm; top: 1mm; width: 46mm; text-align: center">Il mercato</div>
       <img class="carta" src="img/lav_06.jpg" style="left: 56mm; top: 6mm; width: 14mm">
       <img class="carta" src="img/lav_28.jpg" style="left: 72mm; top: 6mm; width: 14mm">
@@ -315,7 +302,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     <div class="passo"><div class="n">1</div><div><span class="v">Aprire una formazione.</span> Gioca una carta Ambito davanti a te: diventa una Formazione e apre una nuova pila. Puoi avere quante pile vuoi.</div></div>
     <div class="passo"><div class="n">2</div><div><span class="v">Migliorare una formazione.</span> Gioca una carta Ambito sotto una tua Formazione: le sue tre competenze si sommano a quelle della pila. Puoi farlo anche dopo aver inserito una Persona, finché il set non è chiuso.</div></div>
     <div class="passo"><div class="n">3</div><div><span class="v">Inserire una persona.</span> Prendi una Persona dal mercato e mettila sopra una tua pila che non ne ha ancora una. Le competenze della pila devono comprendere <b>tutte e tre le sue ambizioni</b>, contate una per una: due icone Digitale ne chiedono due. Il mercato si ripristina subito. Poi <b>attivi il potere</b> della Persona che hai preso.</div></div>
-    <div class="passo"><div class="n">4</div><div><span class="v">Completare un set con un lavoro.</span> Gioca dalla mano una carta Ambito, come Lavoro, sopra una tua pila che ha già una Persona. Le Formazioni della pila devono comprendere <b>tutte e tre le icone del Lavoro</b>. Segna i punti, controlla i token obiettivo e metti negli scarti le Formazioni; poi <b>chiudi il set</b> in orizzontale davanti a te (pagina 6).</div></div>
+    <div class="passo"><div class="n">4</div><div><span class="v">Completare un set con un lavoro.</span> Gioca dalla mano una carta Ambito, come Lavoro, sopra una tua pila che ha già una Persona. Le Formazioni della pila devono comprendere <b>tutte e tre le icone del Lavoro</b>. Metti negli scarti le Formazioni, poi <b>chiudi il set</b> in orizzontale davanti a te (pagina 6).</div></div>
     <div class="passo"><div class="n">5</div><div><span class="v">Pescare.</span> Pesca 2 carte Ambito. Il mercato non cambia.</div></div>
     <p>Se non puoi fare nessuna azione, passi.</p>
     <div class="nota scura">
@@ -368,7 +355,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
   <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
 </div></section>
 
-<!-- ============================================================ 7. PUNTI E TOKEN -->
+<!-- ============================================================ 7. PUNTI E VITTORIA -->
 <section class="pagina"><div class="pannello">
   <div class="testata"><span class="sx">Regolamento</span><span>07</span></div>
   <div class="sezione">
@@ -385,28 +372,13 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     <p>Le ambizioni non devono per forza combaciare col Lavoro: un lavoro qualunque si trova sempre. È il lavoro dei sogni che fa la differenza. Una Persona con {{potere 3}} porta al suo set <b>2 punti</b> in più.</p>
   </div>
   <div class="sezione">
-    <div class="occhiello">Bonus di fine partita</div>
-    <h2>I token obiettivo</h2>
-    <p>Per gli obiettivi conta la <b>categoria</b> della carta che ha chiuso ogni set come Lavoro.</p>
-    <div class="obiettivi">
-      <div class="obiettivo">
-        <div class="coppia">
-          <div class="disco" style="left: 0; top: 0; width: 13mm; height: 13mm; font-size: 17pt; transform: rotate(-6deg)">5</div>
-          <div class="disco" style="left: 10.5mm; top: 2mm; width: 11mm; height: 11mm; font-size: 14pt; transform: rotate(5deg)">3</div>
-        </div>
-        <h3>Due della stessa categoria</h3>
-        <p>Il token da <b>5 punti</b> va a chi chiude, prima del resto del tavolo, 2 set della stessa categoria; quello da <b>3 punti</b> a chi ci riesce subito dopo.</p>
-      </div>
-      <div class="obiettivo">
-        <div class="coppia">
-          <div class="disco" style="left: 0; top: 0; width: 13mm; height: 13mm; font-size: 17pt; transform: rotate(4deg)">5</div>
-          <div class="disco" style="left: 10.5mm; top: 2mm; width: 11mm; height: 11mm; font-size: 14pt; transform: rotate(-5deg)">3</div>
-        </div>
-        <h3>Tre di categorie diverse</h3>
-        <p>Il token da <b>5 punti</b> va a chi chiude, prima del resto del tavolo, 3 set di tre categorie diverse; quello da <b>3 punti</b> a chi ci riesce subito dopo.</p>
-      </div>
+    <div class="occhiello">Il conto finale</div>
+    <h2>Vittoria</h2>
+    <p>Ogni partecipante somma i punti dei propri set. Vince chi ha il punteggio più alto.</p>
+    <div class="nota scura dx">
+      <div class="etichetta">In caso di parità</div>
+      <p>Tra chi è a pari punti vince <b>la prima voce che urla «Lavoro!»</b>.</p>
     </div>
-    <p>Ogni partecipante può prendere al massimo un token per obiettivo. I token si sommano al punteggio finale.</p>
   </div>
   <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
 </div></section>
@@ -435,13 +407,13 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
   <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
 </div></section>
 
-<!-- ============================================================ 9. FINE E VITTORIA -->
+<!-- ============================================================ 9. FINE DELLA PARTITA -->
 <section class="pagina"><div class="pannello">
   <div class="testata"><span class="sx">Regolamento</span><span>09</span></div>
   <div class="sezione">
     <div class="occhiello">La terza Persona al lavoro</div>
     <h2>Fine della partita</h2>
-    <p>La fine della partita scatta quando qualcuno chiude il suo <b>terzo set</b>, cioè manda al lavoro la terza Persona. <b>Ogni altro partecipante gioca ancora un turno</b>, nell'ordine solito; chi ha chiuso il terzo set no. In questi turni si possono chiudere altri set e prendere i token rimasti.</p>
+    <p>La fine della partita scatta quando qualcuno chiude il suo <b>terzo set</b>, cioè manda al lavoro la terza Persona. <b>Ogni altro partecipante gioca ancora un turno</b>, nell'ordine solito; chi ha chiuso il terzo set no. In questi turni si possono chiudere altri set.</p>
     <div class="nota">
       <div class="etichetta">Esempio</div>
       <p>Chiude il terzo set chi siede alla tua destra. Giochi un ultimo turno tu, poi chi viene dopo di te, fino a chi siede alla sua sinistra. Poi si contano i punti.</p>
@@ -449,12 +421,12 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     <p>Quando il mazzo degli Ambiti finisce, rimescolate gli scarti. Se un mazzo finisce e non si può ricostituire, la fine della partita scatta allo stesso modo.</p>
   </div>
   <div class="sezione">
-    <div class="occhiello">Il conto finale</div>
-    <h2>Vittoria</h2>
-    <p>Ogni partecipante somma i punti dei propri set e quelli dei token. Vince chi ha il punteggio più alto.</p>
+    <div class="occhiello">Alla fine</div>
+    <h2>Il conto dei punti</h2>
+    <p>Si guardano i set girati in orizzontale, uno per uno: le ambizioni della Persona che combaciano col suo Lavoro decidono quanto vale (pagina 7).</p>
     <div class="nota scura dx">
-      <div class="etichetta">In caso di parità</div>
-      <p>Tra chi è a pari punti vince <b>la prima voce che urla «Lavoro!»</b>.</p>
+      <div class="etichetta">Esempio</div>
+      <p>Tre set: uno con due ambizioni che combaciano, 10 punti; uno con tre, 16 punti; uno con una sola, 7 punti, ma la sua Persona ha {{potere 3}} e ne vale 9. In tutto <b>35 punti</b>.</p>
     </div>
   </div>
   <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
@@ -471,7 +443,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
       <li>Si possono aprire quante pile si vuole, e migliorare una pila anche dopo averci messo la Persona.</li>
       <li>{{potere 4}} può togliere una Formazione anche da sotto una Persona: la Persona resta, ma per il Lavoro la pila deve ancora coprirne le icone.</li>
       <li>Una Persona presa con {{potere 5}} deve trovare da te una pila libera che copre le sue tre ambizioni, se no il potere va perso.</li>
-      <li>Un Ambito coperto si gioca anche come Lavoro: per i token conta la categoria dell'ambito che hai detto.</li>
+      <li>Un Ambito coperto resta l'ambito che hai detto anche quando {{potere 4}} lo sposta in un'altra pila.</li>
     </ul>
   </div>
   <div class="sezione">
@@ -479,7 +451,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     <h2>Consigli per la prima partita</h2>
     <ul>
       <li><b>Non partire col primo set che ti riesce.</b> Tenere quattro o cinque carte in mano e cercare un Lavoro che somigli alle ambizioni della Persona paga quasi sempre.</li>
-      <li><b>Ma non aspettare solo il set perfetto.</b> Chi rinuncia a un set intero per farne uno da 16 resta indietro, anche nei token.</li>
+      <li><b>Ma non aspettare solo il set perfetto.</b> Chi rinuncia a un set intero per farne uno da 16 resta indietro.</li>
       <li><b>Guarda il mercato.</b> Le Persone con Ricerca {{ico RI}} sono le più difficili da formare: per questo hanno il potere più utile.</li>
       <li><b>Guarda le pile degli altri.</b> Una Persona che aspetta il suo Lavoro si può portare via.</li>
       <li><b>Chi chiude la partita non prende punti in più:</b> conta quanto vale ogni set.</li>
@@ -496,11 +468,11 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     <h2>Il turno in sintesi</h2>
     <div class="nota">
       <div class="etichetta">Una sola azione</div>
-      <p>Annunciala, poi falla. <b>1 Apri</b> una formazione · <b>2 Migliora</b> una formazione · <b>3 Inserisci</b> una Persona e attiva il suo potere · <b>4 Completa</b> un set: punti, token, formazioni negli scarti, set in orizzontale · <b>5 Pesca</b> 2 Ambiti. Un Ambito coperto vale un ambito a scelta. Nessun limite di mano.</p>
+      <p>Annunciala, poi falla. <b>1 Apri</b> una formazione · <b>2 Migliora</b> una formazione · <b>3 Inserisci</b> una Persona e attiva il suo potere · <b>4 Completa</b> un set: formazioni negli scarti, set in orizzontale · <b>5 Pesca</b> 2 Ambiti. Un Ambito coperto vale un ambito a scelta. Nessun limite di mano.</p>
     </div>
     <div class="nota dx">
       <div class="etichetta">Punti</div>
-      <p>Ambizioni che combaciano col Lavoro: nessuna 5, una 7, due 10, tre 16; {{potere 3}} 2 in più. Token: 2 set della stessa categoria 5 e 3; 3 categorie diverse 5 e 3.</p>
+      <p>Ambizioni che combaciano col Lavoro: nessuna 5, una 7, due 10, tre 16; {{potere 3}} 2 in più.</p>
     </div>
     <div class="nota scura">
       <div class="etichetta">Poteri</div>

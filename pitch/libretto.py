@@ -39,8 +39,10 @@ def _csv(nome):
 
 def riempi(html):
     nomi = poteri.nomi()
-    terne = {("per", r["n"]): [r["a1"], r["a2"], r["a3"]] for r in _csv("lavoratori.csv")}
-    terne.update({("amb", r["n"]): [r["l1"], r["l2"], r["l3"]] for r in _csv("ambiti.csv")})
+    # le icone nello stesso ordine delle carte (grafica/carte_nuove.py, ORDINE_ICONE)
+    ordine = ("MA", "DI", "CO", "OR", "CR", "RI").index
+    terne = {("per", r["n"]): sorted([r["a1"], r["a2"], r["a3"]], key=ordine) for r in _csv("lavoratori.csv")}
+    terne.update({("amb", r["n"]): sorted([r["l1"], r["l2"], r["l3"]], key=ordine) for r in _csv("ambiti.csv")})
 
     def icona(sigla):
         return f'<img class="ico" src="img/adesivo_{sigla}.png" alt="{sigla}">'

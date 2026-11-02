@@ -247,7 +247,7 @@ def retro():
     scrivi(d, P(LARGO - 5), P(7.5), "CDS", f_et, PETROLIO, cn.PT(7) * 0.2, "rs")
     scrivi(d, P(5), P(17), "IN QUESTA SCATOLA", font(BAHN, 15, "Bold Condensed"), PETROLIO)
     f_l = font(BAHN, 10.5, "Bold Condensed")
-    for i, riga in enumerate(("60 carte Persona", "60 carte Ambito", "4 carte riassunto", "4 token obiettivo")):
+    for i, riga in enumerate(("60 carte Persona", "60 carte Ambito", "4 carte riassunto")):  # i token non ci sono più
         y = 24.5 + i * 5.4
         q = Image.new("RGBA", (P(2), P(2)), ROSA).rotate(-9, resample=Image.BICUBIC, expand=True)
         incolla_centro(im, q, P(6.2), P(y - 1.3))

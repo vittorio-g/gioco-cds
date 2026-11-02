@@ -10,8 +10,8 @@ grafica/stampa/taglio/. Le immagini che servono le prepara in grafica/stampa/pnp
 - Fogli 1-7: le 60 Persone, col potere scritto sulla carta (grafica/dati/poteri.json,
   assegnazione in grafica/poteri.py).
 - Fogli 8-14: i 60 Ambiti, cioè due copie di ognuno dei 30.
-- Foglio 15: 4 carte riassunto (da un lato il turno, dall'altro punti e poteri) e 4 token,
-  stampati sui due lati.
+- Foglio 15: 4 carte riassunto (da un lato il turno, dall'altro punti e poteri), stampate sui
+  due lati. I token obiettivo non ci sono più dal playtest di novembre 2026.
 - Fogli 16-18: il regolamento A5 (pitch/regolamento_a5.pdf), due pagine per facciata,
   da piegare a metà. Lo rifà ogni volta pitch/libretto.py (HTML stampato da Edge), dopo
   pitch/figure.py per le immagini.
@@ -66,7 +66,6 @@ Y0 = (297 - (3 * H + 4 * ABB)) / 2  # 12.5: il bordo di taglio della prima riga,
 R_ANGOLI = 3
 CROCINI = [(14, 7.5), (196, 7.5), (14, 289.5), (196, 289.5)]  # (x, y dall'alto)
 R_CROCINO, BRACCIO = 2, 3  # il cerchio e mezza croce: tutto tra 4,5 e 10,5 mm dal bordo, fuori dall'abbondanza
-R_TOKEN = 14
 
 
 def posto(k, specchio=False):
@@ -75,13 +74,6 @@ def posto(k, specchio=False):
     if specchio:
         colonna = 2 - colonna
     return X0 + colonna * PASSO_X, Y0 + riga * PASSO_Y
-
-
-# I token stanno al posto delle carte 4 e 5 del foglio delle carte riassunto.
-TOKEN = [(X0 + PASSO_X + 32.5, Y0 + PASSO_Y + 22), (X0 + PASSO_X + 32.5 + 65, Y0 + PASSO_Y + 22),
-         (X0 + PASSO_X + 32.5, Y0 + PASSO_Y + 66), (X0 + PASSO_X + 32.5 + 65, Y0 + PASSO_Y + 66)]
-VALORI_TOKEN = [("5", r"TRE SET\\STESSA CATEGORIA"), ("3", r"TRE SET\\STESSA CATEGORIA"),
-                ("5", r"QUATTRO\\CATEGORIE"), ("3", r"QUATTRO\\CATEGORIE")]
 
 
 # ---------------------------------------------------------------- le immagini, con l'abbondanza
@@ -173,26 +165,13 @@ def foglio_carte(nome, fronti, dorso, foglio, fogli):
     return fronte + chiudi() + retro + chiudi()
 
 
-# ---- le carte riassunto (immagini di carte_nuove.py) e i token
-def token(cx, cy_su, valore, testo):
-    """Un disco petrolio pieno, abbondanza compresa: niente anelli vicino al taglio, che si vedrebbero storti."""
-    c = y(cy_su)
-    return rf"""
-  \fill[petrolio] ({cx},{c}) circle ({R_TOKEN + ABB});
-  \node[text=carta,font=\fontsize{{22}}{{22}}\selectfont\bfseries] at ({cx},{c + 2.3}) {{{valore}}};
-  \node[text=carta,font=\fontsize{{5.2}}{{6}}\selectfont\bfseries,align=center] at ({cx},{c - 6.4}) {{{testo}}};
-"""
-
-
+# ---- le carte riassunto (immagini di carte_nuove.py); i token obiettivo non ci sono più dal playtest di novembre 2026
 def foglio_riassunti():
-    fronte = apri(r"CARTE RIASSUNTO E TOKEN · FRONTE") + crocini()
-    retro = apri(r"CARTE RIASSUNTO E TOKEN · RETRO") + crocini()
+    fronte = apri(r"CARTE RIASSUNTO · FRONTE") + crocini()
+    retro = apri(r"CARTE RIASSUNTO · RETRO") + crocini()
     for k in range(4):
         fronte += immagine(riassunto_fronte, *posto(k))
         retro += immagine(riassunto_retro, *posto(k, specchio=True))
-    for (cx, cy), (valore, testo) in zip(TOKEN, VALORI_TOKEN):
-        fronte += token(cx, cy, valore, testo)
-        retro += token(210 - cx, cy, valore, testo)
     return fronte + chiudi() + retro + chiudi()
 
 
@@ -286,5 +265,5 @@ def svg(tagli):
 
 (TAGLIO / "collocamento_carte_taglio.svg").write_text(svg([rettangolo(*posto(k)) for k in range(9)]), encoding="utf-8")
 (TAGLIO / "collocamento_riassunti_taglio.svg").write_text(
-    svg([rettangolo(*posto(k)) for k in range(4)] + [cerchio(cx, cy, R_TOKEN) for cx, cy in TOKEN]), encoding="utf-8")
+    svg([rettangolo(*posto(k)) for k in range(4)]), encoding="utf-8")
 print("grafica/stampa/taglio: collocamento_carte_taglio.svg (fogli 1-14), collocamento_riassunti_taglio.svg (foglio 15)")

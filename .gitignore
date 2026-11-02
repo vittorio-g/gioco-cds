@@ -33,3 +33,10 @@ __pycache__/
 pitch/_libretto.html
 grafica/stampa/collocamento_scatola_anteprima.png
 grafica/stampa/collocamento_scatola_fronte.png
+
+# Il documento sul playtest: su GitHub il sorgente e lo script delle figure, PDF e immagini su Drive.
+playtest/*.pdf
+playtest/img/
+playtest/*.aux
+playtest/*.log
+playtest/*.out

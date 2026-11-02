@@ -1,0 +1,166 @@
+% Collocamento: il riepilogo del playtest di novembre 2026 per i game designer.
+% Le immagini si preparano con py -3 playtest/figure.py; poi, da dentro playtest/,
+% pdflatex feedback_playtest_2026-11.tex (due volte, per i riferimenti alle figure).
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xltabular}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+
+\title{Collocamento: che cosa cambia dopo il playtest}
+\date{2 novembre 2026}
+
+\begin{document}
+\maketitle
+
+La partita si accorcia a tre set e perde i token obiettivo, il limite di mano e lo scorrimento del mercato.
+Entrano un jolly, cioè l'Ambito giocato coperto, sei poteri pensati per l'interazione e, da provare, un mazzo
+di eventi sul mercato del lavoro in Italia. Le modifiche sono già nei file del print and play; i PDF da stampare
+si rifanno quando sarà decisa la versione nuova. In fondo ci sono le domande ancora aperte.
+
+\section{Regole}
+
+Il confronto è con il regolamento stampato il 28 ottobre.
+
+{\small
+\begin{tabularx}{\textwidth}{@{}P{2.8cm}LL@{}}
+\toprule
+Punto & Regolamento stampato & Dopo il playtest \\
+\midrule
+Fine della partita & Al primo quinto set si finisce il giro, poi si gioca un giro in più. & Quando qualcuno manda al lavoro la terza Persona, ogni altro partecipante gioca ancora un turno. Poi si contano i punti. \\
+Token obiettivo & Quattro token: tre set della stessa categoria, quattro set di categorie diverse. & Tolti. Le categorie restano sulle carte, ma non hanno più effetto sul gioco. \\
+Persone in tavola & Una per partecipante. & Invariato: il playtest lo conferma. \\
+Mercato & Chi pesca fa uscire la Persona in fila da più tempo, e ne entra una nuova. & Non scorre: cambia solo quando qualcuno prende una Persona. \\
+Limite di mano & 6 carte. & Nessun limite. \\
+Chi inizia & Chi è più giovane. & Chi ha fatto per ultimo un colloquio di lavoro. \\
+Set completo & Le Formazioni vanno negli scarti, Persona e Lavoro restano davanti a sé. & In più il set si chiude: il Lavoro va dritto sopra la Persona e le due carte si girano in orizzontale. \\
+Ambito coperto & Non previsto. & Vale come un ambito a scelta, come Formazione o come Lavoro. Si dice quale quando lo si gioca. \\
+Annuncio & Non previsto. & Ogni azione si annuncia prima di farla: serve al potere Contrordine. \\
+\bottomrule
+\end{tabularx}
+}
+
+\section{Carte e libretto}
+
+\paragraph{Icone in alto, sempre nello stesso ordine.} Le tre icone stavano in colonna sul lato destro e, con le
+carte a ventaglio in mano, la carta accanto le copriva. Ora stanno in fila in alto a sinistra (figura~\ref{fig:carte}),
+sempre nello stesso ordine: Manualità, Digitale, Comunicazione, Organizzazione, Creatività, Ricerca. Così due carte si
+confrontano a colpo d'occhio. Nelle pile le carte si sfalsano in verticale: ognuna sporge in alto da quella che ha
+sopra, e resta visibile la fila di icone di tutte.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.78\textwidth]{img/carte.jpg}
+\caption{Due Persone e un Ambito con le icone in alto, nell'ordine fisso.}
+\label{fig:carte}
+\end{figure}
+
+\paragraph{Un dorso nuovo per gli Ambiti.} Una carta Ambito coperta è un ambito qualsiasi, e il dorso lo deve
+raccontare. Ci sono cinque proposte (figura~\ref{fig:dorsi}). Le prime due usano le sei icone delle competenze: la
+\emph{Ruota}, una ruota della fortuna con le sei icone e la freccia che gira, e la \emph{Trama}, un motivo fitto di
+icone con un'etichetta in bianco «Ambito \dots». Le altre tre sono illustrate: il \emph{Modulo} da compilare con il
+timbro «a scelta», il \emph{Multiutensile}, un coltellino svizzero con un attrezzo per ogni mestiere, e il
+\emph{Passe-partout}, la chiave che apre tutte le porte.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{img/dorsi.jpg}
+\caption{Le cinque proposte di dorso degli Ambiti, da sinistra: Ruota, Trama, Modulo, Multiutensile, Passe-partout.}
+\label{fig:dorsi}
+\end{figure}
+
+\paragraph{Libretto.} Il regolamento non spiega più come stampare e tagliare il print and play. Senza i token,
+la pagina dei punti ospita anche la vittoria, e quella della fine partita un esempio di conto finale.
+
+\section{Poteri}
+
+Restano Passaparola e Corso intensivo, escono Ho un amico e Chiamata diretta, ne entrano quattro nuovi per dare
+più interazione e spargere i punti. Con sei poteri, ognuno va su 10 Persone.
+
+{\small
+\begin{tabularx}{\textwidth}{@{}P{3.4cm}Lp{1.4cm}@{}}
+\toprule
+Potere & Che cosa fa & Stato \\
+\midrule
+Passaparola & Pesca 1 carta Ambito. & Resta \\
+Corso intensivo & Gioca subito fino a 2 carte Ambito come Formazioni. & Resta \\
+Networking & Il set di questa Persona vale 2 punti in più, contati a fine partita. & Nuovo \\
+Concorrenza & Prendi una Formazione da una pila aperta di un altro partecipante, purché gliene resti almeno una, e mettila in una tua pila. & Nuovo \\
+Cacciatore di teste & Prendi una Persona da una pila aperta di un altro partecipante e mettila su una tua pila libera che copre le sue ambizioni. Il suo potere non si attiva. & Nuovo \\
+Contrordine & Fino al tuo prossimo turno, una volta: quando qualcuno annuncia la sua azione, puoi ordinargli di cambiarla. & Nuovo \\
+Ho un amico & Prenota una Persona del mercato. & Esce \\
+Chiamata diretta & Piazza un'altra Persona ignorando un'ambizione. & Esce \\
+\bottomrule
+\end{tabularx}
+}
+
+Una pila è aperta finché non ha un Lavoro. Per ora i poteri vanno alle Persone con lo stesso criterio di prima:
+il più utile alle Persone più difficili da formare. Cacciatore di teste e Contrordine sono nomi proposti.
+
+\section{Carte evento, da provare}
+
+Gli eventi sono l'idea del playtest da provare per prima. Sono un mazzo di 12 carte. All'inizio di ogni giro chi ha
+iniziato la partita scopre un evento, che vale fino al giro successivo. Ogni carta ha un effetto e una riga di spunto
+su come funziona il mercato del lavoro in Italia: il gioco diventa un'occasione per parlarne. I due poteri tolti
+tornano come eventi: Raccomandazione e Tirocinio.
+
+{\small
+\begin{xltabular}{\textwidth}{@{}P{2.9cm}LL@{}}
+\toprule
+Evento & Effetto per il giro & Spunto \\
+\midrule
+\endhead
+PNRR & Chi apre o migliora una formazione può giocare un secondo Ambito come Formazione. & Con i fondi del PNRR il programma GOL finanzia corsi per chi cerca lavoro. \\
+Supporto formazione e lavoro & Chi ha meno set chiusi pesca 1 Ambito all'inizio del suo turno. & Dal 2023 chi è in difficoltà economica e segue un corso può ricevere un'indennità mensile. \\
+Raccomandazione & Chi inserisce una Persona può prenderne un'altra dal mercato e tenerla da parte, scoperta, fino al suo prossimo turno. Se non la inserisce, torna in fondo al mazzo. & Molte assunzioni passano da parenti, amici e conoscenti più che dai canali ufficiali. \\
+Bonus assunzioni & Il primo set chiuso nel giro si prende questa carta: vale 2 punti a fine partita. & Gli incentivi per chi assume giovani, donne o al Sud sono tanti e cambiano quasi ogni anno. \\
+Click day & Si rivelano 2 Persone in più. La prima voce che urla «Click!» ne mette una su una sua pila che la copre. A fine giro quelle rimaste tornano in fondo al mazzo. & Con il decreto flussi i permessi per lavorare in Italia vanno a chi invia per primo la domanda, nel giorno del click. \\
+Tirocinio & Si può inserire una Persona ignorando una delle sue ambizioni; il suo potere non si attiva. & Molti tirocini pagano un rimborso basso e a volte prendono il posto di un contratto. \\
+Centri per l'impiego & Il mercato non si ripristina: le Persone prese si sostituiscono tutte a fine giro. & I centri per l'impiego trovano lavoro a una piccola parte di chi lo cerca. \\
+Fuga dei cervelli & Le Persone del mercato con l'icona Ricerca vanno in fondo al mazzo; se ne rivelano altre al loro posto. & Ogni anno migliaia di giovani laureati vanno a lavorare all'estero. \\
+Sciopero generale & Nessuno chiude set. Chi pesca prende 3 Ambiti invece di 2. & Lo sciopero è un diritto scritto nella Costituzione, all'articolo 40. \\
+Contratti a termine & I set chiusi nel giro restano dritti e aperti fino al giro dopo, Formazioni comprese. Se Cacciatore di teste ne porta via la Persona, il Lavoro torna in mano a chi l'aveva giocato. & La maggior parte dei nuovi contratti di lavoro è a tempo determinato. \\
+Salario minimo & Il primo set da 5 punti chiuso nel giro, senza ambizioni che combaciano, si prende questa carta: vale 2 punti. & In Italia non c'è un salario minimo fissato per legge: i minimi li stabiliscono i contratti collettivi. \\
+Mismatch & Non si può inserire una Persona su una pila con una sola Formazione. & Le imprese dicono di non trovare le persone giuste per molte delle assunzioni che prevedono. \\
+\bottomrule
+\end{xltabular}
+}
+
+Sette eventi aiutano, quattro frenano e uno, Contratti a termine, apre al furto. Gli spunti vanno controllati
+sulle fonti prima di stampare le carte. L'altra idea del playtest, Formazioni da due competenze con i Lavori in un
+mazzo separato, è stata scartata: cambiava troppo il gioco.
+
+\section{Da decidere insieme}
+
+\begin{enumerate}[leftmargin=*,itemsep=0.4em]
+\item \textbf{Il jolly coperto va limitato.} 51 Persone su 60 hanno le stesse tre icone di un ambito. Giocato
+coperto come Lavoro, quell'ambito chiude il set a 16 punti, perché la pila copre già quelle icone. Proposte: come
+Lavoro vale 5 punti senza bonus, oppure si gioca coperto solo come Formazione.
+\item \textbf{Il mercato può bloccarsi.} Lo scorrimento era stato aggiunto perché il mercato restava fermo su
+Persone difficili: nelle simulazioni in tre dimezzava l'attesa, da 3,4 a 1,7 giri. Ora le Persone si possono
+rubare; da guardare al prossimo playtest.
+\item \textbf{Le categorie.} Senza token le cinque categorie degli Ambiti non hanno più effetto. Si tengono come
+ambientazione o si usano altrove, per esempio negli eventi o nei poteri?
+\item \textbf{Set chiusi.} Le Formazioni vanno ancora negli scarti, o restano nel set girato in orizzontale?
+\item \textbf{Contrordine.} Chi lo subisce deve fare un'altra delle cinque azioni, o può rifare la stessa con
+carte diverse?
+\item \textbf{Concorrenza.} Può togliere una Formazione da una pila che ha già la Persona? Nella proposta sì: la
+Persona resta, ma chiudere il Lavoro diventa più difficile.
+\item \textbf{Eventi.} Valgono per un giro intero, come nella proposta, o solo per il turno di chi li scopre?
+\item \textbf{Nomi e dorso.} Vanno scelti i nomi di Cacciatore di teste e Contrordine, e uno dei cinque dorsi.
+\end{enumerate}
+
+\end{document}
