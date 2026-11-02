@@ -238,8 +238,9 @@ def sporca(img, seme, quanto=0.18):
     return img
 
 
-def timbro(testo, f, colore, angolo, seme, spazio=0, sotto=None, f_sotto=None, fondo=None, sbavature=0.18):
-    """Un timbro a doppia cornice con una parola (e una riga più piccola sotto)."""
+def timbro(testo, f, colore, angolo, seme, spazio=0, sotto=None, f_sotto=None, fondo=None, sbavature=0.18,
+           aria_sotto=0.0):
+    """Un timbro a doppia cornice con una parola (e una riga più piccola sotto, staccata di aria_sotto mm dal fondo)."""
     tw = larghezza(testo, f, spazio)
     pad_x, pad_y = L(2.2), L(1.5)
     asc = f.getbbox("ÀG")[3] - f.getbbox("ÀG")[1]
@@ -247,7 +248,7 @@ def timbro(testo, f, colore, angolo, seme, spazio=0, sotto=None, f_sotto=None, f
     w2 = larghezza(sotto, f_sotto) if sotto else 0
     w = max(tw, w2) + 2 * pad_x
     if sotto:
-        h += L(3.2)
+        h += L(3.2 + aria_sotto)
     img = Image.new("RGBA", (round(w), round(h)), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
     if fondo:  # un fondo chiaro sotto l'inchiostro, perché si legga anche sopra la foto
@@ -256,7 +257,7 @@ def timbro(testo, f, colore, angolo, seme, spazio=0, sotto=None, f_sotto=None, f
     d.rectangle([L(0.9), L(0.9), w - 1 - L(0.9), h - 1 - L(0.9)], outline=colore, width=L(0.22))
     scrivi(d, w / 2, pad_y + asc - L(0.1), testo, f, colore, spazio, "ms")
     if sotto:
-        scrivi(d, w / 2, h - pad_y + L(0.2), sotto, f_sotto, colore, 0, "ms")
+        scrivi(d, w / 2, h - pad_y + L(0.2 - aria_sotto), sotto, f_sotto, colore, 0, "ms")
     if fondo:  # le sbavature solo sull'inchiostro, non sul fondo
         inchiostro = Image.new("RGBA", img.size, (0, 0, 0, 0))
         ImageDraw.Draw(inchiostro)
@@ -340,34 +341,38 @@ def carta_B(tipo, n):
     """Manifesto: Persone su bianco panna con i titoletti rosa, Ambiti su petrolio; titolo stretto e grande.
 
     Il 28/10/2026 il fondo delle Persone era rosa pieno come il dorso: a Vittorio sembrava aggressivo.
+    Dopo il playtest di novembre le icone stanno in fila in alto a sinistra: in colonna sul lato destro,
+    con le carte a ventaglio in mano, le copriva la carta accanto.
     """
     persona = tipo == "persona"
     dati = PERSONE[n] if persona else AMBITI[n]
     fondo, colore, accento = (PANNA, PETROLIO, MAGENTA) if persona else (PETROLIO, BIANCO, BIANCO)
     tela = Image.new("RGBA", (LARGO, ALTO), fondo)
     d = ImageDraw.Draw(tela)
+    # in alto a sinistra le tre icone in fila, la parte che resta scoperta nel ventaglio e nelle pile sfalsate
+    codici = AMBIZIONI[n] if persona else COMPETENZE[n]
+    for i, (k, ang) in enumerate(zip(codici, (4, -4, 3))):
+        incolla(tela, adesivo(k, 9.6, ang, 0.8, BIANCO), X(10.6 + i * 11.2), X(9.6))
+    # in alto a destra il tipo di carta e il numero
     f = font(BAHN, 8.5, "SemiBold Condensed")
-    scrivi(d, X(5.5), X(7.6), "PERSONA" if persona else "AMBITO", f, accento, PT(8.5) * 0.22)
-    scrivi(d, X(57.5), X(7.6), n, f, colore, PT(8.5) * 0.1, "rs")
-    # nome in alto, grande
+    scrivi(d, X(57.5), X(8.4), "PERSONA" if persona else "AMBITO", f, accento, PT(8.5) * 0.22, "rs")
+    scrivi(d, X(57.5), X(12.8), n, f, colore, PT(8.5) * 0.1, "rs")
+    # il nome sotto le icone, grande
     f_nome, righe, pt, _ = adatta(dati["nome"].upper(), BAHN, 21, 13, L(52), 2, "Bold Condensed")
-    y = X(10.2) + PT(pt) * 0.74
+    y = X(16.6) + PT(pt) * 0.74
     y = paragrafo(d, X(5.5), y, righe, f_nome, colore, PT(pt) * 0.92)
-    # illustrazione dritta, con la cornice chiara di una stampa, fino a 64 mm
+    # illustrazione dritta, larga quanto la carta, con la cornice chiara di una stampa, fino a 64 mm
     top = y / PX - ABB + 2.6
-    aw, ah = 46, 64 - top
+    ah = 64 - top
+    aw = min(52, ah * 1.5)   # con un nome su due righe la stampa si stringe, se no il ritaglio taglia le teste
+    sx = 5.5 + (52 - aw) / 2
     img = con_bordo(illustrazione(tipo, n, aw, ah).convert("RGBA"), L(1.0), BIANCO)
     if persona:  # sul fondo chiaro la stampa si stacca con un'ombra leggera
         ombra = Image.new("RGBA", (img.width + L(3), img.height + L(3)), (0, 0, 0, 0))
         ombra.paste(Image.new("RGBA", img.size, (23, 71, 77, 75)), (L(1.5), L(1.5)))
         ombra = ombra.filter(ImageFilter.GaussianBlur(L(0.5)))
-        tela.alpha_composite(ombra, (X(5.5) - L(1.0) - L(1.5) + L(0.5), X(top) - L(1.5) + L(0.6)))
-    tela.alpha_composite(img, (X(5.5) - L(1.0), X(top)))
-    # icone in colonna a destra, attaccate al bordo della stampa
-    codici = AMBIZIONI[n] if persona else COMPETENZE[n]
-    passo = min(12.6, (ah - 2) / 3)
-    for i, (k, ang) in enumerate(zip(codici, (4, -4, 3))):
-        incolla(tela, adesivo(k, 10.5, ang, 0.8, BIANCO), X(54.5), X(top + 1 + passo / 2 + i * passo))
+        tela.alpha_composite(ombra, (X(sx) - L(1.0) - L(1.5) + L(0.5), X(top) - L(1.5) + L(0.6)))
+    tela.alpha_composite(img, (X(sx) - L(1.0), X(top)))
     # battuta
     f_bat, r_bat, pt_b, _ = adatta(dati["battuta"], BAHN, 10.5, 8.5, L(52), 2, "SemiBold SemiCondensed")
     paragrafo(d, X(5.5), X(66.4) + PT(pt_b) * 0.75, r_bat, f_bat, colore, PT(pt_b) * 1.12)
@@ -444,7 +449,7 @@ def carta_C(tipo, n):
 
 PROPOSTE = {
     "A": ("Fanzine", "Franklin Gothic Heavy e macchina da scrivere, fondo carta", carta_A, 53 / 39),
-    "B": ("Manifesto", "Bahnschrift stretto, Persone su bianco panna, Ambiti su petrolio", carta_B, 46 / 30),
+    "B": ("Manifesto", "Bahnschrift stretto, Persone su bianco panna, Ambiti su petrolio", carta_B, 1.5),
     "C": ("Schedario", "Rockwell e macchina da scrivere, fondo cartellina", carta_C, 51 / 37),
 }
 CAMPIONE = [("persona", "27"), ("persona", "55"), ("persona", "19"), ("persona", "59"), ("persona", "07"),
@@ -561,15 +566,15 @@ def riassunto_B(lato):
     riga = PT(8.5) * 1.16
     if lato == "fronte":
         y = X(23.5)
-        d.text((X(5.5), y), "Una sola azione per turno:", font=grassetto, fill=PETROLIO, anchor="ls")
+        d.text((X(5.5), y), "Una sola azione per turno: dilla, poi falla.", font=grassetto, fill=PETROLIO, anchor="ls")
         y += riga * 1.55
         azioni = [("APRI", " una formazione: un Ambito davanti a te."),
                   ("MIGLIORA", " una formazione: un Ambito sotto una tua pila."),
-                  ("INSERISCI", " una Persona su una pila che copre le sue 3 ambizioni. Il mercato si ripristina "
-                                "in coda. Attivi il suo potere."),
+                  ("INSERISCI", " una Persona su una pila che copre le sue 3 ambizioni. Il mercato si ripristina. "
+                                "Attivi il suo potere."),
                   ("COMPLETA", " un set: un Ambito come Lavoro su una pila con una Persona; la pila copre le 3 icone "
-                               "del Lavoro. Punti, token, formazioni negli scarti."),
-                  ("PESCA", " 2 Ambiti; la Persona in fila da più tempo va in fondo al mazzo e ne entra una nuova.")]
+                               "del Lavoro. Punti, token, formazioni negli scarti, set in orizzontale."),
+                  ("PESCA", " 2 Ambiti.")]
         lato_q = L(4.4)
         for i, (verbo, resto) in enumerate(azioni, 1):
             # il numero in un quadratino petrolio, come nel regolamento
@@ -577,28 +582,29 @@ def riassunto_B(lato):
             d.text((X(5.5) + lato_q / 2, y - L(3.4) + lato_q / 2), str(i), font=stretto, fill=BIANCO, anchor="mm")
             y = testo_ricco(d, X(11.4), y, L(46.4), [(verbo, stretto, MAGENTA), (resto, corpo, None)], riga)
             y += riga * 1.38
-        testo_ricco(d, X(5.5), y, L(52), [("Fine turno:", grassetto, None), (" al massimo 6 carte in mano.", corpo, None)],
-                    riga)
+        testo_ricco(d, X(5.5), y, L(52), [("Ambito coperto:", grassetto, None),
+                                           (" vale un ambito a tua scelta, da dire quando lo giochi.", corpo, None)], riga)
     else:
         y = X(23.5)
         y = testo_ricco(d, X(5.5), y, L(52), [("Ambizioni che combaciano col Lavoro", grassetto, None)], riga)
         y += riga
         d.text((X(5.5), y), "nessuna 5  ·  una 7  ·  due 10  ·  tre 16", font=stretto, fill=PETROLIO, anchor="ls")
-        y += riga * 1.9
+        y += riga * 1.75
         y = testo_ricco(d, X(5.5), y, L(52), [("Poteri", grassetto, None), (", quando inserisci la Persona:", corpo, None)],
                         riga)
-        y += riga * 1.25
+        y += riga * 1.2
         for _, p in sorted(POTERI.items()):
             y = testo_ricco(d, X(5.5), y, L(52), [(p["nome"].upper(), stretto, MAGENTA), (" " + p["breve"], corpo, None)],
                             riga)
-            y += riga * 1.2
-        y += riga * 0.6
+            y += riga * 1.12
+        y += riga * 0.45
         y = testo_ricco(d, X(5.5), y, L(52), [("Token:", grassetto, None),
-                                               (" 3 set della stessa categoria 5 e 3; 4 categorie diverse 5 e 3.", corpo, None)],
+                                               (" 2 set della stessa categoria 5 e 3; 3 categorie diverse 5 e 3.", corpo, None)],
                         riga)
-        y += riga * 1.7
+        y += riga * 1.55
         testo_ricco(d, X(5.5), y, L(52), [("Fine:", grassetto, None),
-                                           (" al primo quinto set si chiude il giro, poi un giro in più.", corpo, None)], riga)
+                                           (" alla terza Persona al lavoro, ogni altro partecipante gioca un ultimo turno.",
+                                            corpo, None)], riga)
     return tela.convert("RGB")
 
 
