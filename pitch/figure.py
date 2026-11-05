@@ -11,7 +11,7 @@ Legge i .tex e produce solo le immagini che usano, in pitch/img/:
     amb_NN.jpg   la carta dell'ambito NN            (da grafica/carte_v3/ambiti, senza abbondanza)
     dorso_lav.jpg, dorso_amb.jpg                   i dorsi originali delle carte
     dorsoB_lav.jpg, dorsoB_amb.jpg                 i dorsi della proposta B (grafica/dorsi_proposte; per le
-                                                   Persone B_persone.png e per gli Ambiti B_ambiti_jolly.png,
+                                                   Persone B_persone.png e per gli Ambiti la Ruota, ambiti_ruota_ordinata.png,
                                                    se ci sono)
     ill_NN.jpg   l'illustrazione del lavoratore NN (da grafica/illustrazioni/lav)
     art_NN.jpg   l'illustrazione dell'ambito NN, ritagliata dalla carta
@@ -71,11 +71,11 @@ for nome in sorted(usate):
         proposta = tipo[-1]
         file = RADICE / "grafica" / "dorsi_proposte" / f"{proposta}_{mazzo}.png"
         persone = file.with_name(f"{proposta}_persone.png")  # il dorso riscritto da grafica/dorso_persone.py
-        jolly = file.with_name(f"{proposta}_ambiti_jolly.png")  # col timbro di grafica/dorso_ambiti.py
+        ruota = file.with_name("ambiti_ruota_ordinata.png")  # il dorso degli Ambiti scelto, da grafica/dorso_ruota.py
         if mazzo == "lavoratori" and persone.exists():
             file = persone
-        if mazzo == "ambiti" and jolly.exists():
-            file = jolly
+        if mazzo == "ambiti" and ruota.exists():
+            file = ruota
         salva(ridotta(Image.open(file)), nome)
     elif tipo in ("lav", "amb"):  # le carte di grafica/carte_nuove.py, tolti i 2 mm di abbondanza
         carta = Image.open(RADICE / "grafica" / "carte_v3" / ("persone" if tipo == "lav" else "ambiti") / f"{numero}.png")

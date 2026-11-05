@@ -99,10 +99,11 @@ fronti_amb = [salva(Image.open(CARTE / "ambiti" / f"{n}.png"), f"amb_{n}") for n
 riassunto_fronte = salva(Image.open(CARTE / "riassunto_fronte.png"), "riassunto_fronte")
 riassunto_retro = salva(Image.open(CARTE / "riassunto_retro.png"), "riassunto_retro")
 dorso_per = salva(con_abbondanza(Image.open(QUI / "dorsi_proposte" / f"{DORSI}_persone.png"), "reflect"), "dorso_per")
-# il dorso degli Ambiti col timbro JOLLY (grafica/dorso_ambiti.py): giocata coperta, la carta vale un ambito a scelta
-if not (QUI / "dorsi_proposte" / f"{DORSI}_ambiti_jolly.png").exists():
-    subprocess.run([sys.executable, str(QUI / "dorso_ambiti.py")], check=True)
-dorso_amb = salva(con_abbondanza(Image.open(QUI / "dorsi_proposte" / f"{DORSI}_ambiti_jolly.png"), "reflect"), "dorso_amb")
+# il dorso degli Ambiti è la Ruota (scelta da Vittorio il 5/11/2026): giocata coperta, la carta vale un ambito
+# a scelta; grafica/dorso_ruota.py ne mette le icone nell'ordine delle carte
+if not (QUI / "dorsi_proposte" / "ambiti_ruota_ordinata.png").exists():
+    subprocess.run([sys.executable, str(QUI / "dorso_ruota.py")], check=True)
+dorso_amb = salva(con_abbondanza(Image.open(QUI / "dorsi_proposte" / "ambiti_ruota_ordinata.png"), "reflect"), "dorso_amb")
 for vecchia in IMG.glob("*.jpg"):  # le immagini delle versioni precedenti
     if f"pnp_img/{vecchia.name}" not in fronti_per + fronti_amb + [dorso_per, dorso_amb, riassunto_fronte, riassunto_retro]:
         vecchia.unlink()
