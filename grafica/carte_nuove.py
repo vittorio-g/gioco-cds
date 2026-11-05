@@ -92,6 +92,7 @@ COMPETENZE = {n: in_ordine([r["l1"], r["l2"], r["l3"]]) for n, r in _csv("ambiti
 CATEGORIA = {n: r["cat"] for n, r in _csv("ambiti.csv").items()}
 POTERI = poteri.nomi()
 CHI = poteri.assegnazione()
+EVENTI = {x["n"]: x for x in json.loads((QUI / "dati" / "eventi.json").read_text(encoding="utf-8"))["eventi"]}
 VOLTI = {k: v for k, v in json.loads((QUI / "dati" / "volti.json").read_text(encoding="utf-8")).items()
          if not k.startswith("_")}
 
@@ -370,9 +371,13 @@ def carta_B(tipo, n):
     f_nome, righe, pt, _ = adatta(dati["nome"].upper(), BAHN, 21, 13, L(52), 2, "Bold Condensed")
     y = X(16.6) + PT(pt) * 0.74
     y = paragrafo(d, X(5.5), y, righe, f_nome, colore, PT(pt) * 0.92)
-    # illustrazione dritta, larga quanto la carta, con la cornice chiara di una stampa, fino a 64 mm
+    # illustrazione dritta, larga quanto la carta, con la cornice chiara di una stampa, fino a 61,5 mm; sugli Ambiti,
+    # che dal playtest di novembre non hanno più la categoria in fondo, scende fino a 72. Sulle Persone potere e
+    # descrizione devono finire 3 mm prima del taglio (il laser di aira si sposta fino a 1 mm): per questo la stampa
+    # finisce a 61,5 e non più a 64
     top = y / PX - ABB + 2.6
-    ah = 64 - top
+    fine_stampa = 61.5 if persona else 72
+    ah = fine_stampa - top
     aw = min(52, ah * 1.5)   # con un nome su due righe la stampa si stringe, se no il ritaglio taglia le teste
     sx = 5.5 + (52 - aw) / 2
     img = con_bordo(illustrazione(tipo, n, aw, ah).convert("RGBA"), L(1.0), BIANCO)
@@ -384,19 +389,60 @@ def carta_B(tipo, n):
     tela.alpha_composite(img, (X(sx) - L(1.0), X(top)))
     # battuta
     f_bat, r_bat, pt_b, _ = adatta(dati["battuta"], BAHN, 10.5, 8.5, L(52), 2, "SemiBold SemiCondensed")
-    paragrafo(d, X(5.5), X(66.4) + PT(pt_b) * 0.75, r_bat, f_bat, colore, PT(pt_b) * 1.12)
-    # in fondo: il potere o la categoria
+    paragrafo(d, X(5.5), X(fine_stampa + 2.4) + PT(pt_b) * 0.75, r_bat, f_bat, colore, PT(pt_b) * 1.12)
+    # in fondo il potere delle Persone; le categorie degli Ambiti le ha tolte Vittorio dopo il playtest di novembre
     if persona:
         p = POTERI[CHI[n]]
         f_p = font(BAHN, 12, "Bold Condensed")
-        scrivi(d, X(5.5), X(79.4), p["nome"].upper(), f_p, accento, PT(12) * 0.05)
-        f_b, r_b, pt_e, _ = adatta(p["breve"][0].upper() + p["breve"][1:], BAHN, 9, 7.5, L(52), 2, "SemiCondensed")
-        paragrafo(d, X(5.5), X(79.4) + PT(pt_e) * 1.35, r_b, f_b, PETROLIO, PT(pt_e) * 1.1)
-    else:
-        cat = CATEGORIA[n]
-        incolla(tela, simbolo_categoria(cat, 7, BIANCO), X(9.0), X(80.4))
-        f_c = font(BAHN, 11, "Bold Condensed")
-        scrivi(d, X(14.2), X(82.3), CATEGORIE[cat].upper(), f_c, BIANCO, PT(11) * 0.06)
+        scrivi(d, X(5.5), X(76.4), p["nome"].upper(), f_p, accento, PT(12) * 0.05)
+        f_b, r_b, pt_e, _ = adatta(p["breve"][0].upper() + p["breve"][1:], BAHN, 8.5, 7.25, L(52), 2, "SemiCondensed")
+        paragrafo(d, X(5.5), X(76.4) + PT(pt_e) * 1.3, r_b, f_b, PETROLIO, PT(pt_e) * 1.08)
+    return tela.convert("RGB")
+
+
+def carta_evento(n):
+    """Le carte evento (playtest di novembre 2026), nello stile B: fondo rosa, solo testo.
+
+    In alto il nome; nel cartoncino panna l'effetto, che vale per tutto il giro; in fondo uno spunto vero
+    sul mercato del lavoro in Italia.
+    """
+    dati = EVENTI[n]
+    tela = Image.new("RGBA", (LARGO, ALTO), ROSA)
+    d = ImageDraw.Draw(tela)
+    f = font(BAHN, 8.5, "SemiBold Condensed")
+    scrivi(d, X(5.5), X(7.6), "EVENTO", f, BIANCO, PT(8.5) * 0.22)
+    scrivi(d, X(57.5), X(7.6), n, f, PETROLIO, PT(8.5) * 0.1, "rs")
+    f_nome, righe, pt, _ = adatta(dati["nome"].upper(), BAHN, 23, 14, L(52), 2, "Bold Condensed")
+    y = X(10.4) + PT(pt) * 0.74
+    y = paragrafo(d, X(5.5), y, righe, f_nome, PETROLIO, PT(pt) * 0.92)
+    # l'effetto su un cartoncino panna appena storto, col timbro QUESTO GIRO
+    top = y / PX - ABB + 4.2
+    alto = 60.5 - top
+    cartoncino = Image.new("RGBA", (L(54), L(alto)), PANNA)
+    dc = ImageDraw.Draw(cartoncino)
+    # il testo sta sotto il timbro (4,5 mm) e sopra il bordo basso (2,5 mm): il corpo scende finché ci sta
+    spazio_su, spazio_giu = L(4.5), L(2.5)
+    pt_e = 11.0
+    while True:
+        f_e = font(BAHN, pt_e, "SemiBold SemiCondensed")
+        r_e = a_capo(dati["effetto"], f_e, L(47))
+        interlinea = PT(pt_e) * 1.18
+        altezza_testo = (len(r_e) - 1) * interlinea + PT(pt_e) * 0.74 + PT(pt_e) * 0.22
+        if altezza_testo <= cartoncino.height - spazio_su - spazio_giu or pt_e <= 7.5:
+            break
+        pt_e -= 0.25
+    libero = cartoncino.height - spazio_su - spazio_giu
+    y0 = spazio_su + (libero - altezza_testo) / 2 + PT(pt_e) * 0.74
+    paragrafo(dc, L(3.5), y0, r_e, f_e, PETROLIO, interlinea)
+    cartoncino = ruota(cartoncino, -1.2)
+    tela.alpha_composite(cartoncino, (X(31.5) - cartoncino.width // 2, X(top) - L(0.6)))
+    stampo = timbro("QUESTO GIRO", font(BAHN, 9, "Bold Condensed"), PETROLIO, 4, int(n) + 40, PT(9) * 0.12,
+                    fondo=PANNA, sbavature=0.1)
+    incolla(tela, stampo, X(47), X(top))
+    # in fondo lo spunto, su due o tre righe
+    f_s, r_s, pt_s, _ = adatta(dati["spunto"], BAHN, 9, 7.25, L(52), 3, "SemiCondensed")
+    scrivi(d, X(5.5), X(66.2), "NELLA REALTÀ", f, BIANCO, PT(8.5) * 0.22)
+    paragrafo(d, X(5.5), X(66.2) + PT(pt_s) * 1.55, r_s, f_s, PETROLIO, PT(pt_s) * 1.16)
     return tela.convert("RGB")
 
 
@@ -575,6 +621,8 @@ def riassunto_B(lato):
     riga = PT(8.5) * 1.16
     if lato == "fronte":
         y = X(23.5)
+        d.text((X(5.5), y), "A ogni giro si scopre un evento.", font=corpo, fill=PETROLIO, anchor="ls")
+        y += riga * 1.2
         d.text((X(5.5), y), "Una sola azione per turno: dilla, poi falla.", font=grassetto, fill=PETROLIO, anchor="ls")
         y += riga * 1.55
         azioni = [("APRI", " una formazione: un Ambito davanti a te."),
@@ -582,7 +630,7 @@ def riassunto_B(lato):
                   ("INSERISCI", " una Persona su una pila che copre le sue 3 ambizioni. Il mercato si ripristina. "
                                 "Attivi il suo potere."),
                   ("COMPLETA", " un set: un Ambito come Lavoro su una pila con una Persona; la pila copre le 3 icone "
-                               "del Lavoro. Formazioni negli scarti, set in orizzontale."),
+                               "del Lavoro. Il set intero si gira in orizzontale."),
                   ("PESCA", " 2 Ambiti.")]
         lato_q = L(4.4)
         for i, (verbo, resto) in enumerate(azioni, 1):
@@ -592,7 +640,7 @@ def riassunto_B(lato):
             y = testo_ricco(d, X(11.4), y, L(46.4), [(verbo, stretto, MAGENTA), (resto, corpo, None)], riga)
             y += riga * 1.38
         testo_ricco(d, X(5.5), y, L(52), [("Ambito coperto:", grassetto, None),
-                                           (" vale un ambito a tua scelta, da dire quando lo giochi.", corpo, None)], riga)
+                                           (" solo come Formazione, vale un ambito a tua scelta.", corpo, None)], riga)
     else:
         y = X(23.5)
         y = testo_ricco(d, X(5.5), y, L(52), [("Ambizioni che combaciano col Lavoro", grassetto, None)], riga)
@@ -608,8 +656,8 @@ def riassunto_B(lato):
             y += riga * 1.12
         y += riga * 0.45
         testo_ricco(d, X(5.5), y, L(52), [("Fine:", grassetto, None),
-                                           (" alla terza Persona al lavoro, ogni altro partecipante gioca un ultimo turno.",
-                                            corpo, None)], riga)
+                                           (" alla terza Persona al lavoro, o quando finiscono gli Ambiti, ogni altro "
+                                            "partecipante gioca un ultimo turno.", corpo, None)], riga)
     return tela.convert("RGB")
 
 
@@ -629,6 +677,10 @@ def mazzo(chiave):
         for lato in ("fronte", "retro"):
             riassunto_B(lato).save(out / f"riassunto_{lato}.png")
         print(out / "riassunto_fronte.png, riassunto_retro.png")
+        (out / "eventi").mkdir(parents=True, exist_ok=True)
+        for n in EVENTI:
+            carta_evento(n).save(out / "eventi" / f"{n}.png")
+        print(out / "eventi", len(EVENTI))
 
 
 if __name__ == "__main__":

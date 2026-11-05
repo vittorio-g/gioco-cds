@@ -9,6 +9,8 @@ Legge i .tex e produce solo le immagini che usano, in pitch/img/:
 
     lav_NN.jpg   la carta della Persona NN          (da grafica/carte_v3/persone, senza abbondanza)
     amb_NN.jpg   la carta dell'ambito NN            (da grafica/carte_v3/ambiti, senza abbondanza)
+    evt_NN.jpg   la carta evento NN                 (da grafica/carte_v3/eventi, senza abbondanza)
+    dorsoB_evt.jpg  il dorso degli eventi           (grafica/dorsi_proposte/eventi.png o eventi_giornale.png)
     dorso_lav.jpg, dorso_amb.jpg                   i dorsi originali delle carte
     dorsoB_lav.jpg, dorsoB_amb.jpg                 i dorsi della proposta B (grafica/dorsi_proposte; per le
                                                    Persone B_persone.png e per gli Ambiti la Ruota, ambiti_ruota_ordinata.png,
@@ -47,7 +49,7 @@ ABBONDANZA = 24  # 2 mm a 12 pixel per millimetro, intorno alle carte nuove
 
 sorgenti = [f for f in QUI.glob("*.tex") if f.name != "poteri.tex"] + [QUI / "regolamento_a5.html"]
 tex = "\n".join(f.read_text(encoding="utf-8") for f in sorgenti)
-usate = set(re.findall(r"\b((?:lav|amb|ill|art)_\d\d|dorso[ABC]?_(?:lav|amb)|riassunto)\b", tex))
+usate = set(re.findall(r"\b((?:lav|amb|ill|art|evt)_\d\d|dorso[ABC]?_(?:lav|amb|evt)|riassunto)\b", tex))
 
 
 def salva(img, nome, qualita=88):
@@ -63,7 +65,16 @@ for nome in sorted(usate):
         carta = Image.open(RADICE / "grafica" / "carte_v3" / "riassunto_fronte.png")
         salva(ridotta(carta.crop((ABBONDANZA, ABBONDANZA, carta.width - ABBONDANZA, carta.height - ABBONDANZA))), nome)
         continue
+    if nome == "dorsoB_evt":  # il dorso degli eventi: quello illustrato se c'è, se no la prima pagina di giornale
+        dorsi = RADICE / "grafica" / "dorsi_proposte"
+        file = dorsi / "eventi.png" if (dorsi / "eventi.png").exists() else dorsi / "eventi_giornale.png"
+        salva(ridotta(Image.open(file)), nome)
+        continue
     tipo, _, numero = nome.partition("_")
+    if tipo == "evt":  # le carte evento di grafica/carte_nuove.py, tolti i 2 mm di abbondanza
+        carta = Image.open(RADICE / "grafica" / "carte_v3" / "eventi" / f"{numero}.png")
+        salva(ridotta(carta.crop((ABBONDANZA, ABBONDANZA, carta.width - ABBONDANZA, carta.height - ABBONDANZA))), nome)
+        continue
     mazzo = "lavoratori" if numero == "lav" or tipo == "lav" else "ambiti"
     if tipo == "dorso":
         salva(ridotta(Image.open(RADICE / "grafica" / "carte_v2" / mazzo / "dorso.png")), nome)

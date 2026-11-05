@@ -5,38 +5,39 @@ Il 28 ottobre 2026 Vittorio ha stampato il print and play e il regolamento di Co
 l'Archistar con "2-4 partecipanti" e "15 min, gioco di carte"). I PDF stampati sono su Drive in
 `Collocamento - immagini della grafica/stampa/stampato 2026-10-28/`.
 
-Da allora i cambiamenti si accumulano qui per la versione successiva. Quelli segnati "nei sorgenti" sono
-già fatti nei dati e negli script, ma i PDF non sono stati rifatti: si rifanno tutti insieme quando
-serve la versione nuova (`py -3 grafica/pnp.py`, `py -3 grafica/scatola.py`, poi `pitch/` per il pitch).
+Il **5 novembre 2026** il print and play è stato rifatto con tutti i cambiamenti qui sotto, quelli del playtest
+di novembre e le decisioni di Vittorio dello stesso giorno: `grafica/stampa/collocamento_pnp.pdf`, 19 fogli, e
+`collocamento_regolamento_a4.pdf`. È la versione da stampare, non ancora stampata. La scatola non è stata rifatta:
+nei sorgenti (`grafica/scatola.py`) ha già il contenuto nuovo, eventi compresi; 12 carte in più stanno nei 44 mm.
 
-**File di taglio.** Gli SVG di `grafica/stampa/taglio/` corrispondono a quello che si stampa. In laser-designs
-(`designs/collocamento-print-and-play`, `designs/collocamento-scatola`) i file sono rifiniti dalla sessione
-LASER: due versioni di crocini per le carte (`crocini_due_versioni.py`), segni di tolleranza incisi al posto
-dei crocini ripassati (`tools/crocini_tolleranza.py`, vedi `docs/crocini-tolleranza.md`), impaginazioni per i
-fogli plastificati. Quindi non si copiano sopra a mano: gli SVG nuovi si passano a LASER, oppure dopo la
-copia si rilanciano quegli strumenti (per la scatola:
-`python tools/crocini_tolleranza.py collocamento_scatola_taglio.svg --centri 14,10 283,10 14,200 283,200`).
+**Taglio al laser.** Dal 5/11 il laser di aira (sessione LASER) trova i fogli con la telecamera: niente più crocini,
+ma tre marker ArUco da 5 mm stampati solo sul fronte dei fogli di carte (lavoro 4 per i fogli da 9 carte, lavoro 5
+per il foglio da 7). Le pagine coi marker vengono da laser-designs (`designs/fogli-stampati/segni`, commit
+36d72a5) e sono copiate in `grafica/stampa/segni/`. I file di taglio (`grafica/stampa/taglio/`) hanno solo il gruppo
+CUT: LASER li copia in `fogli-stampati` come `lavoro_04_taglio.svg` e `lavoro_05_taglio.svg` e aggiorna il suo
+registro. In laser-designs non si scrive da qui.
 
 | Data | Cambiamento | Dove | Stato |
 |---|---|---|---|
-| 28/10/2026 | Il potere 2, Colloquio, si chiama **Ho un amico**. | `grafica/dati/poteri.json`: lo prendono carte, carte riassunto, libretto e pitch | nei sorgenti |
-| 02/11/2026 | Playtest: la partita finisce quando qualcuno manda al lavoro la **terza Persona**; ogni altro partecipante gioca ancora un turno. Prima: al quinto set, chiudere il giro e un giro in più. | libretto (pagine 2, 9, 11), carta riassunto | nei sorgenti |
-| 02/11/2026 | **Via i token obiettivo** (decisione di Vittorio). Le categorie restano sulle carte senza effetto. Nel libretto la pagina 7 ha punti e vittoria, la 9 un esempio di conto finale; il foglio 15 del print and play ha solo le 4 carte riassunto, quindi cambia il suo file di taglio (`collocamento_riassunti_taglio.svg`: da passare a LASER); dalla scatola sparisce la riga «4 token obiettivo». | libretto (pagine 2, 4, 5, 7, 9, 10, 11), `carte_nuove.py` (carta riassunto), `pnp.py`, `scatola.py` | nei sorgenti |
-| 02/11/2026 | Playtest: il set chiuso si gira **in orizzontale** davanti a sé, col Lavoro dritto sopra la Persona. Le Formazioni vanno ancora negli scarti (da confermare coi designer). | libretto (pagine 5, 6), carta riassunto | nei sorgenti |
-| 02/11/2026 | Playtest: una carta Ambito giocata **coperta** vale come un ambito a scelta (si dice quale quando la si gioca). Da limitare: 51 Persone su 60 hanno le stesse tre icone di un ambito, e come Lavoro coperto chiuderebbero sempre a 16 punti. | libretto (pagine 3, 5, 10, 11), carta riassunto | nei sorgenti |
-| 02/11/2026 | Il dorso degli Ambiti è nuovo e racconta che una carta coperta è un ambito qualsiasi: tra cinque proposte (Ruota, Trama, Modulo, Multiutensile, Passe-partout; spesa OpenAI 0,87 $) Vittorio ha scelto il 5/11 la **Ruota**, le sei icone su una ruota della fortuna, con le icone rimesse nell'ordine delle carte. | `grafica/genera_dorsi_ambiti.mjs` → `grafica/dorsi_proposte/ambiti_ruota.png`, `grafica/dorso_ruota.py` → `ambiti_ruota_ordinata.png` (su Drive); lo usano `pnp.py` e `pitch/figure.py` | nei sorgenti |
-| 02/11/2026 | Playtest: inizia **chi ha fatto per ultimo un colloquio di lavoro** (prima: chi è più giovane). | libretto (pagina 4) | nei sorgenti |
-| 02/11/2026 | Playtest: **nessun limite di mano** (prima 6 carte) e **il mercato non scorre** quando qualcuno pesca. Le Persone in tavola restano una per partecipante. | libretto (pagine 4, 5, 11), carta riassunto | nei sorgenti |
-| 02/11/2026 | Ogni azione si **annuncia** prima di farla: serve al potere Contrordine. | libretto (pagine 5, 11), carta riassunto | nei sorgenti |
-| 02/11/2026 | Playtest: i poteri passano da quattro a **sei**, 10 Persone ciascuno. Restano Passaparola e Corso intensivo; escono Ho un amico (e con lui le Persone prenotate) e Chiamata diretta; entrano Networking (+2 punti al suo set), Concorrenza (prendi una Formazione), Cacciatore di teste e Contrordine (nomi proposti, da decidere). L'ordine di chi ha quale potere è provvisorio. | `grafica/dati/poteri.json`, `grafica/poteri.py`; li prendono carte, carte riassunto e libretto (pagine 8, 10, 11) | nei sorgenti |
-| 02/11/2026 | Playtest: le tre icone delle carte stanno **in fila in alto a sinistra**: in colonna sul lato destro, a ventaglio in mano, le copriva la carta accanto. Le pile si sfalsano in verticale, ognuna sporge in alto da quella che ha sopra; l'illustrazione si allarga a tutta la carta. | `grafica/carte_nuove.py` (`carta_B`); libretto (pagine 3, 6) | nei sorgenti |
-| 02/11/2026 | Il libretto non spiega più come stampare e tagliare il print and play: la pagina 12 è il retro di copertina, con la nota sulle immagini. | `pitch/regolamento_a5.html` | nei sorgenti |
-| 02/11/2026 | Le tre icone di ogni carta stanno **sempre nello stesso ordine**: Manualità, Digitale, Comunicazione, Organizzazione, Creatività, Ricerca, per confrontare le carte a colpo d'occhio. Vale anche per le icone nel libretto e per le ambizioni dell'Archistar sulla scatola. | `grafica/carte_nuove.py` (`ORDINE_ICONE`), `pitch/libretto.py` | nei sorgenti |
-| 02/11/2026 | Da provare: un mazzo di **12 carte evento** sul mercato del lavoro italiano, uno per giro, con un effetto e una riga di spunto (PNRR, Click day, Raccomandazione, Sciopero generale...). L'altra idea, Formazioni a coppie di competenze con i Lavori in un mazzo separato, è scartata. | `playtest/feedback_playtest_2026-11.tex` | da provare |
+| 28/10/2026 | Il potere 2, Colloquio, si chiama **Ho un amico** (poi tolto col playtest). | `grafica/dati/poteri.json` | superato |
+| 02/11/2026 | La partita finisce quando qualcuno manda al lavoro la **terza Persona**; ogni altro partecipante gioca ancora un turno. Dal 5/11 la fine scatta anche quando qualcuno pesca **l'ultimo Ambito**: gli Ambiti non si rimescolano più. | libretto (pagine 2, 5, 9, 11), carta riassunto | nel PDF del 5/11 |
+| 02/11/2026 | **Via i token obiettivo** e, dal 5/11, **via le cinque categorie** degli Ambiti: dalle carte, dal libretto, dal print and play (il foglio dei riassunti non ha più i token) e dall'elenco della scatola. | libretto, `carte_nuove.py`, `pnp.py`, `scatola.py` | nel PDF del 5/11 |
+| 02/11/2026 | Il set chiuso si gira **in orizzontale** davanti a sé. Dal 5/11 resta intero, **Formazioni comprese**: gli Ambiti non hanno più scarti. | libretto (pagine 5, 6, 9, 11), carta riassunto | nel PDF del 5/11 |
+| 02/11/2026 | Una carta Ambito giocata **coperta** vale come un ambito a scelta, che si dice quando la si gioca. Dal 5/11 **solo come Formazione**: come Lavoro chiudeva a 16 punti 51 Persone su 60. | libretto (pagine 3, 5, 10, 11), carta riassunto | nel PDF del 5/11 |
+| 02/11/2026 | Inizia **chi ha fatto per ultimo un colloquio di lavoro** (prima: chi è più giovane). | libretto (pagina 4) | nel PDF del 5/11 |
+| 02/11/2026 | **Nessun limite di mano** (prima 6 carte) e **il mercato non scorre** quando qualcuno pesca. Le Persone in tavola restano una per partecipante. | libretto (pagine 4, 5, 11), carta riassunto | nel PDF del 5/11 |
+| 02/11/2026 | Ogni azione si **annuncia** prima di farla: serve al potere Contrordine. | libretto (pagine 5, 11), carta riassunto | nel PDF del 5/11 |
+| 02/11/2026 | I poteri passano da quattro a **sei**, 10 Persone ciascuno: Passaparola, Corso intensivo, Networking (+2 punti al suo set), Concorrenza (prendi una Formazione, anche da sotto una Persona), Cacciatore di teste (prendi una Persona) e Contrordine. Contrordine, deciso il 5/11: chi lo subisce può rifare la stessa azione, ma non con quella carta. Escono Ho un amico e Chiamata diretta. L'ordine di chi ha quale potere è provvisorio. | `grafica/dati/poteri.json`, `grafica/poteri.py`; carte, carte riassunto, libretto (pagine 8, 10, 11) | nel PDF del 5/11 |
+| 02/11/2026 | Le tre icone delle carte stanno **in fila in alto a sinistra**, sempre nell'ordine Manualità, Digitale, Comunicazione, Organizzazione, Creatività, Ricerca. Le pile si sfalsano in verticale. Sulle Persone potere e descrizione finiscono ad almeno 3 mm dal taglio, come chiede il laser; sugli Ambiti, senza categoria, l'illustrazione scende fino in fondo. | `grafica/carte_nuove.py` (`carta_B`, `ORDINE_ICONE`), `pitch/libretto.py`; libretto (pagine 3, 6) | nel PDF del 5/11 |
+| 02/11/2026 | Il dorso degli Ambiti è la **Ruota** (scelta il 5/11 tra cinque proposte; spesa OpenAI 0,87 $), con le icone nell'ordine delle carte. | `grafica/genera_dorsi_ambiti.mjs`, `grafica/dorso_ruota.py` → `grafica/dorsi_proposte/ambiti_ruota_ordinata.png` (su Drive) | nel PDF del 5/11 |
+| 02/11/2026 | Il libretto non spiega più come stampare e tagliare il print and play: la pagina 12 è il retro di copertina, con la nota sulle immagini. | `pitch/regolamento_a5.html` | nel PDF del 5/11 |
+| 05/11/2026 | Le **12 carte evento** entrano nel gioco: a ogni giro se ne scopre una, che vale per tutto il giro; quando finiscono si rimescolano. Fondo rosa, effetto su un cartoncino col timbro QUESTO GIRO, spunto vero sul mercato del lavoro in Italia (controllati sulle fonti il 5/11). Nel print and play il foglio 15 ha gli eventi 1-9, il 16 le carte riassunto e gli eventi 10-12. | `grafica/dati/eventi.json`, `carte_nuove.py` (`carta_evento`), `pnp.py`; libretto (pagine 2, 4, 5, 9, 11) | nel PDF del 5/11 |
+| 05/11/2026 | Il dorso degli eventi è **provvisorio**, una prima pagina di giornale disegnata senza immagini generate: quello illustrato non si è potuto fare perché i crediti OpenAI erano finiti. Ricaricati i crediti, `node grafica/genera_dorso_eventi.mjs` scrive `eventi.png` e `pnp.py` lo usa al posto del provvisorio. | `grafica/dorso_eventi.py` → `grafica/dorsi_proposte/eventi_giornale.png` | provvisorio |
+| 05/11/2026 | Al posto dei crocini, **tre marker ArUco** sul fronte dei fogli di carte (vedi sopra); file di taglio nuovi: `collocamento_carte_taglio.svg` (lavoro 4, fogli 1-15) e `collocamento_riassunti_eventi_taglio.svg` (lavoro 5, foglio 16, vuoti gli ultimi due posti). | `grafica/pnp.py`, `grafica/stampa/segni/`, `grafica/stampa/taglio/` | nel PDF del 5/11 |
 
-**Non allineati al playtest.** `REGOLAMENTO.md` è la trascrizione del testo dei designer del 5 ottobre e resta
-com'è. Le simulazioni (`strumenti/regole.mjs`, `strumenti/analisi.mjs`) e `BUCHI.md` conoscono ancora le regole e
-i quattro poteri del 28 ottobre. Il documento del pitch (`pitch/regolamenti.tex`) descrive la versione stampata:
-`pitch/poteri.tex` ora ha sei poteri, quindi va riallineato prima di ricompilarlo. Il riepilogo per i designer,
-con gli eventi e le domande ancora aperte, è `playtest/feedback_playtest_2026-11.tex` (il PDF è su Drive, in
-`playtest/`; le figure le fa `py -3 playtest/figure.py`).
+**Non allineati.** `REGOLAMENTO.md` è la trascrizione del testo dei designer del 5 ottobre e resta com'è. Le
+simulazioni (`strumenti/regole.mjs`, `strumenti/analisi.mjs`) e `BUCHI.md` conoscono ancora le regole e i quattro
+poteri del 28 ottobre. Il documento del pitch (`pitch/regolamenti.tex`) descrive la versione stampata:
+`pitch/poteri.tex` ora ha sei poteri, quindi va riallineato prima di ricompilarlo. Il logo a timbro tondo usa ancora
+i simboli delle cinque categorie, che dal gioco sono spariti. Il riepilogo per i designer è
+`playtest/feedback_playtest_2026-11.tex` (il PDF è su Drive, in `playtest/`; le figure le fa `py -3 playtest/figure.py`).

@@ -28,6 +28,6 @@
   "6": {
     "nome": "Contrordine",
     "breve": "fino al tuo turno, fai cambiare azione a qualcuno.",
-    "effetto": "Fino al tuo prossimo turno, una volta: quando qualcuno annuncia la sua azione, puoi ordinargli di cambiarla. Deve farne un'altra."
+    "effetto": "Fino al tuo prossimo turno, una volta: quando qualcuno annuncia la sua azione, puoi ordinargli di cambiarla. Può rifare la stessa azione, ma non con quella carta."
   }
 }
