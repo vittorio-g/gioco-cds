@@ -209,6 +209,19 @@ def incolla_centro(tela, im, cx, cy):
     tela.alpha_composite(im, (round(cx - im.width / 2), round(cy - im.height / 2)))
 
 
+def logo_cds(larghezza_mm):
+    """Il logo del Centro di Solidarietà della Compagnia delle Opere Liguria (grafica/dati/logo_cds.svg),
+    tutto in petrolio come i testi della scatola: i due azzurri e i grigi originali stonavano sul panna
+    (Vittorio, 10/11/2026: «rimanipolalo pure a seconda di come sta meglio»)."""
+    svg = (QUI / "dati" / "logo_cds.svg").read_text(encoding="utf-8")
+    for colore in ("#065D8F", "#2C9ED2", "#38444F", "#868788"):
+        svg = svg.replace(f'fill="{colore}"', f'fill="{PETROLIO}"')
+    pagina = fitz.open(stream=svg.encode("utf-8"), filetype="svg")[0]
+    zoom = P(larghezza_mm) / pagina.rect.width
+    pix = pagina.get_pixmap(matrix=fitz.Matrix(zoom, zoom), alpha=True)
+    return Image.frombytes("RGBA", (pix.width, pix.height), pix.samples)
+
+
 COPERTINA = "03"  # la Persona del fronte: L'Archistar (scelta di Vittorio, al posto del ventaglio di carte)
 # Le informazioni del gioco sotto l'immagine: (valore grande, etichetta). Durata decisa da Vittorio il
 # 28/10: 15 minuti. L'età minima non c'è ancora: si aggiunge qui, per esempio ("10+", "anni").
@@ -262,12 +275,14 @@ def retro():
     motto = ("Forma le persone rispettando le loro ambizioni, trova a ciascuna il lavoro giusto "
              "e chiudi il collocamento prima del resto del tavolo.")
     f_m, righe, pt, _ = cn.adatta(motto, BAHN, 8.6, 7, P(LARGO - 10), 4, "SemiBold SemiCondensed")
-    cn.paragrafo(d, P(5), P(49.5), righe, f_m, PETROLIO, cn.PT(pt) * 1.22)
+    cn.paragrafo(d, P(5), P(47), righe, f_m, PETROLIO, cn.PT(pt) * 1.22)
     for i, sigla in enumerate(("MA", "DI", "CO", "OR", "CR", "RI")):
-        incolla_centro(im, cn.adesivo(sigla, 7.2, (-6, 4, -3, 5, -4, 3)[i], 0.6), P(9.2 + i * 9.3), P(70))
+        incolla_centro(im, cn.adesivo(sigla, 7.2, (-6, 4, -3, 5, -4, 3)[i], 0.6), P(9.2 + i * 9.3), P(64.5))
     f_p = font(BAHN, 6.2, "SemiCondensed")
-    scrivi(d, P(5), P(80.5), "Il regolamento si stampa a parte.", f_p, PETROLIO)
-    scrivi(d, P(5), P(84), "Prototipo: immagini generate con l'intelligenza artificiale.", f_p, PETROLIO)
+    scrivi(d, P(5), P(72.6), "Regolamento a parte. Prototipo: immagini generate con l'IA.", f_p, PETROLIO)
+    # in fondo il logo del CdS, a 3 mm dalla piega del fondo
+    logo = logo_cds(LARGO - 13)
+    im.alpha_composite(logo, (P(5), P(ALTO - 3) - logo.height))
     return im
 
 
