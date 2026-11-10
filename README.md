@@ -40,7 +40,7 @@ Le immagini pesanti della grafica sono su Google Drive, non su GitHub:
 | `carte_v2/` | Le carte dei designer, a sei simboli, una per file in PNG: `lavoratori/` (60 più il dorso) e `ambiti/` (30 più il dorso). Da qui vengono i disegni degli Ambiti delle carte nuove. |
 | `carte_v3/` | Le carte nuove del print and play (stile B, con l'abbondanza): `persone/` (60), `ambiti/` (30), `eventi/` (12) e le due facce della carta riassunto. Si rifanno con `py -3 grafica/carte_nuove.py B`. |
 | `stampa/` | I PDF da stampare, con le carte in uso: nove per pagina, fronte e retro, con i segni di taglio. |
-| `stampa/collocamento_pnp.pdf` | Il print and play di Collocamento in un file solo: 19 fogli A4 da stampare fronte e retro in una volta. 60 Persone col potere, 60 Ambiti, 12 eventi e carte riassunto pronti per il taglio laser, e il regolamento da piegare in un libretto A5. |
+| `stampa/collocamento_pnp_A_con_eventi.pdf`, `stampa/collocamento_pnp_B_senza_eventi.pdf` | Il print and play di Collocamento nelle due versioni del playtest a confronto, ognuna in un file solo da stampare fronte e retro in una volta: 60 Persone col potere, 60 Ambiti, carte riassunto e (nella A) 12 eventi pronti per il taglio laser, e il regolamento da piegare in un libretto A5. |
 | `pitch/` | Il documento per il pitch, `regolamenti.pdf`, il regolamento di Collocamento in libretto A5 (`regolamento_a5.pdf`) e le immagini che gli servono (`img/`). |
 | `illustrazioni/` | Le illustrazioni originali della prima grafica: 60 lavoratori e 24 ambiti. |
 | `carte/` | Le carte della prima grafica. |
@@ -127,17 +127,18 @@ Un modello della partita del prototipo di destrezza ([regole](mercato-del-lavoro
 py -3 grafica/pnp.py
 ```
 
-Scrive `grafica/stampa/collocamento_pnp.pdf`: 38 pagine, 19 fogli A4 da stampare in una volta, fronte e retro sul lato lungo, al 100%.
+Scrive le due versioni del playtest a confronto (novembre 2026), da stampare ognuna in una volta, fronte e retro sul lato lungo, al 100%: `grafica/stampa/collocamento_pnp_A_con_eventi.pdf` (19 fogli) e `collocamento_pnp_B_senza_eventi.pdf` (18 fogli). `py -3 grafica/pnp.py B` ne fa una sola. Persone e Ambiti sono uguali; cambiano il regolamento, le carte riassunto e i fogli degli eventi, e i pezzi che cambiano dicono la versione.
 
 | Fogli | Contenuto |
 |---|---|
 | 1-7 | Le 60 Persone, col potere scritto sulla carta, dorsi rosa |
 | 8-14 | I 60 Ambiti (due copie dei 30), dorsi petrolio |
-| 15 | Le carte evento 1-9, dorsi panna |
-| 16 | 4 carte riassunto (il turno; punti e poteri), stampate sui due lati, e le carte evento 10-12; gli ultimi due posti restano vuoti |
-| 17-19 | Il regolamento, già imposto: si piegano i tre fogli a metà, uno dentro l'altro, e viene il libretto A5 di 12 pagine |
+| 15 (A) | Le carte evento 1-9, dorsi panna |
+| 16 (A) | 4 carte riassunto (il turno; punti e poteri), stampate sui due lati, e le carte evento 10-12; gli ultimi due posti restano vuoti |
+| 15 (B) | Le 4 carte riassunto della versione B, negli stessi posti; il resto del foglio è bianco |
+| ultimi 3 | Il regolamento della versione, già imposto: si piegano i tre fogli a metà, uno dentro l'altro, e viene il libretto A5 di 12 pagine |
 
-Lo script scrive anche `grafica/stampa/collocamento_regolamento_a4.pdf`, solo i tre fogli del regolamento, da stampare a parte con le stesse impostazioni.
+Lo script scrive anche `grafica/stampa/collocamento_regolamento_a4_A.pdf` e `_B.pdf`, solo i tre fogli del regolamento, da stampare a parte con le stesse impostazioni. Il regolamento ha un sorgente solo, `pitch/regolamento_a5.html`: i pezzi di una sola versione stanno fra i commenti `A` e `/A` o `B` e `/B`, e `pitch/libretto.py` ne stampa le due versioni.
 
 Carte e riassunti hanno un solo colore di fondo fino al bordo e 2 mm di abbondanza per lato su tutte e due le facciate: uno scarto del taglio non si vede. Testi e simboli stanno ad almeno 3 mm dal taglio. Sul fronte di ogni foglio di carte ci sono tre marker ArUco da 5 mm, con cui il laser di aira trova il foglio con la telecamera (dal 5 novembre 2026, al posto dei crocini): le pagine coi marker vengono da `laser-designs` (`designs/fogli-stampati/segni`) e sono copiate in `grafica/stampa/segni/`, lavoro 4 per i fogli da 9 carte e lavoro 5 per quello da 7. I profili di taglio sono in `grafica/stampa/taglio/` (SVG, solo il gruppo CUT): la sessione LASER li copia in `laser-designs` come lavori 4 e 5. Senza laser si taglia a mano: lo spazio di 4 mm tra le carte basta per la taglierina.
 
@@ -145,7 +146,7 @@ Le carte sono quelle di `grafica/carte_nuove.py` nello stile B, scelto da Vittor
 
 I dorsi sono quelli della proposta B di `grafica/dorsi_proposte/` (generati da `grafica/genera_dorsi.mjs`, su Drive); sul dorso delle Persone la fascia dice PERSONE (`grafica/dorso_persone.py`), il dorso degli Ambiti è la **Ruota** (scelta da Vittorio il 5 novembre 2026): le sei icone su una ruota della fortuna, perché una carta giocata coperta vale un ambito a scelta. L'ha generata `grafica/genera_dorsi_ambiti.mjs` insieme ad altre quattro proposte (`grafica/dorsi_proposte/ambiti_*.png`, su Drive); `grafica/dorso_ruota.py` ne mette le icone nell'ordine delle carte. Il dorso degli eventi è provvisorio, una prima pagina di giornale (`grafica/dorso_eventi.py`): quello illustrato lo fa `grafica/genera_dorso_eventi.mjs` quando ci sono crediti OpenAI, e `pnp.py` lo preferisce se c'è. Il regolamento è `pitch/regolamento_a5.html`, nello stile delle carte: `pitch/libretto.py` lo stampa in PDF con Microsoft Edge (carattere Bahnschrift, di Windows), e `pnp.py` lo rifà ogni volta. Il fondo arriva al bordo della pagina, ma testi e figure stanno ad almeno 11 mm, per le stampanti che non arrivano al margine; anche marker e intestazioni dei fogli di carte stanno ad almeno 4,5 mm dal bordo. Servono da Drive `grafica/illustrazioni/`, `grafica/carte_v2/` e `pitch/img/` (o `py -3 pitch/figure.py`).
 
-Le proposte di logo (A il timbro, B l'incastro, C la coppia di carte) le genera `grafica/genera_logo.mjs` in `grafica/logo_proposte/`, fuori da git e su Drive; la chiave si legge da `OPENAI_API_KEY`. Il 30 ottobre 2026 Vittorio ha preferito il timbro tondo (A2); la versione con i simboli delle cinque categorie di Ambiti al posto delle stelline è `A2_categorie`, una modifica di A2 (`MODIFICHE` nello script). Vittorio ha tenuto la scritta così e ha chiesto di sistemare i simboli: `py -3 grafica/logo_simboli.py` li sostituisce con quelli veri delle carte, uguali e a passo costante sull'arco, e scrive `A2_categorie_sistemato.png`.
+Le proposte di logo (A il timbro, B l'incastro, C la coppia di carte) le genera `grafica/genera_logo.mjs` in `grafica/logo_proposte/`, fuori da git e su Drive; la chiave si legge da `OPENAI_API_KEY`. Il 30 ottobre 2026 Vittorio ha preferito il timbro tondo (A2); la versione con dei simboli al posto delle stelline è `A2_categorie`, una modifica di A2 (`MODIFICHE` nello script). Vittorio ha tenuto la scritta così; i simboli li sostituisce `py -3 grafica/logo_simboli.py`: dal 10 novembre 2026, tolte le categorie dal gioco, sono le sei icone delle competenze nell'ordine delle carte, come riquadri timbrati col disegno scavato, a passo costante sull'arco. Scrive `A2_competenze.png`.
 
 I nomi dei poteri stanno in `grafica/dati/poteri.json`; quale Persona ha quale potere lo calcola `grafica/poteri.py`, col potere più utile alle Persone più difficili da formare. Li leggono sia `pnp.py` sia `pitch/figure.py`, che scrive `pitch/poteri.tex` per i documenti LaTeX.
 

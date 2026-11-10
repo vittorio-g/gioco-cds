@@ -2,6 +2,9 @@
 <!--
   Collocamento: il regolamento in libretto A5, nello stile delle carte (proposta B).
   È il sorgente: py -3 pitch/libretto.py riempie i segnaposto e lo stampa in PDF con Edge.
+  Due versioni per il playtest a confronto: i pezzi racchiusi fra i commenti A e /A valgono solo per la A (con
+  eventi), quelli fra B e /B solo per la B (senza); il segnaposto "versione" diventa "versione A, con eventi" o
+  "versione B, senza eventi" (pitch/libretto.py).
   Segnaposto, tra doppie graffe: "potere N", "effetto N", "breve N" (N da 1 a 6, da grafica/dati/poteri.json),
   "ico XX" (un'icona), "terna per NN" e "terna amb NN" (le tre icone di una carta, da mazzi/).
   Ogni <section class="pagina"> è una pagina: devono essere 12, e niente deve uscire dal pannello.
@@ -164,7 +167,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
 
 <!-- ============================================================ 1. COPERTINA -->
 <section class="pagina"><div class="pannello scuro copertina"><div style="position: absolute; inset: 6mm">
-  <div class="testata" style="top: 5.4mm; left: 9mm; right: 9mm"><span class="sx" style="color: var(--rosa)">CDS</span><span>Regolamento</span></div>
+  <div class="testata" style="top: 5.4mm; left: 9mm; right: 9mm"><span class="sx" style="color: var(--rosa)">CDS</span><span>Regolamento · {{versione}}</span></div>
   <h1>COLLOCAMENTO</h1>
   <div class="barra"></div>
   <div class="motto">Forma le persone rispettando le loro ambizioni, trova a ciascuna il lavoro giusto e chiudi il collocamento prima del resto del tavolo.</div>
@@ -195,17 +198,22 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     <ul>
       <li><b>60 carte Persona.</b> Ognuna ha tre icone <b>ambizione</b> e un <b>potere</b>, scritto sulla carta.</li>
       <li><b>60 carte Ambito:</b> 30 ambiti, due copie di ognuno. Ogni carta ha tre icone <b>competenza</b>.</li>
-      <li><b>12 carte evento</b>, che cambiano una regola per un giro.</li>
+<!--A-->      <li><b>12 carte evento</b>, che cambiano una regola per un giro.</li>
+<!--/A-->
       <li><b>4 carte riassunto</b>, una a testa.</li>
     </ul>
     <div class="figura" style="height: 40mm; margin-top: 4mm">
-      <img class="carta" src="img/lav_41.jpg" style="left: 2mm; top: 3mm; width: 25mm; transform: rotate(-6deg)">
+<!--A-->      <img class="carta" src="img/lav_41.jpg" style="left: 2mm; top: 3mm; width: 25mm; transform: rotate(-6deg)">
       <img class="carta" src="img/amb_22.jpg" style="left: 31mm; top: 2mm; width: 25mm; transform: rotate(3deg)">
       <img class="carta" src="img/evt_01.jpg" style="left: 60mm; top: 3mm; width: 25mm; transform: rotate(-2deg)">
       <img class="carta" src="img/riassunto.jpg" style="left: 89mm; top: 2mm; width: 25mm; transform: rotate(5deg)">
+<!--/A--><!--B-->      <img class="carta" src="img/lav_41.jpg" style="left: 12mm; top: 3mm; width: 25mm; transform: rotate(-6deg)">
+      <img class="carta" src="img/amb_22.jpg" style="left: 46.5mm; top: 2mm; width: 25mm; transform: rotate(3deg)">
+      <img class="carta" src="img/riassunto_B.jpg" style="left: 81mm; top: 2mm; width: 25mm; transform: rotate(5deg)">
+<!--/B-->
     </div>
   </div>
-  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+  <div class="piede"><span>Collocamento · {{versione}}</span><span>CDS · prototipo 2026</span></div>
 </div></section>
 
 <!-- ============================================================ 3. COMPETENZE E CARTE -->
@@ -256,7 +264,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
       <div class="didascalia" style="left: 99.3mm; top: 5.2mm; width: 19mm"><b>Tre competenze.</b>Offerte come Formazione, richieste come Lavoro.</div>
     </div>
   </div>
-  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+  <div class="piede"><span>Collocamento · {{versione}}</span><span>CDS · prototipo 2026</span></div>
 </div></section>
 
 <!-- ============================================================ 4. PREPARAZIONE -->
@@ -268,13 +276,16 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     <div class="passo"><div class="n">1</div><div><span class="v">Mescolate</span> separatamente il mazzo delle Persone e quello degli Ambiti.</div></div>
     <div class="passo"><div class="n">2</div><div><span class="v">Pescate</span> 3 carte Ambito a testa: è la vostra mano.</div></div>
     <div class="passo"><div class="n">3</div><div><span class="v">Aprite il mercato.</span> Rivelate una Persona per ogni partecipante. Quando qualcuno ne prende una, se ne rivela subito un'altra.</div></div>
-    <div class="passo"><div class="n">4</div><div><span class="v">Mescolate gli eventi</span> e metteteli coperti accanto agli altri mazzi.</div></div>
+<!--A-->    <div class="passo"><div class="n">4</div><div><span class="v">Mescolate gli eventi</span> e metteteli coperti accanto agli altri mazzi.</div></div>
     <div class="passo"><div class="n">5</div><div><span class="v">Prendete una carta riassunto</span> a testa: da un lato il turno, dall'altro punti e poteri.</div></div>
+<!--/A--><!--B-->    <div class="passo"><div class="n">4</div><div><span class="v">Prendete una carta riassunto</span> a testa: da un lato il turno, dall'altro punti e poteri.</div></div>
+<!--/B-->
     <div class="figura" style="height: 52mm; margin-top: 4mm">
       <img class="carta" src="img/dorsoB_amb.jpg" style="left: 0; top: 6mm; width: 14mm">
       <div class="marchio" style="left: 0; top: 26.6mm; width: 14mm; text-align: center">Ambiti</div>
-      <img class="carta" src="img/dorsoB_evt.jpg" style="left: 17mm; top: 6mm; width: 14mm">
+<!--A-->      <img class="carta" src="img/dorsoB_evt.jpg" style="left: 17mm; top: 6mm; width: 14mm">
       <div class="marchio" style="left: 17mm; top: 26.6mm; width: 14mm; text-align: center">Eventi</div>
+<!--/A-->
       <div class="marchio" style="left: 56mm; top: 1mm; width: 46mm; text-align: center">Il mercato</div>
       <img class="carta" src="img/lav_06.jpg" style="left: 56mm; top: 6mm; width: 14mm">
       <img class="carta" src="img/lav_28.jpg" style="left: 72mm; top: 6mm; width: 14mm">
@@ -289,7 +300,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     </div>
     <p>Inizia <b>chi ha fatto per ultimo un colloquio di lavoro</b>, poi si procede in senso orario. Non c'è limite di carte in mano.</p>
   </div>
-  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+  <div class="piede"><span>Collocamento · {{versione}}</span><span>CDS · prototipo 2026</span></div>
 </div></section>
 
 <!-- ============================================================ 5. IL TURNO -->
@@ -298,7 +309,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
   <div class="sezione">
     <div class="occhiello">Una sola azione</div>
     <h2>Il turno</h2>
-    <p>A ogni giro si scopre un <b>evento</b> (pagina 9). Nel tuo turno fai <b>una sola</b> di queste cinque azioni: prima la <b>annunci</b>, poi la fai. I poteri delle Persone possono concederne altre.</p>
+    <p><!--A-->A ogni giro si scopre un <b>evento</b> (pagina 9). <!--/A-->Nel tuo turno fai <b>una sola</b> di queste cinque azioni: prima la <b>annunci</b>, poi la fai. I poteri delle Persone possono concederne altre.</p>
     <div class="passo"><div class="n">1</div><div><span class="v">Aprire una formazione.</span> Gioca una carta Ambito davanti a te: diventa una Formazione e apre una nuova pila. Puoi avere quante pile vuoi.</div></div>
     <div class="passo"><div class="n">2</div><div><span class="v">Migliorare una formazione.</span> Gioca una carta Ambito sotto una tua Formazione: le sue tre competenze si sommano a quelle della pila. Puoi farlo anche dopo aver inserito una Persona, finché il set non è chiuso.</div></div>
     <div class="passo"><div class="n">3</div><div><span class="v">Inserire una persona.</span> Prendi una Persona dal mercato e mettila sopra una tua pila che non ne ha ancora una. Le competenze della pila devono comprendere <b>tutte e tre le sue ambizioni</b>, contate una per una: due icone Digitale ne chiedono due. Il mercato si ripristina subito. Poi <b>attivi il potere</b> della Persona che hai preso.</div></div>
@@ -310,7 +321,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
       <p>Con le azioni 1 e 2 puoi giocare una carta Ambito <b>coperta</b>, come Formazione: vale come un ambito a tua scelta, tra i trenta del gioco. Di' quale quando la giochi: resta quello. Come Lavoro un Ambito si gioca sempre scoperto.</p>
     </div>
   </div>
-  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+  <div class="piede"><span>Collocamento · {{versione}}</span><span>CDS · prototipo 2026</span></div>
 </div></section>
 
 <!-- ============================================================ 6. COME SI COSTRUISCE UN SET -->
@@ -352,7 +363,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
       <p>Di solito due. Ne basta una quando Formazione, Persona e Lavoro hanno le stesse tre icone: succede, e vale il massimo dei punti.</p>
     </div>
   </div>
-  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+  <div class="piede"><span>Collocamento · {{versione}}</span><span>CDS · prototipo 2026</span></div>
 </div></section>
 
 <!-- ============================================================ 7. PUNTI E VITTORIA -->
@@ -380,7 +391,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
       <p>Tra chi è a pari punti vince <b>la prima voce che urla «Lavoro!»</b>.</p>
     </div>
   </div>
-  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+  <div class="piede"><span>Collocamento · {{versione}}</span><span>CDS · prototipo 2026</span></div>
 </div></section>
 
 <!-- ============================================================ 8. POTERI -->
@@ -404,7 +415,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
       <li>Una Persona spostata da un potere non attiva il suo. Un potere che non puoi o non vuoi usare va perso.</li>
     </ul>
   </div>
-  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+  <div class="piede"><span>Collocamento · {{versione}}</span><span>CDS · prototipo 2026</span></div>
 </div></section>
 
 <!-- ============================================================ 9. FINE DELLA PARTITA E GLI EVENTI -->
@@ -420,7 +431,16 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     </div>
     <p>Gli Ambiti non si rimescolano: restano tutti nelle mani e nei set. Se finisce il mazzo delle Persone, il mercato non si ripristina più.</p>
   </div>
-  <div class="sezione">
+<!--B-->  <div class="sezione">
+    <div class="occhiello">Alla fine</div>
+    <h2>Il conto dei punti</h2>
+    <p>Si guardano i set girati in orizzontale, uno per uno: le ambizioni della Persona che combaciano col suo Lavoro decidono quanto vale (pagina 7).</p>
+    <div class="nota scura dx">
+      <div class="etichetta">Esempio</div>
+      <p>Tre set: uno con due ambizioni che combaciano, 10 punti; uno con tre, 16 punti; uno con una sola, 7 punti, ma la sua Persona ha {{potere 3}} e ne vale 9. In tutto <b>35 punti</b>.</p>
+    </div>
+  </div>
+<!--/B--><!--A-->  <div class="sezione">
     <div class="occhiello">Uno a giro</div>
     <h2>Gli eventi</h2>
     <div style="display: flex; gap: 5mm; align-items: flex-start">
@@ -432,7 +452,8 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
       </div>
     </div>
   </div>
-  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+<!--/A-->
+  <div class="piede"><span>Collocamento · {{versione}}</span><span>CDS · prototipo 2026</span></div>
 </div></section>
 
 <!-- ============================================================ 10. CASI PARTICOLARI E CONSIGLI -->
@@ -460,7 +481,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
       <li><b>Chi chiude la partita non prende punti in più:</b> conta quanto vale ogni set.</li>
     </ul>
   </div>
-  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+  <div class="piede"><span>Collocamento · {{versione}}</span><span>CDS · prototipo 2026</span></div>
 </div></section>
 
 <!-- ============================================================ 11. IN SINTESI -->
@@ -471,7 +492,7 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
     <h2>Il turno in sintesi</h2>
     <div class="nota">
       <div class="etichetta">Una sola azione</div>
-      <p>A ogni giro un evento. Annuncia l'azione, poi falla. <b>1 Apri</b> una formazione · <b>2 Migliora</b> una formazione · <b>3 Inserisci</b> una Persona e attiva il suo potere · <b>4 Completa</b> un set e giralo in orizzontale, Formazioni comprese · <b>5 Pesca</b> 2 Ambiti. Un Ambito coperto, come Formazione, vale un ambito a scelta. Nessun limite di mano.</p>
+      <p><!--A-->A ogni giro un evento. <!--/A-->Annuncia l'azione, poi falla. <b>1 Apri</b> una formazione · <b>2 Migliora</b> una formazione · <b>3 Inserisci</b> una Persona e attiva il suo potere · <b>4 Completa</b> un set e giralo in orizzontale, Formazioni comprese · <b>5 Pesca</b> 2 Ambiti. Un Ambito coperto, come Formazione, vale un ambito a scelta. Nessun limite di mano.</p>
     </div>
     <div class="nota dx">
       <div class="etichetta">Punti</div>
@@ -486,12 +507,12 @@ table.punti tr > :last-child { border-radius: 0 1.2mm 1.2mm 0; }
       <p>Alla terza Persona al lavoro, o all'ultimo Ambito pescato, ogni altro partecipante gioca un ultimo turno. Parità: vince la prima voce che urla «Lavoro!».</p>
     </div>
   </div>
-  <div class="piede"><span>Collocamento</span><span>CDS · prototipo 2026</span></div>
+  <div class="piede"><span>Collocamento · {{versione}}</span><span>CDS · prototipo 2026</span></div>
 </div></section>
 
 <!-- ============================================================ 12. RETRO DI COPERTINA -->
 <section class="pagina"><div class="pannello scuro copertina"><div style="position: absolute; inset: 6mm">
-  <div class="testata" style="top: 5.4mm; left: 9mm; right: 9mm"><span class="sx" style="color: var(--rosa)">CDS</span><span>Regolamento</span></div>
+  <div class="testata" style="top: 5.4mm; left: 9mm; right: 9mm"><span class="sx" style="color: var(--rosa)">CDS</span><span>Regolamento · {{versione}}</span></div>
   <img class="carta" src="img/lav_41.jpg" style="left: 12mm; top: 30mm; width: 34mm; transform: rotate(-6deg)">
   <img class="carta" src="img/amb_22.jpg" style="left: 49mm; top: 25mm; width: 34mm; transform: rotate(2deg)">
   <img class="carta" src="img/dorsoB_amb.jpg" style="left: 86mm; top: 30mm; width: 34mm; transform: rotate(7deg)">

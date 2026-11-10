@@ -2,21 +2,27 @@
 Il print and play di Collocamento: un PDF solo, da stampare in una volta, A4 fronte e retro
 sul lato lungo, e da tagliare al laser.
 
-    py -3 grafica/pnp.py
+    py -3 grafica/pnp.py          # le due versioni
+    py -3 grafica/pnp.py B        # una sola
 
-Scrive grafica/stampa/collocamento_pnp.pdf (38 pagine, 19 fogli) e i file di taglio in
-grafica/stampa/taglio/. Le immagini che servono le prepara in grafica/stampa/pnp_img/.
+Per il playtest a confronto di novembre 2026 ci sono due versioni: A con le carte evento, B senza.
+Scrive grafica/stampa/collocamento_pnp_A_con_eventi.pdf (38 pagine, 19 fogli) e
+collocamento_pnp_B_senza_eventi.pdf (36 pagine, 18 fogli), e i file di taglio in grafica/stampa/taglio/.
+Le immagini che servono le prepara in grafica/stampa/pnp_img/.
 
 - Fogli 1-7: le 60 Persone, col potere scritto sulla carta (grafica/dati/poteri.json,
-  assegnazione in grafica/poteri.py).
-- Fogli 8-14: i 60 Ambiti, cioè due copie di ognuno dei 30.
-- Foglio 15: le carte evento 1-9 (grafica/dati/eventi.json).
-- Foglio 16: 4 carte riassunto (da un lato il turno, dall'altro punti e poteri) e le carte evento
-  10-12; restano vuoti gli ultimi due posti, in basso al centro e a destra. I token obiettivo non ci
-  sono più dal playtest di novembre 2026.
-- Fogli 17-19: il regolamento A5 (pitch/regolamento_a5.pdf), due pagine per facciata,
-  da piegare a metà. Lo rifà ogni volta pitch/libretto.py (HTML stampato da Edge), dopo
+  assegnazione in grafica/poteri.py). Uguali nelle due versioni.
+- Fogli 8-14: i 60 Ambiti, cioè due copie di ognuno dei 30. Uguali nelle due versioni.
+- Versione A, foglio 15: le carte evento 1-9 (grafica/dati/eventi.json). Foglio 16: 4 carte
+  riassunto (da un lato il turno, dall'altro punti e poteri) e le carte evento 10-12; restano vuoti
+  gli ultimi due posti, in basso al centro e a destra.
+- Versione B, foglio 15: le 4 carte riassunto della B, negli stessi posti; il resto del foglio è bianco.
+- Ultimi tre fogli: il regolamento A5 della versione (pitch/regolamento_a5_A.pdf o _B.pdf), due pagine
+  per facciata, da piegare a metà. Lo rifà ogni volta pitch/libretto.py (HTML stampato da Edge), dopo
   pitch/figure.py per le immagini.
+
+Carte riassunto, regolamento e intestazioni dei fogli che cambiano dicono la versione, perché i
+materiali dei due tavoli non si mescolino. I token obiettivo non ci sono più dal playtest di novembre.
 
 Le carte sono quelle di grafica/carte_nuove.py nello stile scelto (STILE, la proposta B): un solo
 colore di fondo, abbondanza compresa, così uno scarto del taglio non si vede. Se grafica/carte_v3/
@@ -38,7 +44,6 @@ Servono le illustrazioni in grafica/illustrazioni/, le carte dei designer in gra
 (per i disegni degli Ambiti) e i dorsi in grafica/dorsi_proposte/, tutto da Drive; Pillow, NumPy,
 OpenCV, PyMuPDF, pdflatex con TikZ e Microsoft Edge (per il libretto).
 """
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -51,6 +56,7 @@ QUI = Path(__file__).resolve().parent
 RADICE = QUI.parent
 sys.path.insert(0, str(QUI))
 import carte_nuove  # noqa: E402
+import segni_laser  # noqa: E402
 
 CARTE = QUI / "carte_v3"
 STAMPA = QUI / "stampa"
@@ -59,7 +65,6 @@ TAGLIO = STAMPA / "taglio"
 for d in (IMG, TAGLIO):
     d.mkdir(parents=True, exist_ok=True)
 DORSI = "B"  # la proposta di dorsi scelta da Vittorio il 28/10/2026 (grafica/dorsi_proposte)
-REGOLAMENTO = RADICE / "pitch" / "regolamento_a5.pdf"
 
 # ---------------------------------------------------------------- la geometria del foglio, in mm
 W, H = 63, 88  # una carta
@@ -68,7 +73,6 @@ PASSO_X, PASSO_Y = W + 2 * ABB, H + 2 * ABB
 X0 = (210 - (3 * W + 4 * ABB)) / 2  # 6.5: il bordo di taglio della prima colonna
 Y0 = (297 - (3 * H + 4 * ABB)) / 2  # 12.5: il bordo di taglio della prima riga, dall'alto
 R_ANGOLI = 3
-SEGNI = STAMPA / "segni"  # le pagine coi marker di aira laser: lavoro_04_segni.svg, lavoro_05_segni.svg
 LAVORO_9, LAVORO_7 = 4, 5  # i lavori di aira laser: fogli da 9 carte e foglio da 7 (riassunti ed eventi)
 
 
@@ -94,14 +98,15 @@ def salva(img, nome):
 
 
 # le carte nuove, con l'abbondanza già dentro (67 x 92 mm): se mancano si rifanno
-if not (CARTE / "riassunto_retro.png").exists():
+VERSIONI = carte_nuove.VERSIONI  # le due versioni del playtest a confronto: A con eventi, B senza
+if not (CARTE / "riassunto_retro_B.png").exists():
     carte_nuove.mazzo(carte_nuove.STILE)
 persone = sorted(carte_nuove.PERSONE)
 ambiti = sorted(carte_nuove.AMBITI)
 fronti_per = [salva(Image.open(CARTE / "persone" / f"{n}.png"), f"per_{n}") for n in persone]
 fronti_amb = [salva(Image.open(CARTE / "ambiti" / f"{n}.png"), f"amb_{n}") for n in ambiti]
-riassunto_fronte = salva(Image.open(CARTE / "riassunto_fronte.png"), "riassunto_fronte")
-riassunto_retro = salva(Image.open(CARTE / "riassunto_retro.png"), "riassunto_retro")
+riassunti = {v: tuple(salva(Image.open(CARTE / f"riassunto_{lato}_{v}.png"), f"riassunto_{lato}_{v}")
+                      for lato in ("fronte", "retro")) for v in VERSIONI}
 fronti_evt = [salva(Image.open(CARTE / "eventi" / f"{n}.png"), f"evt_{n}") for n in sorted(carte_nuove.EVENTI)]
 # il dorso degli eventi: quello illustrato se c'è (grafica/genera_dorso_eventi.mjs), se no la prima pagina di
 # giornale di grafica/dorso_eventi.py
@@ -118,8 +123,8 @@ if not (QUI / "dorsi_proposte" / "ambiti_ruota_ordinata.png").exists():
     subprocess.run([sys.executable, str(QUI / "dorso_ruota.py")], check=True)
 dorso_amb = salva(con_abbondanza(Image.open(QUI / "dorsi_proposte" / "ambiti_ruota_ordinata.png"), "reflect"), "dorso_amb")
 for vecchia in IMG.glob("*.jpg"):  # le immagini delle versioni precedenti
-    if f"pnp_img/{vecchia.name}" not in (fronti_per + fronti_amb + fronti_evt
-                                         + [dorso_per, dorso_amb, dorso_evt, riassunto_fronte, riassunto_retro]):
+    if f"pnp_img/{vecchia.name}" not in (fronti_per + fronti_amb + fronti_evt + [dorso_per, dorso_amb, dorso_evt]
+                                         + [f for coppia in riassunti.values() for f in coppia]):
         vecchia.unlink()
 
 # ---------------------------------------------------------------- il PDF
@@ -148,7 +153,7 @@ def y(su):
 
 
 def apri(intestazione=None):
-    """Una facciata; l'intestazione sta tra i crocini, lontana dal bordo che la stampante può tagliare."""
+    """Una facciata; l'intestazione sta tra i marker, lontana dal bordo che la stampante può tagliare."""
     testo = r"\noindent\begin{tikzpicture}[remember picture,overlay,x=1mm,y=1mm,shift={(current page.south west)}]" + "\n"
     if intestazione:
         testo += rf"\node[font=\fontsize{{6}}{{7}}\selectfont,text=petrolio] at (105,{y(7.5)}) {{{intestazione}}};" + "\n"
@@ -158,17 +163,10 @@ def apri(intestazione=None):
 def segni(lavoro):
     """I tre marker ArUco del lavoro, dalla pagina SVG di aira laser: per ogni marker il riquadro bianco e i
     quadretti neri pieni, senza tratto, alle stesse coordinate in mm della pagina."""
-    testo = (SEGNI / f"lavoro_{lavoro:02d}_segni.svg").read_text(encoding="utf-8")
-    marker = re.findall(r'<rect x="([\d.]+)" y="([\d.]+)" width="([\d.]+)" height="[\d.]+" fill="#fff"/>'
-                        r'<path d="([^"]+)" fill="#000"/>', testo)
-    if len(marker) != 3:
-        raise SystemExit(f"lavoro_{lavoro:02d}_segni.svg: mi aspettavo tre marker, ne ho trovati {len(marker)}")
     righe = []
-    for x, su, lato, nero in marker:
-        x, su, lato = float(x), float(su), float(lato)
-        righe.append(rf"\fill[white] ({x:.4f},{y(su):.4f}) rectangle ({x + lato:.4f},{y(su + lato):.4f});")
-        for qx, qy, qw, qh in re.findall(r"M([\d.]+) ([\d.]+)h([\d.]+)v([\d.]+)h-[\d.]+z", nero):
-            qx, qy, qw, qh = map(float, (qx, qy, qw, qh))
+    for (x, su, lw, lh), quadretti in segni_laser.marker(lavoro):
+        righe.append(rf"\fill[white] ({x:.4f},{y(su):.4f}) rectangle ({x + lw:.4f},{y(su + lh):.4f});")
+        for qx, qy, qw, qh in quadretti:
             righe.append(rf"\fill[black] ({qx:.4f},{y(qy):.4f}) rectangle ({qx + qw:.4f},{y(qy + qh):.4f});")
     return "\n".join(righe) + "\n"
 
@@ -194,11 +192,11 @@ def foglio_carte(nome, carte, lavoro):
 
 
 # ---- il libretto: pagine A5 a due a due, ruotate
-def fogli_libretto():
-    n = len(fitz.open(REGOLAMENTO))
+def fogli_libretto(regolamento):
+    n = len(fitz.open(regolamento))
     if n % 4:
         raise SystemExit(f"il regolamento A5 ha {n} pagine: per il libretto servono multipli di 4")
-    file = REGOLAMENTO.as_posix()
+    file = regolamento.as_posix()
     testo = ""
     for s in range(n // 4):
         sinistra, destra = n - 2 * s, 2 * s + 1  # fronte, visto in orizzontale
@@ -214,47 +212,59 @@ def fogli_libretto():
     return testo
 
 
-# ---------------------------------------------------------------- il regolamento A5, sempre rifatto
+# ---------------------------------------------------------------- le due versioni, col regolamento sempre rifatto
 subprocess.run([sys.executable, str(RADICE / "pitch" / "figure.py")], check=True)
 sys.path.insert(0, str(RADICE / "pitch"))
 import libretto  # noqa: E402
 
-libretto.main()
+# i file di prima delle due versioni
+for vecchio in [STAMPA / f"collocamento_pnp.{e}" for e in ("pdf", "tex")] + [STAMPA / "collocamento_regolamento_a4.pdf",
+                                                                             RADICE / "pitch" / "regolamento_a5.pdf"]:
+    vecchio.unlink(missing_ok=True)
 
-testo = TESTA
-for nome, fronti, dorso in (("PERSONE", fronti_per, dorso_per), ("AMBITI", fronti_amb + fronti_amb, dorso_amb)):
-    fogli = (len(fronti) + 8) // 9
-    for i in range(0, len(fronti), 9):
-        testo += foglio_carte(rf"{nome} · FOGLIO {i // 9 + 1} DI {fogli}", [(f, dorso) for f in fronti[i:i + 9]], LAVORO_9)
-testo += foglio_carte("EVENTI 1-9", [(f, dorso_evt) for f in fronti_evt[:9]], LAVORO_9)
-# il foglio da 7: le 4 carte riassunto (stampate sui due lati) e gli eventi 10-12; gli ultimi due posti restano vuoti
-misto = [(riassunto_fronte, riassunto_retro)] * 4 + [(f, dorso_evt) for f in fronti_evt[9:]]
-testo += foglio_carte("CARTE RIASSUNTO ED EVENTI 10-12", misto, LAVORO_7)
-testo += fogli_libretto()
-testo += "\\end{document}\n"
+for versione in [v.upper() for v in sys.argv[1:]] or list(VERSIONI):
+    regolamento = libretto.main(versione)
+    testo = TESTA
+    for nome, fronti, dorso in (("PERSONE", fronti_per, dorso_per), ("AMBITI", fronti_amb + fronti_amb, dorso_amb)):
+        fogli = (len(fronti) + 8) // 9
+        for i in range(0, len(fronti), 9):
+            testo += foglio_carte(rf"{nome} · FOGLIO {i // 9 + 1} DI {fogli}", [(f, dorso) for f in fronti[i:i + 9]],
+                                  LAVORO_9)
+    fronte, retro = riassunti[versione]
+    if versione == "A":
+        testo += foglio_carte("EVENTI 1-9 · VERSIONE A", [(f, dorso_evt) for f in fronti_evt[:9]], LAVORO_9)
+        # il foglio da 7: le 4 carte riassunto (stampate sui due lati) e gli eventi 10-12; gli ultimi due posti vuoti
+        misto = [(fronte, retro)] * 4 + [(f, dorso_evt) for f in fronti_evt[9:]]
+        testo += foglio_carte("CARTE RIASSUNTO ED EVENTI 10-12 · VERSIONE A", misto, LAVORO_7)
+    else:
+        # senza eventi restano le 4 carte riassunto, negli stessi posti del foglio da 7 (lavoro 5): il laser taglia
+        # anche i tre posti degli eventi, che restano bianchi
+        testo += foglio_carte("CARTE RIASSUNTO · VERSIONE B", [(fronte, retro)] * 4, LAVORO_7)
+    testo += fogli_libretto(regolamento)
+    testo += "\\end{document}\n"
 
-NOME = "collocamento_pnp"
-(STAMPA / f"{NOME}.tex").write_text(testo, encoding="utf-8")
-for _ in range(2):  # due passate: le pagine usano le coordinate della pagina
-    esito = subprocess.run(["pdflatex", "-interaction=nonstopmode", "-halt-on-error", f"{NOME}.tex"],
-                           cwd=STAMPA, capture_output=True, text=True, errors="replace")
-    if esito.returncode:
-        raise SystemExit(f"pdflatex non è riuscito:\n{esito.stdout[-2000:]}")
-for avanzo in ("aux", "log"):
-    (STAMPA / f"{NOME}.{avanzo}").unlink(missing_ok=True)
+    NOME = f"collocamento_pnp_{versione}_{VERSIONI[versione].replace(' ', '_')}"
+    (STAMPA / f"{NOME}.tex").write_text(testo, encoding="utf-8")
+    for _ in range(2):  # due passate: le pagine usano le coordinate della pagina
+        esito = subprocess.run(["pdflatex", "-interaction=nonstopmode", "-halt-on-error", f"{NOME}.tex"],
+                               cwd=STAMPA, capture_output=True, text=True, errors="replace")
+        if esito.returncode:
+            raise SystemExit(f"pdflatex non è riuscito:\n{esito.stdout[-2000:]}")
+    for avanzo in ("aux", "log"):
+        (STAMPA / f"{NOME}.{avanzo}").unlink(missing_ok=True)
+    pdf = STAMPA / f"{NOME}.pdf"
+    print(f"grafica/stampa/{NOME}.pdf: {len(fitz.open(pdf))} pagine, {pdf.stat().st_size / 1e6:.0f} MB")
+
+    # il solo regolamento, da stampare a parte: sono gli ultimi fogli del print and play, già imposti
+    tutto = fitz.open(pdf)
+    facciate = len(fitz.open(regolamento)) // 2
+    solo = fitz.open()
+    solo.insert_pdf(tutto, from_page=len(tutto) - facciate, to_page=len(tutto) - 1)
+    solo.set_metadata({"title": f"Collocamento - Regolamento, versione {versione}, libretto A5 su A4 fronte e retro"})
+    solo.save(STAMPA / f"collocamento_regolamento_a4_{versione}.pdf", garbage=3, deflate=True)
+    print(f"grafica/stampa/collocamento_regolamento_a4_{versione}.pdf: {facciate} pagine, {facciate // 2} fogli")
 for vecchio in STAMPA.glob("collocamento_pnp_dorsi_*"):
     vecchio.unlink()
-pdf = STAMPA / f"{NOME}.pdf"
-print(f"grafica/stampa/{NOME}.pdf: {len(fitz.open(pdf))} pagine, {pdf.stat().st_size / 1e6:.0f} MB")
-
-# il solo regolamento, da stampare a parte: sono gli ultimi fogli del print and play, già imposti
-tutto = fitz.open(pdf)
-facciate = len(fitz.open(REGOLAMENTO)) // 2
-solo = fitz.open()
-solo.insert_pdf(tutto, from_page=len(tutto) - facciate, to_page=len(tutto) - 1)
-solo.set_metadata({"title": "Collocamento - Regolamento, libretto A5 su A4 fronte e retro"})
-solo.save(STAMPA / "collocamento_regolamento_a4.pdf", garbage=3, deflate=True)
-print(f"grafica/stampa/collocamento_regolamento_a4.pdf: {facciate} pagine, {facciate // 2} fogli")
 
 
 # ---------------------------------------------------------------- i file di taglio

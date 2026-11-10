@@ -3,9 +3,14 @@ La scatola di Collocamento: una scatola a ribalta classica, da mazzo di carte, s
 
     py -3 grafica/scatola.py
 
-Scrive grafica/stampa/collocamento_scatola.pdf (da stampare su cartoncino, al 100%, solo fronte) e
-grafica/stampa/taglio/collocamento_scatola_taglio.svg (taglio, pieghe da cordonare e crocini,
-per tools/svg_to_lbrn2.py della repo laser-designs), più un'anteprima con le linee sovrapposte.
+Scrive grafica/stampa/collocamento_scatola.pdf (al 100%, solo fronte) e
+grafica/stampa/taglio/collocamento_scatola_taglio.svg, più un'anteprima con le linee sovrapposte.
+
+Per il laser di aira è il lavoro 11 (registrato da LASER il 10/11/2026): sul fronte tre marker ArUco da
+12 mm (33, 34, 35) nei bordi liberi a destra e a sinistra della fustella, dalla pagina
+grafica/stampa/segni/lavoro_11_segni.svg; niente crocini. Il file di taglio ha il gruppo CUT (contorno
+della fustella, #c62828) e il gruppo MARK con le sole pieghe (#1e88e5), che il laser incide leggere e
+continue prima del taglio; LASER lo copia in laser-designs come lavoro_11_taglio.svg.
 
 Dentro ci vanno le carte plastificate, senza il regolamento: 120 carte, 4 carte riassunto e, dal playtest
 di novembre 2026, 12 carte evento (i token non ci sono più). Vittorio plastifica con buste da 2 x 75 micron
@@ -35,6 +40,7 @@ from PIL import Image, ImageDraw, ImageFilter
 QUI = Path(__file__).resolve().parent
 sys.path.insert(0, str(QUI))
 import carte_nuove as cn  # noqa: E402
+import segni_laser  # noqa: E402
 from carte_nuove import BAHN, BIANCO, MAGENTA, PANNA, PETROLIO, ROSA, font, larghezza, scrivi  # noqa: E402
 
 STAMPA = QUI / "stampa"
@@ -52,8 +58,7 @@ SMUSSO = 5         # gli angoli smussati della linguetta di colla
 POLLICE = 9        # raggio della tacca sul fronte
 ABB = 2            # abbondanza della stampa oltre il taglio
 FOGLIO = (297, 210)
-CROCINI = [(14, 10), (283, 10), (14, 200), (283, 200)]
-R_CROCINO, BRACCIO = 2, 3
+LAVORO = 11       # il lavoro di aira laser: marker e taglio della scatola
 
 larghezza_tot = COLLA + 2 * LARGO + 2 * PROFONDITA
 altezza_tot = 2 * (LINGUETTA + PROFONDITA) + ALTO
@@ -143,18 +148,17 @@ def pieghe():
 
 
 def svg():
-    segni = [f"M {cx - R_CROCINO} {cy} A {R_CROCINO} {R_CROCINO} 0 1 0 {cx + R_CROCINO} {cy} "
-             f"A {R_CROCINO} {R_CROCINO} 0 1 0 {cx - R_CROCINO} {cy} Z" for cx, cy in CROCINI]
-    segni += [f"M {cx - BRACCIO} {cy} H {cx + BRACCIO} M {cx} {cy - BRACCIO} V {cy + BRACCIO}" for cx, cy in CROCINI]
+    """Il file di taglio di aira laser: CUT = contorno della fustella, MARK = pieghe da incidere leggere."""
     w, h = FOGLIO
-    return ('<?xml version="1.0" encoding="UTF-8"?>\n'
-            f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}mm" height="{h}mm" viewBox="0 0 {w} {h}">\n'
-            f'  <rect id="A4_riferimento" x="0" y="0" width="{w}" height="{h}" fill="none" stroke="#00AA00" stroke-width="0.1" stroke-dasharray="2 2"/>\n'
-            '  <g id="MARK" fill="none" stroke="#0000FF" stroke-width="0.2">\n'
-            + "".join(f'    <path d="{d}"/>\n' for d in segni + pieghe())
-            + '  </g>\n  <g id="CUT" fill="none" stroke="#FF0000" stroke-width="0.2">\n'
-            + "".join(f'    <path d="{d}"/>\n' for d in tagli())
-            + '  </g>\n</svg>\n')
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}mm" height="{h}mm" viewBox="0 0 {w} {h}">\n'
+            f'<!-- lavoro {LAVORO}: scatola di Collocamento. Coordinate del foglio A4 orizzontale (fronte); aira laser lo '
+            'porta sulla macchina dai marker. MARK = pieghe, incise leggere prima del taglio. Scritto da '
+            'gioco-cds/grafica/scatola.py. -->\n'
+            '<g id="CUT">\n'
+            + "".join(f'<path d="{d}" fill="none" stroke="#c62828" stroke-width="0.2"/>\n' for d in tagli())
+            + '</g>\n<g id="MARK">\n'
+            + "".join(f'<path d="{d}" fill="none" stroke="#1e88e5" stroke-width="0.2"/>\n' for d in pieghe())
+            + '</g>\n</svg>\n')
 
 
 # ---------------------------------------------------------------- la grafica
@@ -346,10 +350,11 @@ def pdf(img, destino):
     pagina.insert_image(pagina.rect, filename=str(temp))
     temp.unlink()
     k = 72 / 25.4
-    for cx, cy in CROCINI:
-        pagina.draw_circle((cx * k, cy * k), R_CROCINO * k, color=(0, 0, 0), width=0.25 * k)
-        pagina.draw_line(((cx - BRACCIO) * k, cy * k), ((cx + BRACCIO) * k, cy * k), color=(0, 0, 0), width=0.25 * k)
-        pagina.draw_line((cx * k, (cy - BRACCIO) * k), (cx * k, (cy + BRACCIO) * k), color=(0, 0, 0), width=0.25 * k)
+    # i marker di aira laser: riquadro bianco e quadretti neri pieni, senza tratto, nero solo (grigio 0)
+    for (x, y, lw, lh), quadretti in segni_laser.marker(LAVORO):
+        pagina.draw_rect(fitz.Rect(x * k, y * k, (x + lw) * k, (y + lh) * k), color=None, fill=(1,), width=0)
+        for qx, qy, qw, qh in quadretti:
+            pagina.draw_rect(fitz.Rect(qx * k, qy * k, (qx + qw) * k, (qy + qh) * k), color=None, fill=(0,), width=0)
     doc.set_metadata({"title": "Collocamento - scatola (A4 orizzontale, solo fronte, al 100%)"})
     doc.save(destino, garbage=3, deflate=True)
 

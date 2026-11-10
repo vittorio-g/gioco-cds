@@ -1,13 +1,15 @@
 """
-Il logo a timbro tondo con i simboli delle cinque categorie di Ambiti messi in ordine.
+Il logo a timbro tondo con le sei icone delle competenze in fila sull'arco basso.
 
     py -3 grafica/logo_simboli.py
 
 Parte da grafica/logo_proposte/A2_categorie.png (generato da genera_logo.mjs): la scritta e gli anelli
 restano quelli, a Vittorio piacciono così. I simboli che ci aveva messo il generatore avevano misure
-diverse e non stavano in fila sull'arco: qui si cancellano e al loro posto vanno i simboli veri delle
-carte (grafica/dati/icone_hd/cat_01..05), tutti sulla stessa griglia, alla stessa distanza dal centro e
-a passo costante, con la grana del timbro. Scrive grafica/logo_proposte/A2_categorie_sistemato.png.
+diverse e non stavano in fila sull'arco: qui si cancellano. Al loro posto c'erano le cinque categorie
+degli Ambiti; tolte le categorie dal gioco (10/11/2026), Vittorio ha chiesto le sei icone delle competenze
+(grafica/dati/icone_hd), nell'ordine delle carte: ogni icona è il suo riquadro in inchiostro petrolio col
+disegno scavato, tutte sulla stessa griglia, alla stessa distanza dal centro e a passo costante, con la
+grana del timbro. Scrive grafica/logo_proposte/A2_competenze.png.
 """
 from pathlib import Path
 
@@ -24,11 +26,21 @@ CENTRO = (764, 508)
 FASCIA = (258, 384)      # tra l'anello interno e quello esterno (r 383-399): lì stanno scritta e simboli
 CANCELLA = (25, 170)     # gradi, 90 = in basso: la metà bassa della fascia, dove stavano i simboli
 ASSE = 99.5              # la scritta va da -161 a 0 gradi: il timbro è ruotato di 9,5 gradi
-PASSO = 23               # gradi tra un simbolo e l'altro
+PASSO = 19               # gradi tra un'icona e l'altra
 RAGGIO = 320             # distanza dei simboli dal centro
-LATO = 100               # lato della griglia comune dei simboli, in px
+LATO = 86                # lato delle icone, in px
 FONDO = (252, 250, 241)
 INCHIOSTRO = (19, 69, 78)
+
+
+ICONE_COMPETENZE = ("MA", "DI", "CO", "OR", "CR", "RI")  # l'ordine delle carte (carte_nuove.ORDINE_ICONE)
+
+
+def icona_timbro(sigla):
+    """L'icona come timbro: il riquadro colorato diventa inchiostro, il disegno bianco resta carta."""
+    a = np.asarray(Image.open(ICONE / f"{sigla}.png").convert("RGBA")).astype(int)
+    pieno = (a[..., 3] > 128) & (a[..., :3].sum(axis=2) < 650)
+    return Image.fromarray((pieno * 255).astype(np.uint8)).resize((LATO, LATO), Image.LANCZOS)
 
 
 def grana(alfa, seme):
@@ -66,16 +78,15 @@ def main():
     a[zona] = np.clip(np.array(FONDO) + rng.normal(0, 0.7, (zona.sum(), 3)), 0, 255).astype(np.uint8)
     out = Image.fromarray(a)
 
-    for i in range(5):
-        alfa = Image.open(ICONE / f"cat_0{i + 1}.png").getchannel("A").resize((LATO, LATO), Image.LANCZOS)
-        alfa = alfa.rotate(-(ASSE - 90), resample=Image.BICUBIC, expand=True)   # dritti rispetto al timbro
+    for i, sigla in enumerate(ICONE_COMPETENZE):
+        alfa = icona_timbro(sigla).rotate(-(ASSE - 90), resample=Image.BICUBIC, expand=True)   # dritte rispetto al timbro
         alfa = grana(alfa, 100 + i)
         # da sinistra a destra lungo l'arco basso: angoli decrescenti
-        t = np.radians(ASSE + (2 - i) * PASSO)
+        t = np.radians(ASSE + ((len(ICONE_COMPETENZE) - 1) / 2 - i) * PASSO)
         cx, cy = CENTRO[0] + RAGGIO * np.cos(t), CENTRO[1] + RAGGIO * np.sin(t)
         out.paste(Image.new("RGB", alfa.size, INCHIOSTRO), (round(cx - alfa.width / 2), round(cy - alfa.height / 2)), alfa)
 
-    dest = DIR / "A2_categorie_sistemato.png"
+    dest = DIR / "A2_competenze.png"
     out.save(dest)
     print(dest)
 

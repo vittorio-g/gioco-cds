@@ -49,7 +49,7 @@ ABBONDANZA = 24  # 2 mm a 12 pixel per millimetro, intorno alle carte nuove
 
 sorgenti = [f for f in QUI.glob("*.tex") if f.name != "poteri.tex"] + [QUI / "regolamento_a5.html"]
 tex = "\n".join(f.read_text(encoding="utf-8") for f in sorgenti)
-usate = set(re.findall(r"\b((?:lav|amb|ill|art|evt)_\d\d|dorso[ABC]?_(?:lav|amb|evt)|riassunto)\b", tex))
+usate = set(re.findall(r"\b((?:lav|amb|ill|art|evt)_\d\d|dorso[ABC]?_(?:lav|amb|evt)|riassunto(?:_B)?)\b", tex))
 
 
 def salva(img, nome, qualita=88):
@@ -61,8 +61,8 @@ def ridotta(img):
 
 
 for nome in sorted(usate):
-    if nome == "riassunto":  # il fronte della carta riassunto, senza abbondanza
-        carta = Image.open(RADICE / "grafica" / "carte_v3" / "riassunto_fronte.png")
+    if nome.startswith("riassunto"):  # il fronte della carta riassunto, versione A o B, senza abbondanza
+        carta = Image.open(RADICE / "grafica" / "carte_v3" / f"riassunto_fronte_{'B' if nome.endswith('_B') else 'A'}.png")
         salva(ridotta(carta.crop((ABBONDANZA, ABBONDANZA, carta.width - ABBONDANZA, carta.height - ABBONDANZA))), nome)
         continue
     if nome == "dorsoB_evt":  # il dorso degli eventi: quello illustrato se c'è, se no la prima pagina di giornale

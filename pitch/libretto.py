@@ -1,12 +1,17 @@
 """
 Il regolamento di Collocamento in libretto A5, nello stile delle carte: da HTML a PDF con Edge.
 
-    py -3 pitch/libretto.py
+    py -3 pitch/libretto.py          # le due versioni
+    py -3 pitch/libretto.py B        # una sola
 
 Legge pitch/regolamento_a5.html (il sorgente), riempie i segnaposto (nomi ed effetti dei poteri da
 grafica/dati/poteri.json, icone delle carte da mazzi/), scrive pitch/_libretto.html e lo stampa in
-pitch/regolamento_a5.pdf. Si ferma se una pagina trabocca dal suo pannello o se le pagine non sono 12:
-grafica/pnp.py le impagina quattro per foglio, da piegare a metà.
+pitch/regolamento_a5_A.pdf e pitch/regolamento_a5_B.pdf. Si ferma se una pagina trabocca dal suo pannello
+o se le pagine non sono 12: grafica/pnp.py le impagina quattro per foglio, da piegare a metà.
+
+Le versioni servono al playtest a confronto di novembre 2026: A con gli eventi, B senza. Nel sorgente i
+pezzi che valgono per una sola versione stanno tra <!--A--> e <!--/A--> o tra <!--B--> e <!--/B-->;
+il segnaposto {{versione}} diventa "versione A, con eventi" o "versione B, senza eventi".
 
 Le immagini vengono da pitch/img/ (py -3 pitch/figure.py). Il carattere è Bahnschrift, di Windows.
 """
@@ -27,8 +32,12 @@ import poteri  # noqa: E402
 
 SORGENTE = QUI / "regolamento_a5.html"
 PRONTO = QUI / "_libretto.html"
-PDF = QUI / "regolamento_a5.pdf"
 PAGINE = 12
+VERSIONI = {"A": "con eventi", "B": "senza eventi"}
+
+
+def pdf_di(versione):
+    return QUI / f"regolamento_a5_{versione}.pdf"
 EDGE = Path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
 
 
@@ -37,7 +46,11 @@ def _csv(nome):
         return list(csv.DictReader(f))
 
 
-def riempi(html):
+def riempi(html, versione):
+    # prima i pezzi dell'altra versione, poi i segnaposto
+    html = re.sub(r"<!--([AB])-->(.*?)<!--/\1-->", lambda m: m.group(2) if m.group(1) == versione else "", html,
+                  flags=re.S)
+    html = html.replace("{{versione}}", f"versione {versione}, {VERSIONI[versione]}")
     nomi = poteri.nomi()
     # le icone nello stesso ordine delle carte (grafica/carte_nuove.py, ORDINE_ICONE)
     ordine = ("MA", "DI", "CO", "OR", "CR", "RI").index
@@ -70,25 +83,28 @@ def edge(*argomenti):
                               capture_output=True, text=True, encoding="utf-8", errors="replace")
 
 
-def main():
-    PRONTO.write_text(riempi(SORGENTE.read_text(encoding="utf-8")), encoding="utf-8")
-    PDF.unlink(missing_ok=True)
-    edge("--no-pdf-header-footer", f"--print-to-pdf={PDF}", PRONTO.as_uri())
+def main(versione, destino=None):
+    """Stampa il libretto di una versione; destino = un altro PDF, per le prove."""
+    destino = destino or pdf_di(versione)
+    PRONTO.write_text(riempi(SORGENTE.read_text(encoding="utf-8"), versione), encoding="utf-8")
+    destino.unlink(missing_ok=True)
+    edge("--no-pdf-header-footer", f"--print-to-pdf={destino}", PRONTO.as_uri())
     for _ in range(60):  # Edge può tornare prima di aver finito di scrivere
-        if PDF.exists() and PDF.stat().st_size:
+        if destino.exists() and destino.stat().st_size:
             break
         time.sleep(0.5)
     time.sleep(0.5)
-    pdf = fitz.open(PDF)
+    pdf = fitz.open(destino)
     # lo script della pagina scrive TRABOCCA dove il contenuto esce dal pannello
     fuori = [str(i + 1) for i, p in enumerate(pdf) if "TRABOCCA" in p.get_text()]
     if fuori:
-        raise SystemExit(f"Il testo esce dal pannello nelle pagine {', '.join(fuori)} di pitch/regolamento_a5.html")
+        raise SystemExit(f"Versione {versione}: il testo esce dal pannello nelle pagine {', '.join(fuori)}")
     if len(pdf) != PAGINE:
-        raise SystemExit(f"Il libretto ha {len(pdf)} pagine invece di {PAGINE}")
-    n = len(pdf)
-    print(f"pitch/regolamento_a5.pdf: {n} pagine A5, {PDF.stat().st_size / 1e6:.1f} MB")
+        raise SystemExit(f"Versione {versione}: il libretto ha {len(pdf)} pagine invece di {PAGINE}")
+    print(f"{destino.name}: {len(pdf)} pagine A5, {destino.stat().st_size / 1e6:.1f} MB")
+    return destino
 
 
 if __name__ == "__main__":
-    main()
+    for v in sys.argv[1:] or VERSIONI:
+        main(v.upper())

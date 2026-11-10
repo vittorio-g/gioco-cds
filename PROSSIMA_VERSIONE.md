@@ -6,9 +6,15 @@ l'Archistar con "2-4 partecipanti" e "15 min, gioco di carte"). I PDF stampati s
 `Collocamento - immagini della grafica/stampa/stampato 2026-10-28/`.
 
 Il **5 novembre 2026** il print and play è stato rifatto con tutti i cambiamenti qui sotto, quelli del playtest
-di novembre e le decisioni di Vittorio dello stesso giorno: `grafica/stampa/collocamento_pnp.pdf`, 19 fogli, e
-`collocamento_regolamento_a4.pdf`. È la versione da stampare, non ancora stampata. La scatola non è stata rifatta:
-nei sorgenti (`grafica/scatola.py`) ha già il contenuto nuovo, eventi compresi; 12 carte in più stanno nei 44 mm.
+di novembre e le decisioni di Vittorio dello stesso giorno. Il **10 novembre** Vittorio ha chiesto due versioni per un
+confronto A/B: **A con gli eventi** (`grafica/stampa/collocamento_pnp_A_con_eventi.pdf`, 19 fogli) e **B senza**
+(`collocamento_pnp_B_senza_eventi.pdf`, 18 fogli), più i regolamenti a parte `collocamento_regolamento_a4_A.pdf` e
+`_B.pdf`. Persone e Ambiti sono uguali; regolamento, carte riassunto e intestazioni dei fogli dicono la versione. Nella B
+il foglio delle carte riassunto usa il lavoro 5 del laser, quindi i tre posti degli eventi si tagliano bianchi. È la
+versione da stampare, non ancora stampata. Le carte si tagliano **plastificate** (buste in PET; in PVC il laser non
+taglia). La scatola è stata rifatta il 10/11: interno 45 mm con linguette da 10 per le 136 carte, lavoro 11 del
+laser (marker 33-35 da 12 mm, pieghe incise nel gruppo MARK); non si plastifica, sono tre fogli incollati (stampa e due
+cartoncini). Elenca anche le 12 carte evento: con la versione B restano fuori.
 
 **Taglio al laser.** Dal 5/11 il laser di aira (sessione LASER) trova i fogli con la telecamera: niente più crocini,
 ma tre marker ArUco da 5 mm stampati solo sul fronte dei fogli di carte (lavoro 4 per i fogli da 9 carte, lavoro 5
@@ -38,6 +44,8 @@ registro. In laser-designs non si scrive da qui.
 **Non allineati.** `REGOLAMENTO.md` è la trascrizione del testo dei designer del 5 ottobre e resta com'è. Le
 simulazioni (`strumenti/regole.mjs`, `strumenti/analisi.mjs`) e `BUCHI.md` conoscono ancora le regole e i quattro
 poteri del 28 ottobre. Il documento del pitch (`pitch/regolamenti.tex`) descrive la versione stampata:
-`pitch/poteri.tex` ora ha sei poteri, quindi va riallineato prima di ricompilarlo. Il logo a timbro tondo usa ancora
-i simboli delle cinque categorie, che dal gioco sono spariti. Il riepilogo per i designer è
+`pitch/poteri.tex` ora ha sei poteri, quindi va riallineato prima di ricompilarlo. Il riepilogo per i designer è
 `playtest/feedback_playtest_2026-11.tex` (il PDF è su Drive, in `playtest/`; le figure le fa `py -3 playtest/figure.py`).
+| 10/11/2026 | Il logo a timbro tondo ha sull'arco basso **le sei icone delle competenze**, nell'ordine delle carte, al posto dei simboli delle categorie. | `grafica/logo_simboli.py` → `grafica/logo_proposte/A2_competenze.png` (su Drive) | fatto |
+| 10/11/2026 | **Due versioni per il confronto A/B**, con e senza eventi: un sorgente solo per il regolamento, con i pezzi di una sola versione fra i commenti A e B; carte riassunto con la lettera della versione; `pnp.py` fa i due PDF. | `pitch/regolamento_a5.html`, `pitch/libretto.py`, `carte_nuove.py` (`VERSIONI`), `pnp.py` | nei PDF del 10/11 |
+| 10/11/2026 | **Scatola** da 45 mm con linguette da 10, nel formato del laser di aira (lavoro 11): marker 33-35 da 12 mm, file di taglio con CUT e pieghe in MARK. | `grafica/scatola.py`, `grafica/segni_laser.py`, `grafica/stampa/segni/lavoro_11_segni.svg` | nel PDF del 10/11 |

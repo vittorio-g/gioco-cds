@@ -606,13 +606,19 @@ def testo_ricco(d, x, y, largo, pezzi, interlinea, colore=PETROLIO):
     return y + (len(righe) - 1) * interlinea
 
 
-def riassunto_B(lato):
-    """La carta riassunto: sul fronte il turno, sul retro punti e poteri. Fondo panna, come le Persone."""
+VERSIONI = {"A": "con eventi", "B": "senza eventi"}  # le due versioni del playtest a confronto (novembre 2026)
+
+
+def riassunto_B(lato, versione="A"):
+    """La carta riassunto: sul fronte il turno, sul retro punti e poteri. Fondo panna, come le Persone.
+
+    Le versioni A (con eventi) e B (senza) del playtest a confronto hanno la lettera in alto a destra,
+    perché le carte dei due tavoli non si mescolino; sulla B il turno non nomina gli eventi."""
     tela = Image.new("RGBA", (LARGO, ALTO), PANNA)
     d = ImageDraw.Draw(tela)
     f_et = font(BAHN, 8.5, "SemiBold Condensed")
     scrivi(d, X(5.5), X(7.6), "RIASSUNTO", f_et, MAGENTA, PT(8.5) * 0.22)
-    scrivi(d, X(57.5), X(7.6), "COLLOCAMENTO", f_et, PETROLIO, PT(8.5) * 0.12, "rs")
+    scrivi(d, X(57.5), X(7.6), f"COLLOCAMENTO · {versione}", f_et, PETROLIO, PT(8.5) * 0.12, "rs")
     titolo = "IL TURNO" if lato == "fronte" else "PUNTI E POTERI"
     f_t = font(BAHN, 21, "Bold Condensed")
     scrivi(d, X(5.5), X(10.2) + PT(21) * 0.74, titolo, f_t, PETROLIO)
@@ -621,8 +627,9 @@ def riassunto_B(lato):
     riga = PT(8.5) * 1.16
     if lato == "fronte":
         y = X(23.5)
-        d.text((X(5.5), y), "A ogni giro si scopre un evento.", font=corpo, fill=PETROLIO, anchor="ls")
-        y += riga * 1.2
+        if versione == "A":
+            d.text((X(5.5), y), "A ogni giro si scopre un evento.", font=corpo, fill=PETROLIO, anchor="ls")
+            y += riga * 1.2
         d.text((X(5.5), y), "Una sola azione per turno: dilla, poi falla.", font=grassetto, fill=PETROLIO, anchor="ls")
         y += riga * 1.55
         azioni = [("APRI", " una formazione: un Ambito davanti a te."),
@@ -675,8 +682,10 @@ def mazzo(chiave):
         print(out / cartella, len(numeri))
     if chiave == "B":
         for lato in ("fronte", "retro"):
-            riassunto_B(lato).save(out / f"riassunto_{lato}.png")
-        print(out / "riassunto_fronte.png, riassunto_retro.png")
+            (out / f"riassunto_{lato}.png").unlink(missing_ok=True)  # di prima delle due versioni
+            for versione in VERSIONI:
+                riassunto_B(lato, versione).save(out / f"riassunto_{lato}_{versione}.png")
+        print(out / "riassunto_{fronte,retro}_{A,B}.png")
         (out / "eventi").mkdir(parents=True, exist_ok=True)
         for n in EVENTI:
             carta_evento(n).save(out / "eventi" / f"{n}.png")
