@@ -97,7 +97,7 @@ def edge(*argomenti):
 # una pagina per gli appunti: nel libretto formato carta se ne aggiungono prima del retro finché le pagine non
 # sono un multiplo di 4 (il libretto si pinza: ogni foglio piegato fa quattro pagine)
 APPUNTI = ('<section class="sezione appunti"><div class="occhiello">Durante la partita</div><h2>Appunti</h2>'
-           '<div class="righe"></div></section>\n')
+           '<div class="righe">' + '<div></div>' * 9 + '</div></section>\n')
 
 
 def stampa(html, destino):

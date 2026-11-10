@@ -117,10 +117,8 @@ table.punti tr > :last-child { border-radius: 0 1mm 1mm 0; }
 .esempio-set .didascalie { flex: 1; font-size: 6.6pt; line-height: 1.24; }
 .esempio-set .didascalie p { margin-bottom: .9mm; }
 .appunti { break-before: page; }
-.appunti .righe {
-  height: 58mm; margin-top: 2mm;
-  background: repeating-linear-gradient(to bottom, transparent 0, transparent 6.2mm, rgba(23, 71, 77, .28) 6.2mm, rgba(23, 71, 77, .28) 6.45mm);
-}
+.appunti .righe { margin-top: 1mm; }
+.appunti .righe div { height: 6.4mm; border-bottom: .25mm solid rgba(23, 71, 77, .28); }
 
 /* la copertina: petrolio come il fronte della scatola, con un ventaglio di carte (un set perfetto: L'Archistar e
    Grafica hanno le stesse tre icone), gli adesivi e il timbro REGOLAMENTO */
@@ -395,6 +393,20 @@ table.punti tr > :last-child { border-radius: 0 1mm 1mm 0; }
   </div>
 </div>
 
+<!-- ============================================================ LE IMMAGINI (la dichiarazione sull'IA, come nel libretto A5) -->
+<div class="sezione nuova">
+  <div class="occhiello">Un prototipo</div>
+  <h2>Le immagini</h2>
+  <div class="figura" style="height: 22.5mm; margin-top: 1.6mm">
+    <img class="carta" src="img/lav_41.jpg" style="left: 5.5mm; top: 1.2mm; width: 14mm; transform: rotate(-6deg)">
+    <img class="carta" src="img/amb_22.jpg" style="left: 19.5mm; top: .3mm; width: 14mm; transform: rotate(2deg)">
+    <img class="carta" src="img/dorsoB_amb.jpg" style="left: 33.5mm; top: 1.2mm; width: 14mm; transform: rotate(7deg)">
+  </div>
+  <div class="nota dx" style="font-size: 7.6pt; line-height: 1.26; margin-top: 1.2mm">
+    <p>Le immagini di questo prototipo sono generate con l'intelligenza artificiale: servono a provare il gioco, non sono la sua veste definitiva. Per la versione finale vogliamo affidare grafica e illustrazioni, con un compenso, a chi fa design e illustrazione per professione.</p>
+  </div>
+</div>
+
 <!-- ============================================================ RETRO -->
 <section class="retro">
   <div class="occhiello">Collocamento · game design</div>
@@ -403,7 +415,7 @@ table.punti tr > :last-child { border-radius: 0 1mm 1mm 0; }
   <img src="img/logo_cds_panna.svg" style="width: 46mm; margin-bottom: 4mm">
   <p class="piccolo">Con il contributo del Fondo di beneficenza di</p>
   <img src="img/logo_isp_panna.svg" style="width: 38mm">
-  <div class="fondo">Le immagini di questo prototipo sono generate con l'intelligenza artificiale e non sono la veste definitiva.<br>V2 · {{versione}} · 2026</div>
+  <div class="fondo">Prototipo V2 · {{versione}} · 2026</div>
 </section>
 
 </body>
