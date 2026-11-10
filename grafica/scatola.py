@@ -289,44 +289,46 @@ def fronte():
 
 
 def retro(versione="A"):
-    """Panna: che cosa c'è dentro, in una frase il gioco, le sei competenze. Per il confronto A/B la scatola ha
-    la lettera della versione accanto a CDS, e nella B l'elenco non ha le carte evento."""
+    """Panna, in due blocchi divisi da un filetto rosa: sopra che cosa c'è dentro, il gioco in una frase e le sei
+    competenze; sotto chi l'ha fatto (game design), il CdS e il contributo del Fondo di beneficenza di Intesa
+    Sanpaolo. Per il confronto A/B la scatola ha la lettera della versione accanto a CDS, e nella B l'elenco
+    non ha le carte evento. Il blocco di sotto ha posizioni fisse; nella B c'è più aria sopra gli adesivi.
+    (Vittorio, 10/11/2026: «un po' tutto attaccato»; la nota sulle immagini IA è passata sul fondo.)"""
     im, d = pannello(LARGO, ALTO)
     f_et = font(BAHN, 7, "SemiBold Condensed")
     scrivi(d, P(5), P(7.5), "COLLOCAMENTO", f_et, MAGENTA, cn.PT(7) * 0.24)
     scrivi(d, P(LARGO - 5), P(7.5), f"CDS · {EDIZIONE} · {versione}", f_et, PETROLIO, cn.PT(7) * 0.2, "rs")
-    scrivi(d, P(5), P(16), "IN QUESTA SCATOLA", font(BAHN, 15, "Bold Condensed"), PETROLIO)
-    f_l = font(BAHN, 10.5, "Bold Condensed")
+    scrivi(d, P(5), P(15.6), "IN QUESTA SCATOLA", font(BAHN, 13.5, "Bold Condensed"), PETROLIO)
+    f_l = font(BAHN, 9.8, "Bold Condensed")
     # il regolamento ora sta nella scatola: il libretto formato carta (pitch/regolamento_carta.html)
     contenuto = (["60 carte Persona", "60 carte Ambito"] + (["12 carte evento"] if versione == "A" else [])
                  + ["4 carte riassunto", "il regolamento"])
-    passo = 4.9 if len(contenuto) <= 4 else 4.4
     for i, riga in enumerate(contenuto):  # niente token
-        y = 22.5 + i * passo
-        q = Image.new("RGBA", (P(2), P(2)), ROSA).rotate(-9, resample=Image.BICUBIC, expand=True)
-        incolla_centro(im, q, P(6.2), P(y - 1.3))
-        scrivi(d, P(9.4), P(y), riga, f_l, PETROLIO)
-    motto = ("Forma le persone rispettando le loro ambizioni, trova a ciascuna il lavoro giusto "
-             "e chiudi il collocamento prima del resto del tavolo.")
-    f_m, righe, pt, _ = cn.adatta(motto, BAHN, 8.6, 7, P(LARGO - 10), 3, "SemiBold SemiCondensed")
-    cn.paragrafo(d, P(5), P(max(43.2, y + 4.6)), righe, f_m, PETROLIO, cn.PT(pt) * 1.22)
+        y = 21.8 + i * 4.2
+        q = Image.new("RGBA", (P(1.8), P(1.8)), ROSA).rotate(-9, resample=Image.BICUBIC, expand=True)
+        incolla_centro(im, q, P(6.1), P(y - 1.2))
+        scrivi(d, P(9.2), P(y), riga, f_l, PETROLIO)
+    # il gioco in una frase, su due righe pari (senza una parola sola a capo)
+    f_m = font(BAHN, 8.6, "SemiBold SemiCondensed")
+    cn.paragrafo(d, P(5), P(y + 5.8), ["Forma le persone,", "trova a ciascuna il lavoro giusto."], f_m, PETROLIO,
+                 cn.PT(8.6) * 1.22)
     for i, sigla in enumerate(("MA", "DI", "CO", "OR", "CR", "RI")):
-        incolla_centro(im, cn.adesivo(sigla, 7.2, (-6, 4, -3, 5, -4, 3)[i], 0.6), P(9.2 + i * 9.3), P(60))
-    # sotto gli adesivi chi ha fatto il gioco (Vittorio, 10/11/2026); in fondo il logo del CdS, con sopra da dove
-    # viene il gioco, e il contributo del Fondo di beneficenza di Intesa Sanpaolo; i due loghi in petrolio,
-    # l'ultima riga a 3 mm dalla piega del fondo
-    f_c = font(BAHN, 5.6, "SemiCondensed")
-    f_cb = font(BAHN, 5.6, "SemiBold SemiCondensed")
-    scrivi(d, P(5), P(66.8), "Game design:", f_cb, MAGENTA)
-    scrivi(d, P(5) + larghezza("Game design: ", f_cb, 0), P(66.8), GAME_DESIGN, f_c, PETROLIO)
-    scrivi(d, P(5), P(69.9), "Dalla quotidiana esperienza del", f_c, PETROLIO)
-    cds = logo_cds(38)
-    im.alpha_composite(cds, (P(5), P(70.9)))
-    scrivi(d, P(5), P(81.6), "Con il contributo del", f_c, PETROLIO)
-    scrivi(d, P(5), P(83.7), "Fondo di beneficenza di", f_c, PETROLIO)
-    isp = logo_isp(31)
-    im.alpha_composite(isp, (P(LARGO - 5) - isp.width, P(84.1) - isp.height))
-    scrivi(d, P(5), P(86.7), "Prototipo: immagini generate con l'IA.", font(BAHN, 5.2, "SemiCondensed"), PETROLIO)
+        incolla_centro(im, cn.adesivo(sigla, 6.6, (-6, 4, -3, 5, -4, 3)[i], 0.6), P(8.6 + i * 9.56), P(55))
+    # il filetto che divide il gioco dai crediti
+    d.line([P(5), P(61.4), P(LARGO - 5), P(61.4)], fill=ROSA, width=P(0.3))
+    # i crediti: game design, il CdS, il Fondo di beneficenza; i due loghi in petrolio, l'ultima riga a 3 mm
+    # dalla piega del fondo
+    f_lab = font(BAHN, 5.6, "SemiBold Condensed")
+    f_c = font(BAHN, 5.8, "SemiCondensed")
+    scrivi(d, P(5), P(65.2), "GAME DESIGN", f_lab, MAGENTA, cn.PT(5.6) * 0.2)
+    scrivi(d, P(5), P(68.0), GAME_DESIGN, f_c, PETROLIO)
+    scrivi(d, P(5), P(72.2), "Dalla quotidiana esperienza del", f_c, PETROLIO)
+    cds = logo_cds(32)
+    im.alpha_composite(cds, (P(5), P(73.2)))
+    scrivi(d, P(5), P(83.4), "Con il contributo del", f_c, PETROLIO)
+    scrivi(d, P(5), P(85.6), "Fondo di beneficenza di", f_c, PETROLIO)
+    isp = logo_isp(28)
+    im.alpha_composite(isp, (P(LARGO - 5) - isp.width, P(85.8) - isp.height))
     return im
 
 
@@ -364,8 +366,11 @@ def coperchio():
 def fondo():
     im, d = pannello(LARGO, PROFONDITA)
     f_s = font(BAHN, 7, "SemiBold Condensed")
-    scrivi(d, P(LARGO / 2), P(PROFONDITA / 2) + P(1), f"CDS · COLLOCAMENTO · PROTOTIPO {EDIZIONE} · 2026", f_s, PANNA,
+    scrivi(d, P(LARGO / 2), P(PROFONDITA / 2) - P(0.6), f"CDS · COLLOCAMENTO · PROTOTIPO {EDIZIONE} · 2026", f_s, PANNA,
            cn.PT(7) * 0.2, "ms")
+    # la nota sulle immagini, spostata qui dal retro per dargli aria (10/11/2026)
+    scrivi(d, P(LARGO / 2), P(PROFONDITA / 2) + P(4.2), "IMMAGINI GENERATE CON L'IA", font(BAHN, 6, "SemiBold Condensed"),
+           ROSA, cn.PT(6) * 0.2, "ms")
     return im
 
 
