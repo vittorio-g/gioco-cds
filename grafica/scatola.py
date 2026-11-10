@@ -250,6 +250,7 @@ def svg_immagine(svg, larghezza_mm):
 # La seconda scatola stampata (novembre 2026) si distingue dalla prima del 28/10, che aveva L'Archistar: c'è scritto
 # V2 e in copertina c'è un altro personaggio, La Curiosa (Vittorio, 10/11/2026)
 EDIZIONE = "V2"
+GAME_DESIGN = "Vittorio Guerrieri, Letizia Vaccarella, Pierpaolo Paoletti"  # sul retro, come sul libretto
 COPERTINA = "19"  # la Persona del fronte (prima L'Archistar, "03")
 # Le informazioni del gioco sotto l'immagine: (valore grande, etichetta). Durata decisa da Vittorio il
 # 28/10: 15 minuti. L'età minima non c'è ancora: si aggiunge qui, per esempio ("10+", "anni").
@@ -311,17 +312,21 @@ def retro(versione="A"):
     cn.paragrafo(d, P(5), P(max(43.2, y + 4.6)), righe, f_m, PETROLIO, cn.PT(pt) * 1.22)
     for i, sigla in enumerate(("MA", "DI", "CO", "OR", "CR", "RI")):
         incolla_centro(im, cn.adesivo(sigla, 7.2, (-6, 4, -3, 5, -4, 3)[i], 0.6), P(9.2 + i * 9.3), P(60))
-    # in fondo il logo del CdS, con sopra da dove viene il gioco, e il contributo del Fondo di beneficenza di
-    # Intesa Sanpaolo; i due loghi in petrolio, l'ultima riga a 3 mm dalla piega del fondo
+    # sotto gli adesivi chi ha fatto il gioco (Vittorio, 10/11/2026); in fondo il logo del CdS, con sopra da dove
+    # viene il gioco, e il contributo del Fondo di beneficenza di Intesa Sanpaolo; i due loghi in petrolio,
+    # l'ultima riga a 3 mm dalla piega del fondo
     f_c = font(BAHN, 5.6, "SemiCondensed")
-    scrivi(d, P(5), P(67.4), "Dalla quotidiana esperienza del", f_c, PETROLIO)
-    cds = logo_cds(42)
-    im.alpha_composite(cds, (P(5), P(68.6)))
-    scrivi(d, P(5), P(81.0), "Con il contributo del", f_c, PETROLIO)
-    scrivi(d, P(5), P(83.2), "Fondo di beneficenza di", f_c, PETROLIO)
+    f_cb = font(BAHN, 5.6, "SemiBold SemiCondensed")
+    scrivi(d, P(5), P(66.8), "Game design:", f_cb, MAGENTA)
+    scrivi(d, P(5) + larghezza("Game design: ", f_cb, 0), P(66.8), GAME_DESIGN, f_c, PETROLIO)
+    scrivi(d, P(5), P(69.9), "Dalla quotidiana esperienza del", f_c, PETROLIO)
+    cds = logo_cds(38)
+    im.alpha_composite(cds, (P(5), P(70.9)))
+    scrivi(d, P(5), P(81.6), "Con il contributo del", f_c, PETROLIO)
+    scrivi(d, P(5), P(83.7), "Fondo di beneficenza di", f_c, PETROLIO)
     isp = logo_isp(31)
-    im.alpha_composite(isp, (P(LARGO - 5) - isp.width, P(83.6) - isp.height))
-    scrivi(d, P(5), P(86.6), "Prototipo: immagini generate con l'IA.", font(BAHN, 5.2, "SemiCondensed"), PETROLIO)
+    im.alpha_composite(isp, (P(LARGO - 5) - isp.width, P(84.1) - isp.height))
+    scrivi(d, P(5), P(86.7), "Prototipo: immagini generate con l'IA.", font(BAHN, 5.2, "SemiCondensed"), PETROLIO)
     return im
 
 
