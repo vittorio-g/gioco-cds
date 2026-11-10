@@ -6,7 +6,7 @@
 // Le immagini vanno in grafica/dorsi_proposte/ambiti_<nome>.png (fuori da git: stanno su Drive).
 // La chiave si legge da OPENAI_API_KEY e non va mai scritta qui.
 //
-// Uso:  node grafica/genera_dorsi_ambiti.mjs [ruota trama modulo multiutensile passepartout]
+// Uso:  node grafica/genera_dorsi_ambiti.mjs [fascia_ruota fascia_dadi fascia_urna fascia_ventaglio ruota trama ...]
 // Le due proposte con le icone usano come riferimento dorsi_proposte/rif_icone.png: le sei icone di
 // grafica/dati/icone_hd come adesivi (carte_nuove.adesivo), in due file da tre, su fondo bianco.
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
@@ -27,8 +27,29 @@ The fronts of the cards are punk-fanzine two-colour risograph illustrations: flu
 
 Full-bleed design that fills the card to every edge, because it will be trimmed; keep every important element and all text well inside a 5 mm safe margin. Use only three inks: petrol teal (#17474D), fluorescent pink (#FF3D8B) and off-white (#F3ECDD). Flat printed look, no photographs, no people, no gradients other than risograph grain. Clean and readable from across a table: one strong idea, not a cluttered page.`;
 
-// "icone": true = si passa il riferimento con le sei icone delle competenze
+// Il 10/11/2026 Vittorio ha chiesto quattro proposte con la fascia centrale, come i dorsi di Persone ed Eventi,
+// mantenendo il significato della carta coperta: le proposte fascia_*, che hanno come riferimenti il dorso
+// delle Persone (per la fascia) e le sei icone.
+const FASCIA = `The first reference image is the back of the other deck of the same game (the "Persone" deck): copy its central band exactly, an off-white torn-paper band across the middle of the card with "COLLOCAMENTO" small and widely letter-spaced and the deck title large in bold condensed petrol-teal capitals, two small pink asterisks at its ends, and the same risograph grain and drawing style. Here the title is "AMBITI" and the background is petrol teal with the drawings in fluorescent pink and off-white, the opposite of the Persone back. The second reference image only shows the six competence symbols of the game, to copy their shapes; when they appear in a row or around a circle, keep this order: wrench, computer screen, speech bubble, checklist, four-pointed sparkle, magnifying glass. Create a brand new card back, not an edit of the references. The only text, spelled exactly: "COLLOCAMENTO" and "AMBITI" on the band, plus a question mark where the proposal asks for one.`;
+
+// "icone": true = si passa il riferimento con le sei icone delle competenze; "fascia": true = anche il dorso delle Persone
 export const PROPOSTE = {
+  fascia_ruota: {
+    fascia: true,
+    prompt: `Proposal "the wheel behind the band". A big prize wheel with six slots fills the card, centred so that the band runs across its middle: above the band the upper half of the wheel with three of the competence symbols as stickers (wrench, computer screen, speech bubble), below the band the lower half with the other three (checklist, four-pointed sparkle, magnifying glass). The tip of a large pink spinner arrow pokes out from behind the band, mid-spin, with a few motion lines: wherever it stops, that is your field.`,
+  },
+  fascia_dadi: {
+    fascia: true,
+    prompt: `Proposal "the dice". Two big chunky risograph dice tumble across the card, one above the band and one below it, tilted, with motion lines and a few sparks, as if just thrown. Instead of dots, the visible faces of the dice show the competence symbols, a different symbol on each face: roll and you get a field.`,
+  },
+  fascia_urna: {
+    fascia: true,
+    prompt: `Proposal "the draw". Above the band a big glass raffle jar, like the ones used to draw lottery numbers, full of round tokens, each token printed with one of the six competence symbols. Below the band a few tokens that have just tumbled out, scattered, and one of them in front, larger and flipped, showing only a big question mark: it can be any of them.`,
+  },
+  fascia_ventaglio: {
+    fascia: true,
+    prompt: `Proposal "the fan of cards". Above the band a fan of six small playing cards held open, each card showing one of the six competence symbols, in order from left to right. Below the band a single card lying face down and slightly tilted, its back showing only a big question mark, with a few pink sparks around it: the covered card can be any of the six.`,
+  },
   ruota: {
     icone: true,
     prompt: `Proposal "the wheel". Use the six competence symbols shown in the reference image (wrench, computer screen, speech bubble, checklist, four-pointed sparkle, magnifying glass), redrawn as off-white and pink risograph stickers with a thin off-white outline, all the same size. Arrange them evenly spaced on a big ring in the middle of the card, like the six slots of a prize wheel or a spinner, and put a large hand-drawn pink spinner arrow in the centre of the ring, mid-spin, with a few motion lines: wherever it stops, that is your field. The only text, spelled exactly: "COLLOCAMENTO" small and widely letter-spaced above the wheel, and "AMBITI" large in bold condensed capitals below it.`,
@@ -84,16 +105,21 @@ async function chiedi(nome, fai) {
 await Promise.all(scelte.map(async (id) => {
   const file = join(USCITA, `ambiti_${id}.png`);
   if (existsSync(file)) return;
-  const { icone, prompt } = PROPOSTE[id];
+  const { icone, fascia, prompt } = PROPOSTE[id];
   const testo = `${COMUNE}\n\n${prompt}`;
-  const png = icone
+  const riferimenti = fascia ? ['B_persone.png', 'rif_icone.png'] : ['rif_icone.png'];
+  const premessa = fascia ? FASCIA
+    : 'The reference image only shows the six competence symbols of the game, to copy their shapes. Create a brand new card back, not an edit of the reference.';
+  const png = icone || fascia
     ? await chiedi(id, () => {
       const modulo = new FormData();
       modulo.append('model', MODELLO);
-      modulo.append('prompt', `The reference image only shows the six competence symbols of the game, to copy their shapes. Create a brand new card back, not an edit of the reference.\n\n${testo}`);
+      modulo.append('prompt', `${premessa}\n\n${testo}`);
       modulo.append('size', DIMENSIONE);
       modulo.append('quality', QUALITA);
-      modulo.append('image[]', new Blob([readFileSync(join(USCITA, 'rif_icone.png'))], { type: 'image/png' }), 'rif_icone.png');
+      for (const nome of riferimenti) {
+        modulo.append('image[]', new Blob([readFileSync(join(USCITA, nome))], { type: 'image/png' }), nome);
+      }
       return fetch('https://api.openai.com/v1/images/edits', { method: 'POST', headers: { Authorization: `Bearer ${chiave}` }, body: modulo });
     })
     : await chiedi(id, () => fetch('https://api.openai.com/v1/images/generations', {
