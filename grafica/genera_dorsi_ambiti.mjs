@@ -2,7 +2,7 @@
 // Dopo il playtest di novembre un Ambito giocato coperto vale come un ambito qualsiasi: il dorso lo deve
 // raccontare. Un timbro JOLLY sopra il vecchio dorso B non bastava a Vittorio: voleva
 // dorsi ripensati da capo, un paio con le sei icone delle competenze e gli altri illustrati.
-// Il 5/11/2026 ha scelto la Ruota (grafica/dorso_ruota.py ne mette le icone nell'ordine delle carte).
+// Il 5/11/2026 aveva scelto la Ruota; il 10/11 l'ha sostituita con i Timbri (proposta grafica_timbri, sotto).
 // Le immagini vanno in grafica/dorsi_proposte/ambiti_<nome>.png (fuori da git: stanno su Drive).
 // La chiave si legge da OPENAI_API_KEY e non va mai scritta qui.
 //

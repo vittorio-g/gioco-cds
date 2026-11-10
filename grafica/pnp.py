@@ -120,11 +120,9 @@ if DORSO_EVT is None:
     DORSO_EVT = QUI / "dorsi_proposte" / "eventi_giornale.png"
 dorso_evt = salva(con_abbondanza(Image.open(DORSO_EVT), "reflect"), "dorso_evt")
 dorso_per = salva(con_abbondanza(Image.open(QUI / "dorsi_proposte" / f"{DORSI}_persone.png"), "reflect"), "dorso_per")
-# il dorso degli Ambiti è la Ruota (scelta da Vittorio il 5/11/2026): giocata coperta, la carta vale un ambito
-# a scelta; grafica/dorso_ruota.py ne mette le icone nell'ordine delle carte
-if not (QUI / "dorsi_proposte" / "ambiti_ruota_ordinata.png").exists():
-    subprocess.run([sys.executable, str(QUI / "dorso_ruota.py")], check=True)
-dorso_amb = salva(con_abbondanza(Image.open(QUI / "dorsi_proposte" / "ambiti_ruota_ordinata.png"), "reflect"), "dorso_amb")
+# il dorso degli Ambiti sono i Timbri (scelti da Vittorio il 10/11/2026): la fascia come Persone ed Eventi e le sei
+# icone come timbri d'ufficio, nell'ordine delle carte (grafica/genera_dorsi_ambiti.mjs, proposta grafica_timbri)
+dorso_amb = salva(con_abbondanza(Image.open(QUI / "dorsi_proposte" / "ambiti_grafica_timbri.png"), "reflect"), "dorso_amb")
 for vecchia in IMG.glob("*.jpg"):  # le immagini delle versioni precedenti
     if f"pnp_img/{vecchia.name}" not in (fronti_per + fronti_amb + fronti_evt + [dorso_per, dorso_amb, dorso_evt]
                                          + [f for coppia in riassunti.values() for f in coppia]):

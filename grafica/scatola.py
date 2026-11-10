@@ -218,6 +218,16 @@ def logo_cds(larghezza_mm):
     svg = (QUI / "dati" / "logo_cds.svg").read_text(encoding="utf-8")
     for colore in ("#065D8F", "#2C9ED2", "#38444F", "#868788"):
         svg = svg.replace(f'fill="{colore}"', f'fill="{PETROLIO}"')
+    return svg_immagine(svg, larghezza_mm)
+
+
+def logo_isp(larghezza_mm):
+    """Il logo Intesa Sanpaolo, per il contributo del Fondo di beneficenza (Vittorio, 10/11/2026): bianco su
+    verde com'è, senza ricolorarlo perché è il marchio di un altro (grafica/dati/logo_intesa_sanpaolo.svg)."""
+    return svg_immagine((QUI / "dati" / "logo_intesa_sanpaolo.svg").read_text(encoding="utf-8"), larghezza_mm)
+
+
+def svg_immagine(svg, larghezza_mm):
     pagina = fitz.open(stream=svg.encode("utf-8"), filetype="svg")[0]
     zoom = P(larghezza_mm) / pagina.rect.width
     pix = pagina.get_pixmap(matrix=fitz.Matrix(zoom, zoom), alpha=True)
@@ -268,25 +278,31 @@ def retro(versione="A"):
     f_et = font(BAHN, 7, "SemiBold Condensed")
     scrivi(d, P(5), P(7.5), "COLLOCAMENTO", f_et, MAGENTA, cn.PT(7) * 0.24)
     scrivi(d, P(LARGO - 5), P(7.5), f"CDS · {versione}", f_et, PETROLIO, cn.PT(7) * 0.2, "rs")
-    scrivi(d, P(5), P(17), "IN QUESTA SCATOLA", font(BAHN, 15, "Bold Condensed"), PETROLIO)
+    scrivi(d, P(5), P(16), "IN QUESTA SCATOLA", font(BAHN, 15, "Bold Condensed"), PETROLIO)
     f_l = font(BAHN, 10.5, "Bold Condensed")
     contenuto = ["60 carte Persona", "60 carte Ambito"] + (["12 carte evento"] if versione == "A" else []) + ["4 carte riassunto"]
     for i, riga in enumerate(contenuto):  # niente token
-        y = 24.5 + i * 5.4
+        y = 22.5 + i * 4.9
         q = Image.new("RGBA", (P(2), P(2)), ROSA).rotate(-9, resample=Image.BICUBIC, expand=True)
         incolla_centro(im, q, P(6.2), P(y - 1.3))
         scrivi(d, P(9.4), P(y), riga, f_l, PETROLIO)
     motto = ("Forma le persone rispettando le loro ambizioni, trova a ciascuna il lavoro giusto "
              "e chiudi il collocamento prima del resto del tavolo.")
     f_m, righe, pt, _ = cn.adatta(motto, BAHN, 8.6, 7, P(LARGO - 10), 4, "SemiBold SemiCondensed")
-    cn.paragrafo(d, P(5), P(47), righe, f_m, PETROLIO, cn.PT(pt) * 1.22)
+    cn.paragrafo(d, P(5), P(43.2), righe, f_m, PETROLIO, cn.PT(pt) * 1.22)
     for i, sigla in enumerate(("MA", "DI", "CO", "OR", "CR", "RI")):
-        incolla_centro(im, cn.adesivo(sigla, 7.2, (-6, 4, -3, 5, -4, 3)[i], 0.6), P(9.2 + i * 9.3), P(64.5))
+        incolla_centro(im, cn.adesivo(sigla, 7.2, (-6, 4, -3, 5, -4, 3)[i], 0.6), P(9.2 + i * 9.3), P(60))
     f_p = font(BAHN, 6.2, "SemiCondensed")
-    scrivi(d, P(5), P(72.6), "Regolamento a parte. Prototipo: immagini generate con l'IA.", f_p, PETROLIO)
-    # in fondo il logo del CdS, a 3 mm dalla piega del fondo
-    logo = logo_cds(LARGO - 13)
-    im.alpha_composite(logo, (P(5), P(ALTO - 3) - logo.height))
+    scrivi(d, P(5), P(67.8), "Regolamento a parte. Prototipo: immagini generate con l'IA.", f_p, PETROLIO)
+    # in fondo il logo del CdS e, sotto, il contributo del Fondo di beneficenza di Intesa Sanpaolo,
+    # a 3 mm dalla piega del fondo
+    cds = logo_cds(44)
+    im.alpha_composite(cds, (P(5), P(69.6)))
+    isp = logo_isp(29)
+    im.alpha_composite(isp, (P(LARGO - 5) - isp.width, P(ALTO - 3) - isp.height))
+    f_c = font(BAHN, 5.6, "SemiCondensed")
+    scrivi(d, P(5), P(83.6), "Con il contributo del", f_c, PETROLIO)
+    scrivi(d, P(5), P(86.0), "Fondo di beneficenza di", f_c, PETROLIO)
     return im
 
 
