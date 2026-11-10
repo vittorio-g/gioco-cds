@@ -411,8 +411,10 @@ def pdf(img, destino):
     pagina = doc.new_page(width=w, height=h)
     temp = STAMPA / "_scatola.jpg"
     img.save(temp, quality=92)
-    pagina.insert_image(pagina.rect, filename=str(temp))
+    xref = pagina.insert_image(pagina.rect, filename=str(temp))
     temp.unlink()
+    # RGB semplice, senza profilo ICC: la stampante di Vittorio si è fermata su pagine meno semplici (10/11/2026)
+    doc.xref_set_key(xref, "ColorSpace", "/DeviceRGB")
     k = 72 / 25.4
     # i marker di aira laser: riquadro bianco e quadretti neri pieni, senza tratto, nero solo (grigio 0)
     for (x, y, lw, lh), quadretti in segni_laser.marker(LAVORO):

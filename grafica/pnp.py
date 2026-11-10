@@ -51,7 +51,7 @@ Servono le illustrazioni in grafica/illustrazioni/, le carte dei designer in gra
 (per i disegni degli Ambiti) e i dorsi in grafica/dorsi_proposte/, tutto da Drive; Pillow, NumPy,
 OpenCV, PyMuPDF, pdflatex con TikZ e Microsoft Edge (per il regolamento).
 """
-import shutil
+import io
 import subprocess
 import sys
 from pathlib import Path
@@ -188,6 +188,22 @@ def immagine(file, x, su):
     return rf"\node[anchor=north west,inner sep=0] at ({x - ABB},{y(su - ABB)}) {{\includegraphics[width={W + 2 * ABB}mm,height={H + 2 * ABB}mm]{{{file}}}}};" + "\n"
 
 
+def pdf_semplice(sorgente, destino, dpi=400):
+    """Lo stesso PDF con ogni pagina fatta di una sola immagine JPEG semplice (RGB, baseline, senza profilo):
+    i PDF di Edge hanno caratteri Type3, trasparenze e JPEG progressivi, che la stampante di Vittorio non legge
+    («dati non supportati», 10/11/2026)."""
+    src, out = fitz.open(sorgente), fitz.open()
+    for p in src:
+        pix = p.get_pixmap(dpi=dpi, alpha=False)
+        buf = io.BytesIO()
+        Image.frombytes("RGB", (pix.width, pix.height), pix.samples).save(buf, "JPEG", quality=92, optimize=True)
+        nuova = out.new_page(width=p.rect.width, height=p.rect.height)
+        xref = nuova.insert_image(nuova.rect, stream=buf.getvalue())
+        out.xref_set_key(xref, "ColorSpace", "/DeviceRGB")
+    out.set_metadata(src.metadata)
+    out.save(destino, garbage=3, deflate=True)
+
+
 def foglio_carte(nome, carte, lavoro):
     """Un foglio di carte, fronte e retro: carte = [(fronte, dorso), ...] nei posti da 0 a 8.
     I marker del laser vanno solo sul fronte, dopo le carte, così niente ci finisce sopra."""
@@ -221,11 +237,20 @@ def fogli_libretto(regolamento):
     Foglio k: sul fronte le pagine n-2k (sopra) e 2k+1 (sotto), ruotate in senso orario; sul retro, nella colonna
     specchiata, n-2k-1 (sopra) e 2k+2 (sotto), ruotate in senso antiorario. Copertina e retro sono petrolio:
     l'abbondanza del foglio esterno, sul fronte, è petrolio anche lei."""
-    n = len(fitz.open(regolamento))
+    doc = fitz.open(regolamento)
+    n = len(doc)
     if n % 4:
         raise SystemExit(f"il libretto ha {n} pagine: servono multipli di 4")
-    file = regolamento.as_posix()
     fogli = n // 4
+
+    def immagine_pagina(pagina, angolo):
+        """La pagina del libretto come JPEG semplice (RGB, baseline, a 500 dpi), già ruotata. Il PDF di Edge ha
+        caratteri Type3, trasparenze e JPEG progressivi: la stampante di Vittorio si è fermata lì (10/11/2026)."""
+        pix = doc[pagina - 1].get_pixmap(dpi=500, alpha=False)
+        img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples).rotate(angolo, expand=True)
+        nome = f"pnp_img/{regolamento.stem}_{pagina:02d}.jpg"
+        img.save(STAMPA / nome, quality=92, optimize=True)
+        return nome
     testo = ""
     for facciata in range((fogli + 3) // 4):
         da = range(facciata * 4, min(fogli, facciata * 4 + 4))
@@ -242,7 +267,8 @@ def fogli_libretto(regolamento):
                     sopra, sotto, angolo = n - 2 * k - 1, 2 * k + 2, 90
                 for pagina, centro in ((sopra, su + PAG_W / 2), (sotto, su + PAG_W * 1.5)):
                     testo += (rf"\node[inner sep=0] at ({x + w / 2},{y(centro)}) "
-                              rf"{{\includegraphics[page={pagina},angle={angolo}]{{{file}}}}};" + "\n")
+                              rf"{{\includegraphics[width={PAG_H}mm,height={PAG_W}mm]{{{immagine_pagina(pagina, angolo)}}}}};"
+                              + "\n")
             if lato == "fronte":  # i crocini, fuori dall'abbondanza, solo sul fronte
                 xs = sorted({v for k in da for v in (posto_libretto(k % 4)[0], posto_libretto(k % 4)[0] + PAG_H)})
                 ys = sorted({v for k in da for v in (posto_libretto(k % 4)[1], posto_libretto(k % 4)[1] + 2 * PAG_W)})
@@ -269,7 +295,7 @@ for vecchio in [STAMPA / f"collocamento_pnp.{e}" for e in ("pdf", "tex")] + [STA
 for versione in [v.upper() for v in sys.argv[1:]] or list(VERSIONI):
     regolamento = libretto.main(versione)
     # il libretto A5, da consultare: si tiene allineato al libretto formato carta (stesse regole, stessi segnaposto)
-    shutil.copy(libretto.main(versione, formato="a5"), STAMPA / f"collocamento_regolamento_a5_{versione}.pdf")
+    pdf_semplice(libretto.main(versione, formato="a5"), STAMPA / f"collocamento_regolamento_a5_{versione}.pdf")
     testo = TESTA
     for nome, fronti, dorso in (("PERSONE", fronti_per, dorso_per), ("AMBITI", fronti_amb + fronti_amb, dorso_amb)):
         fogli = (len(fronti) + 8) // 9

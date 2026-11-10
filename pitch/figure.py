@@ -58,7 +58,7 @@ usate = set(re.findall(r"\b((?:lav|amb|ill|art|evt)_\d\d|dorso[ABC]?_(?:lav|amb|
 
 
 def salva(img, nome, qualita=88):
-    img.convert("RGB").save(IMG / f"{nome}.jpg", quality=qualita, optimize=True, progressive=True)
+    img.convert("RGB").save(IMG / f"{nome}.jpg", quality=qualita, optimize=True)  # baseline: le stampanti leggono meglio
 
 
 def ridotta(img):
