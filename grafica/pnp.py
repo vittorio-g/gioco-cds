@@ -6,8 +6,8 @@ sul lato lungo, e da tagliare al laser.
     py -3 grafica/pnp.py B        # una sola
 
 Per il playtest a confronto di novembre 2026 ci sono due versioni: A con le carte evento, B senza.
-Scrive grafica/stampa/collocamento_pnp_A_con_eventi.pdf (40 pagine, 20 fogli) e
-collocamento_pnp_B_senza_eventi.pdf (38 pagine, 19 fogli), e i file di taglio in grafica/stampa/taglio/.
+Scrive grafica/stampa/collocamento_pnp_A_con_eventi.pdf (36 pagine, 18 fogli) e
+collocamento_pnp_B_senza_eventi.pdf (34 pagine, 17 fogli), e i file di taglio in grafica/stampa/taglio/.
 Le immagini che servono le prepara in grafica/stampa/pnp_img/.
 
 - Fogli 1-7: le 60 Persone, col potere scritto sulla carta (grafica/dati/poteri.json,
@@ -17,9 +17,10 @@ Le immagini che servono le prepara in grafica/stampa/pnp_img/.
   riassunto (da un lato il turno, dall'altro punti e poteri) e le carte evento 10-12; restano vuoti
   gli ultimi due posti, in basso al centro e a destra.
 - Versione B, foglio 15: le 4 carte riassunto della B, negli stessi posti; il resto del foglio è bianco.
-- Poi tre fogli: il regolamento A5 della versione (pitch/regolamento_a5_A.pdf o _B.pdf), due pagine
-  per facciata, da piegare a metà. Lo rifà ogni volta pitch/libretto.py (HTML stampato da Edge), dopo
-  pitch/figure.py per le immagini.
+- Poi un foglio: il regolamento della versione (pitch/regolamento_piegato_A.pdf o _B.pdf), A4 fronte e
+  retro da piegare a fisarmonica 4 x 4 fino a 52,5 x 74,25 mm, per metterlo nella scatola (dal 10/11/2026;
+  prima era un libretto A5 di tre fogli). Non si plastifica. Lo rifà ogni volta pitch/libretto.py (HTML
+  stampato da Edge), dopo pitch/figure.py per le immagini.
 - Ultimo foglio: la scatola della versione (grafica/scatola.py), A4 orizzontale, solo fronte, col retro
   bianco. Non si plastifica: si incolla su due cartoncini e si taglia al laser (lavoro 11).
 
@@ -38,13 +39,12 @@ lavoro 4 per i fogli da 9 carte e lavoro 5 per quello da 7. Sul retro niente seg
 allinea al fronte, e un errore del fronte e retro cade sui dorsi, dove c'è l'abbondanza. I dorsi
 sono già specchiati per il lato lungo.
 
-Il libretto: in ogni facciata due pagine A5 ruotate. Sul fronte ruotano in senso orario, sul
-retro in senso antiorario: col fronte e retro sul lato lungo è come stampare un libretto sul
-lato corto, e piegando i fogli a metà le pagine vanno in ordine.
+Il regolamento piegato va così com'è: col fronte e retro sul lato lungo, dietro la prima colonna del
+fronte c'è l'ultima del retro, come girando una pagina.
 
 Servono le illustrazioni in grafica/illustrazioni/, le carte dei designer in grafica/carte_v2/
 (per i disegni degli Ambiti) e i dorsi in grafica/dorsi_proposte/, tutto da Drive; Pillow, NumPy,
-OpenCV, PyMuPDF, pdflatex con TikZ e Microsoft Edge (per il libretto).
+OpenCV, PyMuPDF, pdflatex con TikZ e Microsoft Edge (per il regolamento).
 """
 import subprocess
 import sys
@@ -192,23 +192,15 @@ def foglio_carte(nome, carte, lavoro):
     return fronte + segni(lavoro) + chiudi() + retro + chiudi()
 
 
-# ---- il libretto: pagine A5 a due a due, ruotate
-def fogli_libretto(regolamento):
-    n = len(fitz.open(regolamento))
-    if n % 4:
-        raise SystemExit(f"il regolamento A5 ha {n} pagine: per il libretto servono multipli di 4")
+# ---- il regolamento: un A4 fronte e retro, da piegare
+def foglio_regolamento(regolamento):
+    if len(fitz.open(regolamento)) != 2:
+        raise SystemExit("il regolamento piegato deve avere due pagine, fronte e retro")
     file = regolamento.as_posix()
     testo = ""
-    for s in range(n // 4):
-        sinistra, destra = n - 2 * s, 2 * s + 1  # fronte, visto in orizzontale
-        testo += apri()  # niente intestazione: finirebbe sul margine delle pagine del libretto
-        testo += rf"\node[inner sep=0] at (105,{y(74.25)}) {{\includegraphics[page={sinistra},angle=-90]{{{file}}}}};" + "\n"
-        testo += rf"\node[inner sep=0] at (105,{y(222.75)}) {{\includegraphics[page={destra},angle=-90]{{{file}}}}};" + "\n"
-        testo += chiudi()
-        sinistra, destra = 2 * s + 2, n - 2 * s - 1  # retro, visto in orizzontale
+    for pagina in (1, 2):  # niente intestazione: finirebbe sul margine del foglio
         testo += apri()
-        testo += rf"\node[inner sep=0] at (105,{y(74.25)}) {{\includegraphics[page={destra},angle=90]{{{file}}}}};" + "\n"
-        testo += rf"\node[inner sep=0] at (105,{y(222.75)}) {{\includegraphics[page={sinistra},angle=90]{{{file}}}}};" + "\n"
+        testo += rf"\node[inner sep=0] at (105,148.5) {{\includegraphics[page={pagina}]{{{file}}}}};" + "\n"
         testo += chiudi()
     return testo
 
@@ -241,7 +233,7 @@ for versione in [v.upper() for v in sys.argv[1:]] or list(VERSIONI):
         # senza eventi restano le 4 carte riassunto, negli stessi posti del foglio da 7 (lavoro 5): il laser taglia
         # anche i tre posti degli eventi, che restano bianchi
         testo += foglio_carte("CARTE RIASSUNTO · VERSIONE B", [(fronte, retro)] * 4, LAVORO_7)
-    testo += fogli_libretto(regolamento)
+    testo += foglio_regolamento(regolamento)
     testo += "\\end{document}\n"
 
     NOME = f"collocamento_pnp_{versione}_{VERSIONI[versione].replace(' ', '_')}"
@@ -258,12 +250,12 @@ for versione in [v.upper() for v in sys.argv[1:]] or list(VERSIONI):
 
     # il solo regolamento, da stampare a parte: sono gli ultimi fogli del print and play, già imposti
     tutto = fitz.open(pdf)
-    facciate = len(fitz.open(regolamento)) // 2
+    facciate = len(fitz.open(regolamento))  # fronte e retro del foglio piegato
     solo = fitz.open()
     solo.insert_pdf(tutto, from_page=len(tutto) - facciate, to_page=len(tutto) - 1)
-    solo.set_metadata({"title": f"Collocamento - Regolamento, versione {versione}, libretto A5 su A4 fronte e retro"})
+    solo.set_metadata({"title": f"Collocamento - Regolamento, versione {versione}, A4 fronte e retro da piegare"})
     solo.save(STAMPA / f"collocamento_regolamento_a4_{versione}.pdf", garbage=3, deflate=True)
-    print(f"grafica/stampa/collocamento_regolamento_a4_{versione}.pdf: {facciate} pagine, {facciate // 2} fogli")
+    print(f"grafica/stampa/collocamento_regolamento_a4_{versione}.pdf: {facciate} pagine, 1 foglio")
 
     # in fondo la scatola della versione (grafica/scatola.py): A4 orizzontale, solo fronte, lavoro 11 del laser.
     # Dietro una pagina bianca, perché nella stampa fronte e retro non si sfasi niente

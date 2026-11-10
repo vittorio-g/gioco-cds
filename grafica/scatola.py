@@ -211,20 +211,32 @@ def incolla_centro(tela, im, cx, cy):
     tela.alpha_composite(im, (round(cx - im.width / 2), round(cy - im.height / 2)))
 
 
+LOGHI = {
+    # il logo del Centro di Solidarietà della Compagnia delle Opere Liguria: i due azzurri e i grigi originali
+    # stonavano sul panna (Vittorio, 10/11/2026: «rimanipolalo pure a seconda di come sta meglio»)
+    "cds": ("logo_cds.svg", ("#065D8F", "#2C9ED2", "#38444F", "#868788")),
+    # il logo Intesa Sanpaolo, per il contributo del Fondo di beneficenza: senza il riquadro verde, «che rovina
+    # l'estetica», e con un colore della palette (Vittorio, 10/11/2026)
+    "isp": ("logo_intesa_sanpaolo.svg", ("#000000",)),
+}
+
+
+def logo_svg(nome, colore=PETROLIO):
+    """Il logo come testo SVG, tutto in un colore della palette: lo usano la scatola e il regolamento piegato
+    (pitch/figure.py lo copia in pitch/img/)."""
+    file, originali = LOGHI[nome]
+    svg = (QUI / "dati" / file).read_text(encoding="utf-8")
+    for c in originali:
+        svg = svg.replace(f'fill="{c}"', f'fill="{colore}"')
+    return svg
+
+
 def logo_cds(larghezza_mm):
-    """Il logo del Centro di Solidarietà della Compagnia delle Opere Liguria (grafica/dati/logo_cds.svg),
-    tutto in petrolio come i testi della scatola: i due azzurri e i grigi originali stonavano sul panna
-    (Vittorio, 10/11/2026: «rimanipolalo pure a seconda di come sta meglio»)."""
-    svg = (QUI / "dati" / "logo_cds.svg").read_text(encoding="utf-8")
-    for colore in ("#065D8F", "#2C9ED2", "#38444F", "#868788"):
-        svg = svg.replace(f'fill="{colore}"', f'fill="{PETROLIO}"')
-    return svg_immagine(svg, larghezza_mm)
+    return svg_immagine(logo_svg("cds"), larghezza_mm)
 
 
 def logo_isp(larghezza_mm):
-    """Il logo Intesa Sanpaolo, per il contributo del Fondo di beneficenza (Vittorio, 10/11/2026): bianco su
-    verde com'è, senza ricolorarlo perché è il marchio di un altro (grafica/dati/logo_intesa_sanpaolo.svg)."""
-    return svg_immagine((QUI / "dati" / "logo_intesa_sanpaolo.svg").read_text(encoding="utf-8"), larghezza_mm)
+    return svg_immagine(logo_svg("isp"), larghezza_mm)
 
 
 def svg_immagine(svg, larghezza_mm):
@@ -280,29 +292,32 @@ def retro(versione="A"):
     scrivi(d, P(LARGO - 5), P(7.5), f"CDS · {versione}", f_et, PETROLIO, cn.PT(7) * 0.2, "rs")
     scrivi(d, P(5), P(16), "IN QUESTA SCATOLA", font(BAHN, 15, "Bold Condensed"), PETROLIO)
     f_l = font(BAHN, 10.5, "Bold Condensed")
-    contenuto = ["60 carte Persona", "60 carte Ambito"] + (["12 carte evento"] if versione == "A" else []) + ["4 carte riassunto"]
+    # il regolamento ora sta nella scatola, piegato (pitch/regolamento_a4_piegato.html)
+    contenuto = (["60 carte Persona", "60 carte Ambito"] + (["12 carte evento"] if versione == "A" else [])
+                 + ["4 carte riassunto", "il regolamento"])
+    passo = 4.9 if len(contenuto) <= 4 else 4.4
     for i, riga in enumerate(contenuto):  # niente token
-        y = 22.5 + i * 4.9
+        y = 22.5 + i * passo
         q = Image.new("RGBA", (P(2), P(2)), ROSA).rotate(-9, resample=Image.BICUBIC, expand=True)
         incolla_centro(im, q, P(6.2), P(y - 1.3))
         scrivi(d, P(9.4), P(y), riga, f_l, PETROLIO)
     motto = ("Forma le persone rispettando le loro ambizioni, trova a ciascuna il lavoro giusto "
              "e chiudi il collocamento prima del resto del tavolo.")
-    f_m, righe, pt, _ = cn.adatta(motto, BAHN, 8.6, 7, P(LARGO - 10), 4, "SemiBold SemiCondensed")
-    cn.paragrafo(d, P(5), P(43.2), righe, f_m, PETROLIO, cn.PT(pt) * 1.22)
+    f_m, righe, pt, _ = cn.adatta(motto, BAHN, 8.6, 7, P(LARGO - 10), 3, "SemiBold SemiCondensed")
+    cn.paragrafo(d, P(5), P(max(43.2, y + 4.6)), righe, f_m, PETROLIO, cn.PT(pt) * 1.22)
     for i, sigla in enumerate(("MA", "DI", "CO", "OR", "CR", "RI")):
         incolla_centro(im, cn.adesivo(sigla, 7.2, (-6, 4, -3, 5, -4, 3)[i], 0.6), P(9.2 + i * 9.3), P(60))
-    f_p = font(BAHN, 6.2, "SemiCondensed")
-    scrivi(d, P(5), P(67.8), "Regolamento a parte. Prototipo: immagini generate con l'IA.", f_p, PETROLIO)
-    # in fondo il logo del CdS e, sotto, il contributo del Fondo di beneficenza di Intesa Sanpaolo,
-    # a 3 mm dalla piega del fondo
-    cds = logo_cds(44)
-    im.alpha_composite(cds, (P(5), P(69.6)))
-    isp = logo_isp(29)
-    im.alpha_composite(isp, (P(LARGO - 5) - isp.width, P(ALTO - 3) - isp.height))
+    # in fondo il logo del CdS, con sopra da dove viene il gioco, e il contributo del Fondo di beneficenza di
+    # Intesa Sanpaolo; i due loghi in petrolio, l'ultima riga a 3 mm dalla piega del fondo
     f_c = font(BAHN, 5.6, "SemiCondensed")
-    scrivi(d, P(5), P(83.6), "Con il contributo del", f_c, PETROLIO)
-    scrivi(d, P(5), P(86.0), "Fondo di beneficenza di", f_c, PETROLIO)
+    scrivi(d, P(5), P(67.4), "Dalla quotidiana esperienza del", f_c, PETROLIO)
+    cds = logo_cds(42)
+    im.alpha_composite(cds, (P(5), P(68.6)))
+    scrivi(d, P(5), P(81.0), "Con il contributo del", f_c, PETROLIO)
+    scrivi(d, P(5), P(83.2), "Fondo di beneficenza di", f_c, PETROLIO)
+    isp = logo_isp(31)
+    im.alpha_composite(isp, (P(LARGO - 5) - isp.width, P(83.6) - isp.height))
+    scrivi(d, P(5), P(86.6), "Prototipo: immagini generate con l'IA.", font(BAHN, 5.2, "SemiCondensed"), PETROLIO)
     return im
 
 

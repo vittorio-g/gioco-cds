@@ -1,7 +1,9 @@
 """
 Prepara le immagini e i nomi dei poteri che servono ai documenti di pitch/:
-regolamenti.tex (il documento del pitch) e regolamento_a5.html (il libretto del print and play,
-stampato da libretto.py), con le icone come adesivi (img/adesivo_XX.png).
+regolamenti.tex (il documento del pitch), regolamento_a4_piegato.html (il regolamento del print and play,
+stampato da libretto.py) e regolamento_a5.html (il libretto di prima), con le icone come adesivi
+(img/adesivo_XX.png) e i loghi del CdS e di Intesa Sanpaolo in petrolio (img/logo_cds.svg, img/logo_isp.svg,
+da grafica/scatola.py come sul retro della scatola).
 
     py -3 pitch/figure.py
 
@@ -38,6 +40,7 @@ RADICE = QUI.parent
 sys.path.insert(0, str(RADICE / "grafica"))
 import carte_nuove  # noqa: E402
 import poteri  # noqa: E402
+import scatola  # noqa: E402
 
 IMG = QUI / "img"
 IMG.mkdir(exist_ok=True)
@@ -47,7 +50,8 @@ LATO_ILLUSTRAZIONE = 900
 RIQUADRO_AMBITO = (161, 129, 733, 701)  # l'illustrazione dentro una carta dei designer da 756 x 1056
 ABBONDANZA = 24  # 2 mm a 12 pixel per millimetro, intorno alle carte nuove
 
-sorgenti = [f for f in QUI.glob("*.tex") if f.name != "poteri.tex"] + [QUI / "regolamento_a5.html"]
+sorgenti = [f for f in QUI.glob("*.tex") if f.name != "poteri.tex"] + [QUI / "regolamento_a5.html",
+                                                                       QUI / "regolamento_a4_piegato.html"]
 tex = "\n".join(f.read_text(encoding="utf-8") for f in sorgenti)
 usate = set(re.findall(r"\b((?:lav|amb|ill|art|evt)_\d\d|dorso[ABC]?_(?:lav|amb|evt)|riassunto(?:_B)?)\b", tex))
 
@@ -103,6 +107,9 @@ for sigla in ("MA", "DI", "CO", "OR", "CR", "RI"):
     icona.resize((300, 300), Image.LANCZOS).save(IMG / f"ico_{sigla}.png", optimize=True)
     # l'icona come adesivo, col bordo chiaro delle carte, per il libretto
     carte_nuove.adesivo(sigla, 24, 0, 1.6).save(IMG / f"adesivo_{sigla}.png", optimize=True)
+
+for nome in ("cds", "isp"):
+    (IMG / f"logo_{nome}.svg").write_text(scatola.logo_svg(nome), encoding="utf-8")
 
 # toglie le immagini che i documenti non usano più
 for f in IMG.glob("*.jpg"):
