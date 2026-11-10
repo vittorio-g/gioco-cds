@@ -32,8 +32,38 @@ Full-bleed design that fills the card to every edge, because it will be trimmed;
 // delle Persone (per la fascia) e le sei icone.
 const FASCIA = `The first reference image is the back of the other deck of the same game (the "Persone" deck): copy its central band exactly, an off-white torn-paper band across the middle of the card with "COLLOCAMENTO" small and widely letter-spaced and the deck title large in bold condensed petrol-teal capitals, two small pink asterisks at its ends, and the same risograph grain and drawing style. Here the title is "AMBITI" and the background is petrol teal with the drawings in fluorescent pink and off-white, the opposite of the Persone back. The second reference image only shows the six competence symbols of the game, to copy their shapes; when they appear in a row or around a circle, keep this order: wrench, computer screen, speech bubble, checklist, four-pointed sparkle, magnifying glass. Create a brand new card back, not an edit of the references. The only text, spelled exactly: "COLLOCAMENTO" and "AMBITI" on the band, plus a question mark where the proposal asks for one.`;
 
-// "icone": true = si passa il riferimento con le sei icone delle competenze; "fascia": true = anche il dorso delle Persone
+// Sempre il 10/11 Vittorio ha detto che l'idea del jolly (punti di domanda, ruote, dadi) rovina il dorso: bastano le
+// icone a farlo capire. Le proposte grafica_* hanno la fascia e le sei icone e riprendono la grafica delle carte,
+// senza altri significati.
+const COMUNE_GRAFICA = `The back of a playing card (portrait, 63 x 88 mm) for the "Ambiti" deck of "Collocamento", a card game about job placement. The back shows the six competence symbols of the game, the icons printed on every card, so that players recognise the deck at a glance. Nothing else: no question marks, no wheels, no dice, no jokers, no hidden meaning.
+
+It must look like part of the same game as the card fronts and the other backs: punk-fanzine risograph printing with slight grain, scratchy hand-drawn marker doodles, bold condensed DIN-style capitals, sticker-like icons with a thin off-white outline. The Ambiti fronts have a petrol-teal background, so petrol teal (#17474D) is the dominant colour, with fluorescent pink (#FF3D8B) and off-white (#F3ECDD).
+
+Full-bleed design that fills the card to every edge, because it will be trimmed; keep every important element and all text well inside a 5 mm safe margin. Flat printed look, no photographs, no people. Clean and readable from across a table.`;
+
+// "icone": true = si passa il riferimento con le sei icone delle competenze; "fascia": true = anche il dorso delle Persone;
+// "comune": un testo comune diverso da COMUNE
 export const PROPOSTE = {
+  grafica_adesivi: {
+    fascia: true,
+    comune: COMUNE_GRAFICA,
+    prompt: `Proposal "the stickers". The six competence symbols as big stickers exactly like the second reference image, keeping their own colours (orange wrench, blue screen, pink speech bubble, yellow checklist, red sparkle, brown magnifying glass) and the off-white outline, as they appear on the card fronts: these six colours are the only exception to the three inks. Three stickers above the band and three below it, in order, each slightly tilted as if stuck on by hand, with a few small pink scribbled stars and sparks between them.`,
+  },
+  grafica_parati: {
+    fascia: true,
+    comune: COMUNE_GRAFICA,
+    prompt: `Proposal "the wallpaper". The six competence symbols repeated as a regular all-over pattern behind the band, like a printed wallpaper or the inside of a security envelope: medium-size simple symbols in fluorescent pink and off-white on the petrol-teal background, in neat diagonal rows, always in the same order, each slightly tilted like a sticker. The band sits on top of the pattern.`,
+  },
+  grafica_collage: {
+    fascia: true,
+    comune: COMUNE_GRAFICA,
+    prompt: `Proposal "the collage". A sibling of the Persone back: where that back has a collage of work tools, this one has the six competence symbols drawn big, as large fluorescent pink and off-white risograph cut-outs overlapping like a photocopied fanzine page, three above the band and three below, with scratchy marker zigzags and lightning bolts around them.`,
+  },
+  grafica_timbri: {
+    fascia: true,
+    comune: COMUNE_GRAFICA,
+    prompt: `Proposal "the stamps". The six competence symbols as rubber-stamp impressions, each inside a square stamp frame, printed in fluorescent pink with uneven ink and small gaps, scattered at different angles above and below the band, some overlapping, some stamped twice slightly out of register, like the office stamps of an old job centre.`,
+  },
   fascia_ruota: {
     fascia: true,
     prompt: `Proposal "the wheel behind the band". A big prize wheel with six slots fills the card, centred so that the band runs across its middle: above the band the upper half of the wheel with three of the competence symbols as stickers (wrench, computer screen, speech bubble), below the band the lower half with the other three (checklist, four-pointed sparkle, magnifying glass). The tip of a large pink spinner arrow pokes out from behind the band, mid-spin, with a few motion lines: wherever it stops, that is your field.`,
@@ -105,8 +135,8 @@ async function chiedi(nome, fai) {
 await Promise.all(scelte.map(async (id) => {
   const file = join(USCITA, `ambiti_${id}.png`);
   if (existsSync(file)) return;
-  const { icone, fascia, prompt } = PROPOSTE[id];
-  const testo = `${COMUNE}\n\n${prompt}`;
+  const { icone, fascia, comune, prompt } = PROPOSTE[id];
+  const testo = `${comune ?? COMUNE}\n\n${prompt}`;
   const riferimenti = fascia ? ['B_persone.png', 'rif_icone.png'] : ['rif_icone.png'];
   const premessa = fascia ? FASCIA
     : 'The reference image only shows the six competence symbols of the game, to copy their shapes. Create a brand new card back, not an edit of the reference.';

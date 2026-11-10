@@ -127,7 +127,7 @@ Un modello della partita del prototipo di destrezza ([regole](mercato-del-lavoro
 py -3 grafica/pnp.py
 ```
 
-Scrive le due versioni del playtest a confronto (novembre 2026), da stampare ognuna in una volta, fronte e retro sul lato lungo, al 100%: `grafica/stampa/collocamento_pnp_A_con_eventi.pdf` (19 fogli) e `collocamento_pnp_B_senza_eventi.pdf` (18 fogli). `py -3 grafica/pnp.py B` ne fa una sola. Persone e Ambiti sono uguali; cambiano il regolamento, le carte riassunto e i fogli degli eventi, e i pezzi che cambiano dicono la versione.
+Scrive le due versioni del playtest a confronto (novembre 2026), da stampare ognuna in una volta, fronte e retro sul lato lungo, al 100%: `grafica/stampa/collocamento_pnp_A_con_eventi.pdf` (20 fogli) e `collocamento_pnp_B_senza_eventi.pdf` (19 fogli), ognuno con la scatola in fondo. `py -3 grafica/pnp.py B` ne fa una sola. Persone e Ambiti sono uguali; cambiano il regolamento, le carte riassunto e i fogli degli eventi, e i pezzi che cambiano dicono la versione.
 
 | Fogli | Contenuto |
 |---|---|
@@ -136,7 +136,8 @@ Scrive le due versioni del playtest a confronto (novembre 2026), da stampare ogn
 | 15 (A) | Le carte evento 1-9, dorsi panna |
 | 16 (A) | 4 carte riassunto (il turno; punti e poteri), stampate sui due lati, e le carte evento 10-12; gli ultimi due posti restano vuoti |
 | 15 (B) | Le 4 carte riassunto della versione B, negli stessi posti; il resto del foglio è bianco |
-| ultimi 3 | Il regolamento della versione, già imposto: si piegano i tre fogli a metà, uno dentro l'altro, e viene il libretto A5 di 12 pagine |
+| poi 3 | Il regolamento della versione, già imposto: si piegano i tre fogli a metà, uno dentro l'altro, e viene il libretto A5 di 12 pagine |
+| ultimo | La scatola della versione, A4 orizzontale, solo fronte (il retro è bianco): non si plastifica, si incolla su due cartoncini e si taglia al laser |
 
 Lo script scrive anche `grafica/stampa/collocamento_regolamento_a4_A.pdf` e `_B.pdf`, solo i tre fogli del regolamento, da stampare a parte con le stesse impostazioni. Il regolamento ha un sorgente solo, `pitch/regolamento_a5.html`: i pezzi di una sola versione stanno fra i commenti `A` e `/A` o `B` e `/B`, e `pitch/libretto.py` ne stampa le due versioni.
 

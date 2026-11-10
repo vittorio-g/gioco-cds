@@ -6,8 +6,8 @@ sul lato lungo, e da tagliare al laser.
     py -3 grafica/pnp.py B        # una sola
 
 Per il playtest a confronto di novembre 2026 ci sono due versioni: A con le carte evento, B senza.
-Scrive grafica/stampa/collocamento_pnp_A_con_eventi.pdf (38 pagine, 19 fogli) e
-collocamento_pnp_B_senza_eventi.pdf (36 pagine, 18 fogli), e i file di taglio in grafica/stampa/taglio/.
+Scrive grafica/stampa/collocamento_pnp_A_con_eventi.pdf (40 pagine, 20 fogli) e
+collocamento_pnp_B_senza_eventi.pdf (38 pagine, 19 fogli), e i file di taglio in grafica/stampa/taglio/.
 Le immagini che servono le prepara in grafica/stampa/pnp_img/.
 
 - Fogli 1-7: le 60 Persone, col potere scritto sulla carta (grafica/dati/poteri.json,
@@ -17,9 +17,11 @@ Le immagini che servono le prepara in grafica/stampa/pnp_img/.
   riassunto (da un lato il turno, dall'altro punti e poteri) e le carte evento 10-12; restano vuoti
   gli ultimi due posti, in basso al centro e a destra.
 - Versione B, foglio 15: le 4 carte riassunto della B, negli stessi posti; il resto del foglio è bianco.
-- Ultimi tre fogli: il regolamento A5 della versione (pitch/regolamento_a5_A.pdf o _B.pdf), due pagine
+- Poi tre fogli: il regolamento A5 della versione (pitch/regolamento_a5_A.pdf o _B.pdf), due pagine
   per facciata, da piegare a metà. Lo rifà ogni volta pitch/libretto.py (HTML stampato da Edge), dopo
   pitch/figure.py per le immagini.
+- Ultimo foglio: la scatola della versione (grafica/scatola.py), A4 orizzontale, solo fronte, col retro
+  bianco. Non si plastifica: si incolla su due cartoncini e si taglia al laser (lavoro 11).
 
 Carte riassunto, regolamento e intestazioni dei fogli che cambiano dicono la versione, perché i
 materiali dei due tavoli non si mescolino. I token obiettivo non ci sono più dal playtest di novembre.
@@ -56,6 +58,7 @@ QUI = Path(__file__).resolve().parent
 RADICE = QUI.parent
 sys.path.insert(0, str(QUI))
 import carte_nuove  # noqa: E402
+import scatola  # noqa: E402
 import segni_laser  # noqa: E402
 
 CARTE = QUI / "carte_v3"
@@ -263,6 +266,18 @@ for versione in [v.upper() for v in sys.argv[1:]] or list(VERSIONI):
     solo.set_metadata({"title": f"Collocamento - Regolamento, versione {versione}, libretto A5 su A4 fronte e retro"})
     solo.save(STAMPA / f"collocamento_regolamento_a4_{versione}.pdf", garbage=3, deflate=True)
     print(f"grafica/stampa/collocamento_regolamento_a4_{versione}.pdf: {facciate} pagine, {facciate // 2} fogli")
+
+    # in fondo la scatola della versione (grafica/scatola.py): A4 orizzontale, solo fronte, lavoro 11 del laser.
+    # Dietro una pagina bianca, perché nella stampa fronte e retro non si sfasi niente
+    scatola_pdf = STAMPA / f"collocamento_scatola_{versione}.pdf"
+    scatola.pdf(scatola.grafica(versione), scatola_pdf)
+    tutto.insert_pdf(fitz.open(scatola_pdf))
+    tutto.new_page(width=tutto[-1].rect.width, height=tutto[-1].rect.height)
+    completo = pdf.with_suffix(".tmp.pdf")
+    tutto.save(completo, garbage=3, deflate=True)
+    tutto.close()
+    completo.replace(pdf)
+    print(f"  + la scatola in fondo: {len(fitz.open(pdf))} pagine, {len(fitz.open(pdf)) // 2} fogli")
 for vecchio in STAMPA.glob("collocamento_pnp_dorsi_*"):
     vecchio.unlink()
 

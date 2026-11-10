@@ -3,7 +3,9 @@ La scatola di Collocamento: una scatola a ribalta classica, da mazzo di carte, s
 
     py -3 grafica/scatola.py
 
-Scrive grafica/stampa/collocamento_scatola.pdf (al 100%, solo fronte) e
+Scrive grafica/stampa/collocamento_scatola_A.pdf e _B.pdf (al 100%, solo fronte: le due versioni del
+confronto A/B, che cambiano solo per l'elenco del contenuto e la lettera; grafica/pnp.py le mette anche in
+fondo al print and play della versione) e
 grafica/stampa/taglio/collocamento_scatola_taglio.svg, più un'anteprima con le linee sovrapposte.
 
 Per il laser di aira è il lavoro 11 (registrato da LASER il 10/11/2026): sul fronte tre marker ArUco da
@@ -259,15 +261,17 @@ def fronte():
     return im
 
 
-def retro():
-    """Panna: che cosa c'è dentro, in una frase il gioco, le sei competenze."""
+def retro(versione="A"):
+    """Panna: che cosa c'è dentro, in una frase il gioco, le sei competenze. Per il confronto A/B la scatola ha
+    la lettera della versione accanto a CDS, e nella B l'elenco non ha le carte evento."""
     im, d = pannello(LARGO, ALTO)
     f_et = font(BAHN, 7, "SemiBold Condensed")
     scrivi(d, P(5), P(7.5), "COLLOCAMENTO", f_et, MAGENTA, cn.PT(7) * 0.24)
-    scrivi(d, P(LARGO - 5), P(7.5), "CDS", f_et, PETROLIO, cn.PT(7) * 0.2, "rs")
+    scrivi(d, P(LARGO - 5), P(7.5), f"CDS · {versione}", f_et, PETROLIO, cn.PT(7) * 0.2, "rs")
     scrivi(d, P(5), P(17), "IN QUESTA SCATOLA", font(BAHN, 15, "Bold Condensed"), PETROLIO)
     f_l = font(BAHN, 10.5, "Bold Condensed")
-    for i, riga in enumerate(("60 carte Persona", "60 carte Ambito", "12 carte evento", "4 carte riassunto")):  # niente token
+    contenuto = ["60 carte Persona", "60 carte Ambito"] + (["12 carte evento"] if versione == "A" else []) + ["4 carte riassunto"]
+    for i, riga in enumerate(contenuto):  # niente token
         y = 24.5 + i * 5.4
         q = Image.new("RGBA", (P(2), P(2)), ROSA).rotate(-9, resample=Image.BICUBIC, expand=True)
         incolla_centro(im, q, P(6.2), P(y - 1.3))
@@ -325,7 +329,7 @@ def fondo():
     return im
 
 
-def grafica():
+def grafica(versione="A"):
     tela = Image.new("RGBA", (P(FOGLIO[0]), P(FOGLIO[1])), "white")
     d = ImageDraw.Draw(tela)
     a, b = yb0 - ALETTA, yb1 + ALETTA
@@ -347,7 +351,7 @@ def grafica():
     for x0, y0, x1, y1, colore in ((xs1, a, xf, yb0, ROSA), (xs1, yb1, xf, b, ROSA),
                                    (xs2, a, xe, yb0, PETROLIO), (xs2, yb1, xe, b, PETROLIO)):
         campitura(d, x0, y0, x1, y1, colore)
-    tela.alpha_composite(retro(), (P(xb), P(yb0)))
+    tela.alpha_composite(retro(versione), (P(xb), P(yb0)))
     tela.alpha_composite(titolo_verticale(PROFONDITA, ALTO, ROSA, PETROLIO, "CDS · 2-4 PARTECIPANTI"), (P(xs1), P(yb0)))
     tela.alpha_composite(fronte(), (P(xf), P(yb0)))
     tela.alpha_composite(fianco_destro(), (P(xs2), P(yb0)))
@@ -426,10 +430,13 @@ def anteprima(img, destino):
 
 if __name__ == "__main__":
     TAGLIO.mkdir(parents=True, exist_ok=True)
-    img = grafica()
-    pdf(img, STAMPA / "collocamento_scatola.pdf")
+    (STAMPA / "collocamento_scatola.pdf").unlink(missing_ok=True)  # di prima delle due versioni
+    for versione in ("A", "B"):
+        img = grafica(versione)
+        pdf(img, STAMPA / f"collocamento_scatola_{versione}.pdf")
+        if versione == "A":
+            anteprima(img, STAMPA / "collocamento_scatola_anteprima.png")
     (TAGLIO / "collocamento_scatola_taglio.svg").write_text(svg(), encoding="utf-8")
-    anteprima(img, STAMPA / "collocamento_scatola_anteprima.png")
     print(f"scatola: interno {LARGO} x {ALTO} x {PROFONDITA} mm; fustella {larghezza_tot} x {altezza_tot} mm su A4, "
           f"margini {X0:.1f} e {Y0:.1f} mm")
-    print("grafica/stampa/collocamento_scatola.pdf, grafica/stampa/taglio/collocamento_scatola_taglio.svg")
+    print("grafica/stampa/collocamento_scatola_A.pdf e _B.pdf, grafica/stampa/taglio/collocamento_scatola_taglio.svg")
