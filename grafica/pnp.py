@@ -20,7 +20,9 @@ Le immagini che servono le prepara in grafica/stampa/pnp_img/.
 - Poi un foglio: il regolamento della versione (pitch/regolamento_piegato_A.pdf o _B.pdf), A4 fronte e
   retro da piegare a fisarmonica 4 x 4 fino a 52,5 x 74,25 mm, per metterlo nella scatola (dal 10/11/2026;
   prima era un libretto A5 di tre fogli). Non si plastifica. Lo rifà ogni volta pitch/libretto.py (HTML
-  stampato da Edge), dopo pitch/figure.py per le immagini.
+  stampato da Edge), dopo pitch/figure.py per le immagini. Fuori dal print and play rifà anche il libretto
+  A5 di 12 pagine, più comodo da consultare (Vittorio, 10/11/2026): grafica/stampa/collocamento_regolamento_a5_A.pdf
+  e _B.pdf, con lo stesso testo.
 - Ultimo foglio: la scatola della versione (grafica/scatola.py), A4 orizzontale, solo fronte, col retro
   bianco. Non si plastifica: si incolla su due cartoncini e si taglia al laser (lavoro 11).
 
@@ -46,6 +48,7 @@ Servono le illustrazioni in grafica/illustrazioni/, le carte dei designer in gra
 (per i disegni degli Ambiti) e i dorsi in grafica/dorsi_proposte/, tutto da Drive; Pillow, NumPy,
 OpenCV, PyMuPDF, pdflatex con TikZ e Microsoft Edge (per il regolamento).
 """
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -217,6 +220,8 @@ for vecchio in [STAMPA / f"collocamento_pnp.{e}" for e in ("pdf", "tex")] + [STA
 
 for versione in [v.upper() for v in sys.argv[1:]] or list(VERSIONI):
     regolamento = libretto.main(versione)
+    # il libretto A5, da consultare: si tiene allineato al foglio piegato (stesse regole, stessi segnaposto)
+    shutil.copy(libretto.main(versione, formato="a5"), STAMPA / f"collocamento_regolamento_a5_{versione}.pdf")
     testo = TESTA
     for nome, fronti, dorso in (("PERSONE", fronti_per, dorso_per), ("AMBITI", fronti_amb + fronti_amb, dorso_amb)):
         fogli = (len(fronti) + 8) // 9

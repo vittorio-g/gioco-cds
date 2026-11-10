@@ -52,6 +52,7 @@ TAGLIO = STAMPA / "taglio"
 LARGO = 65         # fronte e retro: carte da 63 mm più un millimetro per parte
 ALTO = 90          # carte da 88 mm più un millimetro sopra e sotto
 PROFONDITA = 45    # i fianchi: 136 carte plastificate, circa 43,5 mm, più un po' di gioco
+# (col regolamento piegato dentro, 2-3 mm, Vittorio resta a 45: nella prova avanzava spazio, 10/11/2026)
 LINGUETTA = 10     # la parte che si infila, sopra e sotto: lingua tonda, lati a quarto di cerchio
 COLLA = 12         # la linguetta da incollare
 ALETTA = 20        # le alette parapolvere sopra e sotto i fianchi
