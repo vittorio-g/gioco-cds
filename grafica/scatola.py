@@ -14,7 +14,7 @@ grafica/stampa/segni/lavoro_11_segni.svg; niente crocini. Il file di taglio ha i
 della fustella, #c62828) e il gruppo MARK con le sole pieghe (#1e88e5), che il laser incide leggere e
 continue prima del taglio; LASER lo copia in laser-designs come lavoro_11_taglio.svg.
 
-Dentro ci vanno il regolamento piegato e le carte plastificate: 120 carte, 4 carte riassunto e, dal playtest
+Dentro ci vanno il regolamento (libretto formato carta) e le carte plastificate: 120 carte, 4 carte riassunto e, dal playtest
 di novembre 2026, 12 carte evento (i token non ci sono più). Vittorio plastifica con buste da 2 x 75 micron
 (75 per foglio, 150 la busta intera): misurate, le carte fanno circa 0,32 mm l'una, quindi le 136 carte
 fanno circa 43,5 mm. La scatola stampata il 28/10 era da 44, per 124 carte e 4 token; ora è da 45
@@ -52,7 +52,7 @@ TAGLIO = STAMPA / "taglio"
 LARGO = 65         # fronte e retro: carte da 63 mm più un millimetro per parte
 ALTO = 90          # carte da 88 mm più un millimetro sopra e sotto
 PROFONDITA = 45    # i fianchi: 136 carte plastificate, circa 43,5 mm, più un po' di gioco
-# (col regolamento piegato dentro, 2-3 mm, Vittorio resta a 45: nella prova avanzava spazio, 10/11/2026)
+# (col regolamento dentro, un libretto formato carta di 24 pagine, Vittorio resta a 45: nella prova avanzava spazio, 10/11/2026)
 LINGUETTA = 10     # la parte che si infila, sopra e sotto: lingua tonda, lati a quarto di cerchio
 COLLA = 12         # la linguetta da incollare
 ALETTA = 20        # le alette parapolvere sopra e sotto i fianchi
@@ -223,7 +223,7 @@ LOGHI = {
 
 
 def logo_svg(nome, colore=PETROLIO):
-    """Il logo come testo SVG, tutto in un colore della palette: lo usano la scatola e il regolamento piegato
+    """Il logo come testo SVG, tutto in un colore della palette: lo usano la scatola e il libretto del regolamento
     (pitch/figure.py lo copia in pitch/img/)."""
     file, originali = LOGHI[nome]
     svg = (QUI / "dati" / file).read_text(encoding="utf-8")
@@ -296,7 +296,7 @@ def retro(versione="A"):
     scrivi(d, P(LARGO - 5), P(7.5), f"CDS · {EDIZIONE} · {versione}", f_et, PETROLIO, cn.PT(7) * 0.2, "rs")
     scrivi(d, P(5), P(16), "IN QUESTA SCATOLA", font(BAHN, 15, "Bold Condensed"), PETROLIO)
     f_l = font(BAHN, 10.5, "Bold Condensed")
-    # il regolamento ora sta nella scatola, piegato (pitch/regolamento_a4_piegato.html)
+    # il regolamento ora sta nella scatola: il libretto formato carta (pitch/regolamento_carta.html)
     contenuto = (["60 carte Persona", "60 carte Ambito"] + (["12 carte evento"] if versione == "A" else [])
                  + ["4 carte riassunto", "il regolamento"])
     passo = 4.9 if len(contenuto) <= 4 else 4.4

@@ -1,15 +1,17 @@
 """
 Il regolamento di Collocamento nello stile delle carte: da HTML a PDF con Edge, in due formati.
 
-    py -3 pitch/libretto.py              # il foglio piegato, le due versioni
+    py -3 pitch/libretto.py              # il libretto formato carta, le due versioni
     py -3 pitch/libretto.py B            # una versione sola
-    py -3 pitch/libretto.py a5           # il libretto A5 di prima (anche: a5 B)
+    py -3 pitch/libretto.py a5           # il libretto A5 (anche: a5 B)
 
-- piegato (quello del print and play dal 10/11/2026): un foglio A4 fronte e retro da piegare a
-  fisarmonica 4 x 4, fino a 52,5 x 74,25 mm, per stare nella scatola sopra le carte. Sorgente
-  pitch/regolamento_a4_piegato.html, PDF pitch/regolamento_piegato_A.pdf e _B.pdf, 2 pagine.
-- a5: il libretto di 12 pagine A5 (pitch/regolamento_a5.html, PDF regolamento_a5_A.pdf e _B.pdf),
-  che grafica/pnp.py impaginava quattro per foglio.
+- carta (quello del print and play dal 10/11/2026): un libretto grande come una carta, 63 x 88 mm,
+  da pinzare nel dorso, che sta nella scatola sopra le carte. Sorgente pitch/regolamento_carta.html, PDF
+  pitch/regolamento_carta_A.pdf e _B.pdf, una pagina 63 x 88 per pagina; le pagine devono essere un
+  multiplo di 4, e grafica/pnp.py le impagina a due a due sui fogli A4. Ha preso il posto del foglio A4
+  da piegare a fisarmonica (pitch/regolamento_a4_piegato.html, tolto: è nella storia di git).
+- a5: il libretto di 12 pagine A5 (pitch/regolamento_a5.html, PDF regolamento_a5_A.pdf e _B.pdf), che resta
+  perché si consulta meglio; grafica/pnp.py lo rifà fuori dal print and play.
 
 Riempie i segnaposto (nomi ed effetti dei poteri da grafica/dati/poteri.json, icone delle carte da
 mazzi/), scrive pitch/_libretto.html e lo stampa. Si ferma se qualcosa trabocca dalla sua colonna o
@@ -38,14 +40,14 @@ import poteri  # noqa: E402
 
 PRONTO = QUI / "_libretto.html"
 VERSIONI = {"A": "con eventi", "B": "senza eventi"}
-# formato: (sorgente, pagine, nome del PDF)
+# formato: (sorgente, pagine, nome del PDF); pagine None = un multiplo di 4 qualunque (il libretto si pinza)
 FORMATI = {
-    "piegato": (QUI / "regolamento_a4_piegato.html", 2, "regolamento_piegato_{}.pdf"),
+    "carta": (QUI / "regolamento_carta.html", None, "regolamento_carta_{}.pdf"),
     "a5": (QUI / "regolamento_a5.html", 12, "regolamento_a5_{}.pdf"),
 }
 
 
-def pdf_di(versione, formato="piegato"):
+def pdf_di(versione, formato="carta"):
     return QUI / FORMATI[formato][2].format(versione)
 EDGE = Path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
 
@@ -92,11 +94,14 @@ def edge(*argomenti):
                               capture_output=True, text=True, encoding="utf-8", errors="replace")
 
 
-def main(versione, destino=None, formato="piegato"):
-    """Stampa il regolamento di una versione; destino = un altro PDF, per le prove."""
-    sorgente, pagine, _ = FORMATI[formato]
-    destino = destino or pdf_di(versione, formato)
-    PRONTO.write_text(riempi(sorgente.read_text(encoding="utf-8"), versione), encoding="utf-8")
+# una pagina per gli appunti: nel libretto formato carta se ne aggiungono prima del retro finché le pagine non
+# sono un multiplo di 4 (il libretto si pinza: ogni foglio piegato fa quattro pagine)
+APPUNTI = ('<section class="sezione appunti"><div class="occhiello">Durante la partita</div><h2>Appunti</h2>'
+           '<div class="righe"></div></section>\n')
+
+
+def stampa(html, destino):
+    PRONTO.write_text(html, encoding="utf-8")
     destino.unlink(missing_ok=True)
     edge("--no-pdf-header-footer", f"--print-to-pdf={destino}", PRONTO.as_uri())
     for _ in range(60):  # Edge può tornare prima di aver finito di scrivere
@@ -104,19 +109,32 @@ def main(versione, destino=None, formato="piegato"):
             break
         time.sleep(0.5)
     time.sleep(0.5)
-    pdf = fitz.open(destino)
+    return fitz.open(destino)
+
+
+def main(versione, destino=None, formato="carta"):
+    """Stampa il regolamento di una versione; destino = un altro PDF, per le prove."""
+    sorgente, pagine, _ = FORMATI[formato]
+    destino = destino or pdf_di(versione, formato)
+    html = riempi(sorgente.read_text(encoding="utf-8"), versione)
+    pdf = stampa(html, destino)
+    if not pagine and len(pdf) % 4:
+        mancano = 4 - len(pdf) % 4
+        pdf.close()
+        pdf = stampa(html.replace('<section class="retro">', APPUNTI * mancano + '<section class="retro">'), destino)
     # lo script della pagina scrive TRABOCCA dove il contenuto esce dalla colonna o dal pannello
     fuori = [str(i + 1) for i, p in enumerate(pdf) if "TRABOCCA" in p.get_text()]
     if fuori:
         raise SystemExit(f"Versione {versione}: il testo esce dalla sua colonna nelle pagine {', '.join(fuori)}")
-    if len(pdf) != pagine:
-        raise SystemExit(f"Versione {versione}: il regolamento ha {len(pdf)} pagine invece di {pagine}")
+    if (pagine and len(pdf) != pagine) or (not pagine and len(pdf) % 4):
+        raise SystemExit(f"Versione {versione}: il regolamento ha {len(pdf)} pagine invece di "
+                         f"{pagine or 'un multiplo di 4'}")
     print(f"{destino.name}: {len(pdf)} pagine, {destino.stat().st_size / 1e6:.1f} MB")
     return destino
 
 
 if __name__ == "__main__":
     argomenti = [a for a in sys.argv[1:]]
-    formato = "a5" if "a5" in argomenti else "piegato"
+    formato = "a5" if "a5" in argomenti else "carta"
     for v in [a.upper() for a in argomenti if a != "a5"] or VERSIONI:
         main(v, formato=formato)

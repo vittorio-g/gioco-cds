@@ -1,9 +1,10 @@
 """
 Prepara le immagini e i nomi dei poteri che servono ai documenti di pitch/:
-regolamenti.tex (il documento del pitch), regolamento_a4_piegato.html (il regolamento del print and play,
-stampato da libretto.py) e regolamento_a5.html (il libretto di prima), con le icone come adesivi
-(img/adesivo_XX.png) e i loghi del CdS e di Intesa Sanpaolo in petrolio (img/logo_cds.svg, img/logo_isp.svg,
-da grafica/scatola.py come sul retro della scatola).
+regolamenti.tex (il documento del pitch), regolamento_carta.html (il libretto formato carta del print and
+play, stampato da libretto.py) e regolamento_a5.html (il libretto A5), con le icone come adesivi
+(img/adesivo_XX.png) e i loghi del CdS e di Intesa Sanpaolo da grafica/scatola.py, in petrolio come sul retro
+della scatola (img/logo_cds.svg, img/logo_isp.svg) e in panna per il retro petrolio del libretto
+(img/logo_cds_panna.svg, img/logo_isp_panna.svg).
 
     py -3 pitch/figure.py
 
@@ -51,7 +52,7 @@ RIQUADRO_AMBITO = (161, 129, 733, 701)  # l'illustrazione dentro una carta dei d
 ABBONDANZA = 24  # 2 mm a 12 pixel per millimetro, intorno alle carte nuove
 
 sorgenti = [f for f in QUI.glob("*.tex") if f.name != "poteri.tex"] + [QUI / "regolamento_a5.html",
-                                                                       QUI / "regolamento_a4_piegato.html"]
+                                                                       QUI / "regolamento_carta.html"]
 tex = "\n".join(f.read_text(encoding="utf-8") for f in sorgenti)
 usate = set(re.findall(r"\b((?:lav|amb|ill|art|evt)_\d\d|dorso[ABC]?_(?:lav|amb|evt)|riassunto(?:_B)?)\b", tex))
 
@@ -110,6 +111,7 @@ for sigla in ("MA", "DI", "CO", "OR", "CR", "RI"):
 
 for nome in ("cds", "isp"):
     (IMG / f"logo_{nome}.svg").write_text(scatola.logo_svg(nome), encoding="utf-8")
+    (IMG / f"logo_{nome}_panna.svg").write_text(scatola.logo_svg(nome, scatola.PANNA), encoding="utf-8")
 
 # toglie le immagini che i documenti non usano più
 for f in IMG.glob("*.jpg"):
