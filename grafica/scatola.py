@@ -14,7 +14,7 @@ grafica/stampa/segni/lavoro_11_segni.svg; niente crocini. Il file di taglio ha i
 della fustella, #c62828) e il gruppo MARK con le sole pieghe (#1e88e5), che il laser incide leggere e
 continue prima del taglio; LASER lo copia in laser-designs come lavoro_11_taglio.svg.
 
-Dentro ci vanno le carte plastificate, senza il regolamento: 120 carte, 4 carte riassunto e, dal playtest
+Dentro ci vanno il regolamento piegato e le carte plastificate: 120 carte, 4 carte riassunto e, dal playtest
 di novembre 2026, 12 carte evento (i token non ci sono più). Vittorio plastifica con buste da 2 x 75 micron
 (75 per foglio, 150 la busta intera): misurate, le carte fanno circa 0,32 mm l'una, quindi le 136 carte
 fanno circa 43,5 mm. La scatola stampata il 28/10 era da 44, per 124 carte e 4 token; ora è da 45
@@ -247,19 +247,22 @@ def svg_immagine(svg, larghezza_mm):
     return Image.frombytes("RGBA", (pix.width, pix.height), pix.samples)
 
 
-COPERTINA = "03"  # la Persona del fronte: L'Archistar (scelta di Vittorio, al posto del ventaglio di carte)
+# La seconda scatola stampata (novembre 2026) si distingue dalla prima del 28/10, che aveva L'Archistar: c'è scritto
+# V2 e in copertina c'è un altro personaggio, La Curiosa (Vittorio, 10/11/2026)
+EDIZIONE = "V2"
+COPERTINA = "19"  # la Persona del fronte (prima L'Archistar, "03")
 # Le informazioni del gioco sotto l'immagine: (valore grande, etichetta). Durata decisa da Vittorio il
 # 28/10: 15 minuti. L'età minima non c'è ancora: si aggiunge qui, per esempio ("10+", "anni").
 INFO_FRONTE = [("2-4", "partecipanti"), ("15 MIN", "gioco di carte")]
 
 
 def fronte():
-    """Petrolio, titolo grande; sotto la stampa dell'Archistar con le sue tre ambizioni come adesivi
-    sul bordo, come sulle carte, e le informazioni del gioco divise da filetti rosa."""
+    """Petrolio, titolo grande; sotto la stampa della Persona di COPERTINA con le sue tre ambizioni come adesivi
+    sul bordo, come sulle carte, il bollino dell'edizione e le informazioni del gioco divise da filetti rosa."""
     im, d = pannello(LARGO, ALTO)
     f_et = font(BAHN, 7, "SemiBold Condensed")
     scrivi(d, P(4.5), P(6.5), "CDS", f_et, ROSA, cn.PT(7) * 0.24)
-    scrivi(d, P(LARGO - 4.5), P(6.5), "PROTOTIPO", f_et, PANNA, cn.PT(7) * 0.2, "rs")
+    scrivi(d, P(LARGO - 4.5), P(6.5), f"PROTOTIPO {EDIZIONE}", f_et, PANNA, cn.PT(7) * 0.2, "rs")
     f_t, righe, pt, _ = cn.adatta("COLLOCAMENTO", BAHN, 26, 14, P(LARGO - 8), 1, "Bold Condensed")
     scrivi(d, P(LARGO / 2), P(13.5) + cn.PT(pt) * 0.72, righe[0], f_t, PANNA, 0, "ms")
     barra = Image.new("RGBA", (P(20), P(1.2)), ROSA).rotate(-2, resample=Image.BICUBIC, expand=True)
@@ -270,6 +273,8 @@ def fronte():
     incolla_centro(im, stampa_illustrazione(COPERTINA, lato, 2), P(cx), P(cy))
     for i, (k, ang) in enumerate(zip(cn.AMBIZIONI[COPERTINA], (6, -5, 4))):
         incolla_centro(im, cn.adesivo(k, 9.5, ang, 0.8), P(cx + lato / 2 + 2.2), P(cy - 12.5 + i * 12.5))
+    # il bollino dell'edizione, sull'angolo in alto a sinistra della stampa
+    incolla_centro(im, chip(EDIZIONE, 12, ROSA, PETROLIO, 8), P(cx - lato / 2 + 3.4), P(cy - lato / 2 + 1.6))
     # le informazioni del gioco: valore grande, etichetta piccola in rosa, colonne divise da un filetto
     f_v = font(BAHN, 14, "Bold Condensed")
     f_e = font(BAHN, 6, "SemiBold Condensed")
@@ -290,7 +295,7 @@ def retro(versione="A"):
     im, d = pannello(LARGO, ALTO)
     f_et = font(BAHN, 7, "SemiBold Condensed")
     scrivi(d, P(5), P(7.5), "COLLOCAMENTO", f_et, MAGENTA, cn.PT(7) * 0.24)
-    scrivi(d, P(LARGO - 5), P(7.5), f"CDS · {versione}", f_et, PETROLIO, cn.PT(7) * 0.2, "rs")
+    scrivi(d, P(LARGO - 5), P(7.5), f"CDS · {EDIZIONE} · {versione}", f_et, PETROLIO, cn.PT(7) * 0.2, "rs")
     scrivi(d, P(5), P(16), "IN QUESTA SCATOLA", font(BAHN, 15, "Bold Condensed"), PETROLIO)
     f_l = font(BAHN, 10.5, "Bold Condensed")
     # il regolamento ora sta nella scatola, piegato (pitch/regolamento_a4_piegato.html)
@@ -349,14 +354,14 @@ def coperchio():
     f_t, righe, pt, _ = cn.adatta("COLLOCAMENTO", BAHN, 26, 14, P(LARGO - 10), 1, "Bold Condensed")
     scrivi(d, P(LARGO / 2), P(PROFONDITA / 2) + cn.PT(pt) * 0.36, righe[0], f_t, PETROLIO, 0, "ms")
     f_s = font(BAHN, 7, "SemiBold Condensed")
-    scrivi(d, P(LARGO / 2), P(PROFONDITA / 2) + P(9.5), "CDS · CARTE", f_s, PETROLIO, cn.PT(7) * 0.24, "ms")
+    scrivi(d, P(LARGO / 2), P(PROFONDITA / 2) + P(9.5), f"CDS · CARTE · {EDIZIONE}", f_s, PETROLIO, cn.PT(7) * 0.24, "ms")
     return im.rotate(180)
 
 
 def fondo():
     im, d = pannello(LARGO, PROFONDITA)
     f_s = font(BAHN, 7, "SemiBold Condensed")
-    scrivi(d, P(LARGO / 2), P(PROFONDITA / 2) + P(1), "CDS · COLLOCAMENTO · PROTOTIPO 2026", f_s, PANNA,
+    scrivi(d, P(LARGO / 2), P(PROFONDITA / 2) + P(1), f"CDS · COLLOCAMENTO · PROTOTIPO {EDIZIONE} · 2026", f_s, PANNA,
            cn.PT(7) * 0.2, "ms")
     return im
 
