@@ -258,7 +258,7 @@ INFO_FRONTE = [("2-4", "partecipanti"), ("15 MIN", "gioco di carte")]
 
 def fronte():
     """Petrolio, titolo grande; sotto la stampa della Persona di COPERTINA con le sue tre ambizioni come adesivi
-    sul bordo, come sulle carte, il bollino dell'edizione e le informazioni del gioco divise da filetti rosa."""
+    sul bordo, come sulle carte, e le informazioni del gioco divise da filetti rosa; l'edizione è in alto a destra."""
     im, d = pannello(LARGO, ALTO)
     f_et = font(BAHN, 7, "SemiBold Condensed")
     scrivi(d, P(4.5), P(6.5), "CDS", f_et, ROSA, cn.PT(7) * 0.24)
@@ -273,8 +273,6 @@ def fronte():
     incolla_centro(im, stampa_illustrazione(COPERTINA, lato, 2), P(cx), P(cy))
     for i, (k, ang) in enumerate(zip(cn.AMBIZIONI[COPERTINA], (6, -5, 4))):
         incolla_centro(im, cn.adesivo(k, 9.5, ang, 0.8), P(cx + lato / 2 + 2.2), P(cy - 12.5 + i * 12.5))
-    # il bollino dell'edizione, sull'angolo in alto a sinistra della stampa
-    incolla_centro(im, chip(EDIZIONE, 12, ROSA, PETROLIO, 8), P(cx - lato / 2 + 3.4), P(cy - lato / 2 + 1.6))
     # le informazioni del gioco: valore grande, etichetta piccola in rosa, colonne divise da un filetto
     f_v = font(BAHN, 14, "Bold Condensed")
     f_e = font(BAHN, 6, "SemiBold Condensed")
