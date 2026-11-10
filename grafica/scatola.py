@@ -7,13 +7,16 @@ Scrive grafica/stampa/collocamento_scatola.pdf (da stampare su cartoncino, al 10
 grafica/stampa/taglio/collocamento_scatola_taglio.svg (taglio, pieghe da cordonare e crocini,
 per tools/svg_to_lbrn2.py della repo laser-designs), più un'anteprima con le linee sovrapposte.
 
-Dentro ci vanno le carte plastificate, senza il regolamento: 120 carte, 4 carte riassunto e 4 token.
-Vittorio plastifica con buste da 2 x 75 micron (75 per foglio, 150 la busta intera): ogni carta ha
-0,15 mm di plastica, e con carta da 100-120 g avevo stimato 0,25-0,30 mm. Misurate, le 124 carte fanno
-circa 40 mm (0,32 mm a carta), più circa 1,3 mm di token: la scatola ne tiene 44 (PROFONDITA). Quella
-stampata il 28/10 era da 40 e non bastava. Se il mazzo viene più spesso basta cambiare quel numero: la
-fustella sta nell'A4 con almeno 4,5 mm di margine finché 2 x (LINGUETTA + PROFONDITA) + ALTO non
-supera 201 mm. Le linguette restano dentro la scatola: se la stampante ne perde l'abbondanza non si vede.
+Dentro ci vanno le carte plastificate, senza il regolamento: 120 carte, 4 carte riassunto e, dal playtest
+di novembre 2026, 12 carte evento (i token non ci sono più). Vittorio plastifica con buste da 2 x 75 micron
+(75 per foglio, 150 la busta intera): misurate, le carte fanno circa 0,32 mm l'una, quindi le 136 carte
+fanno circa 43,5 mm. La scatola stampata il 28/10 era da 44, per 124 carte e 4 token; ora è da 45
+(PROFONDITA), con le linguette da 10 invece che da 11 perché la fustella stia ancora nell'A4: ci sta con
+almeno 4,5 mm di margine finché 2 x (LINGUETTA + PROFONDITA) + ALTO non supera 201 mm. Le linguette
+restano dentro la scatola: se la stampante ne perde l'abbondanza non si vede.
+
+La scatola non si plastifica: sono tre fogli incollati uno sull'altro, la stampa sopra e due cartoncini
+sotto, e si tagliano insieme al laser.
 
 Linguette a tutta larghezza fino allo spigolo, con i lati a quarto di cerchio (senza i gradini di
 scarico ai lati, che a Vittorio non piacevano); alette dei fianchi con gli angoli tondi.
@@ -40,8 +43,8 @@ TAGLIO = STAMPA / "taglio"
 # ---------------------------------------------------------------- misure, in mm
 LARGO = 65         # fronte e retro: carte da 63 mm più un millimetro per parte
 ALTO = 90          # carte da 88 mm più un millimetro sopra e sotto
-PROFONDITA = 44    # i fianchi: il mazzo plastificato misurato, circa 41 mm coi token, più un po' di gioco
-LINGUETTA = 11     # la parte che si infila, sopra e sotto: lingua tonda, lati a quarto di cerchio
+PROFONDITA = 45    # i fianchi: 136 carte plastificate, circa 43,5 mm, più un po' di gioco
+LINGUETTA = 10     # la parte che si infila, sopra e sotto: lingua tonda, lati a quarto di cerchio
 COLLA = 12         # la linguetta da incollare
 ALETTA = 20        # le alette parapolvere sopra e sotto i fianchi
 R_ALETTA = 6       # gli angoli tondi delle alette
