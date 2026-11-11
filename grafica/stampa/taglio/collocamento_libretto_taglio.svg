@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 210 297">
+<!-- lavoro 12: Collocamento, fogli del libretto del regolamento, 88 x 126, da piegare a metà in orizzontale. Coordinate del foglio A4 (fronte); aira laser lo porta sulla macchina dai marker. Scritto da gioco-cds/grafica/pnp.py. -->
+<g id="CUT">
+<rect x="15.000" y="20.500" width="88.000" height="126.000" rx="0.000" fill="none" stroke="#c62828" stroke-width="0.2"/>
+<rect x="107.000" y="20.500" width="88.000" height="126.000" rx="0.000" fill="none" stroke="#c62828" stroke-width="0.2"/>
+<rect x="15.000" y="150.500" width="88.000" height="126.000" rx="0.000" fill="none" stroke="#c62828" stroke-width="0.2"/>
+<rect x="107.000" y="150.500" width="88.000" height="126.000" rx="0.000" fill="none" stroke="#c62828" stroke-width="0.2"/>
+</g>
+</svg>

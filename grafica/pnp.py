@@ -46,6 +46,10 @@ sono già specchiati per il lato lungo.
 Il libretto: ogni coppia di pagine (un foglio del libretto, 126 x 88 mm) sta in verticale, con la piega
 in orizzontale; sul fronte le pagine ruotano in senso orario, sul retro in senso antiorario, nella colonna
 specchiata: col fronte e retro sul lato lungo dietro ogni pagina c'è quella che la segue nel libretto.
+Per il laser è il lavoro 12 (LASER, 11/11/2026, laser-designs commit 573bdc4): i marker 36-38 da 5 mm negli
+stessi posti dei fogli di carte, solo sul fronte, e il taglio dei 4 posti 88 x 126 ad angoli vivi, sempre
+tutti e 4 (sul secondo foglio A4 i due in basso sono bianchi); niente MARK, la piega si fa a mano. Carta da
+80 g. I crocini restano, per il taglio a mano.
 
 Servono le illustrazioni in grafica/illustrazioni/, le carte dei designer in grafica/carte_v2/
 (per i disegni degli Ambiti) e i dorsi in grafica/dorsi_proposte/, tutto da Drive; Pillow, NumPy,
@@ -83,6 +87,7 @@ X0 = (210 - (3 * W + 4 * ABB)) / 2  # 6.5: il bordo di taglio della prima colonn
 Y0 = (297 - (3 * H + 4 * ABB)) / 2  # 12.5: il bordo di taglio della prima riga, dall'alto
 R_ANGOLI = 3
 LAVORO_9, LAVORO_7 = 4, 5  # i lavori di aira laser: fogli da 9 carte e foglio da 7 (riassunti ed eventi)
+LAVORO_LIBRETTO = 12  # il lavoro dei fogli del libretto (aira laser, marker 36-38, assegnato da LASER l'11/11/2026)
 
 
 def posto(k, specchio=False):
@@ -278,6 +283,8 @@ def fogli_libretto(regolamento):
                 for v in ys:
                     testo += rf"\draw[black,line width=0.15mm] ({xs[0] - ABB - 7},{y(v)}) -- ({xs[0] - ABB - 1.5},{y(v)});" + "\n"
                     testo += rf"\draw[black,line width=0.15mm] ({xs[-1] + ABB + 1.5},{y(v)}) -- ({xs[-1] + ABB + 7},{y(v)});" + "\n"
+                if LAVORO_LIBRETTO:  # i marker del laser, negli stessi posti dei fogli di carte
+                    testo += segni(LAVORO_LIBRETTO)
             testo += chiudi()
     return testo
 
@@ -355,9 +362,10 @@ for vecchio in STAMPA.glob("collocamento_pnp_dorsi_*"):
 # Come vuole aira laser (laser-designs, designs/fogli-stampati/README.md): A4 210 x 297 in mm, coordinate del
 # fronte stampato, solo il gruppo CUT coi contorni (rosso #c62828, 0,2). Niente gruppo MARK: per il laser vuol
 # dire incisione. La sessione LASER li copia in fogli-stampati come lavoro_04_taglio.svg e lavoro_05_taglio.svg.
-def svg_taglio(lavoro, posti, cosa):
-    righe = [f'<rect x="{x:.3f}" y="{su:.3f}" width="{W:.3f}" height="{H:.3f}" rx="{R_ANGOLI:.3f}" fill="none" '
-             f'stroke="#c62828" stroke-width="0.2"/>' for x, su in (posto(k) for k in posti)]
+def svg_taglio(lavoro, rettangoli, cosa, raggio=R_ANGOLI):
+    """rettangoli = [(x, su, larghezza, altezza), ...] in mm sul fronte."""
+    righe = [f'<rect x="{x:.3f}" y="{su:.3f}" width="{w:.3f}" height="{h:.3f}" rx="{raggio:.3f}" fill="none" '
+             f'stroke="#c62828" stroke-width="0.2"/>' for x, su, w, h in rettangoli]
     return ('<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 210 297">\n'
             f'<!-- lavoro {lavoro}: Collocamento, {cosa}. Coordinate del foglio A4 (fronte); aira laser lo porta '
             'sulla macchina dai marker. Scritto da gioco-cds/grafica/pnp.py. -->\n'
@@ -366,9 +374,16 @@ def svg_taglio(lavoro, posti, cosa):
 
 (TAGLIO / "collocamento_riassunti_taglio.svg").unlink(missing_ok=True)  # il foglio di prima, coi token
 (TAGLIO / "collocamento_carte_taglio.svg").write_text(
-    svg_taglio(LAVORO_9, range(9), "fogli da 9 carte 63 x 88 (Persone, Ambiti, eventi 1-9)"), encoding="utf-8")
+    svg_taglio(LAVORO_9, [(*posto(k), W, H) for k in range(9)],
+               "fogli da 9 carte 63 x 88 (Persone, Ambiti, eventi 1-9)"), encoding="utf-8")
 (TAGLIO / "collocamento_riassunti_eventi_taglio.svg").write_text(
-    svg_taglio(LAVORO_7, range(7), "foglio da 7 carte, 4 riassunto ed eventi 10-12; vuoti gli ultimi due posti"),
+    svg_taglio(LAVORO_7, [(*posto(k), W, H) for k in range(7)],
+               "foglio da 7 carte, 4 riassunto ed eventi 10-12; vuoti gli ultimi due posti"), encoding="utf-8")
+# il libretto: i 4 fogli da 88 x 126, angoli vivi, sempre tutti e 4 (sul secondo foglio A4 i due in basso sono bianchi)
+(TAGLIO / "collocamento_libretto_taglio.svg").write_text(
+    svg_taglio(LAVORO_LIBRETTO or "da assegnare", [posto_libretto(k) for k in range(4)],
+               "fogli del libretto del regolamento, 88 x 126, da piegare a metà in orizzontale", raggio=0),
     encoding="utf-8")
 print("grafica/stampa/taglio: collocamento_carte_taglio.svg (lavoro 4, fogli 1-15), "
-      "collocamento_riassunti_eventi_taglio.svg (lavoro 5, foglio 16)")
+      "collocamento_riassunti_eventi_taglio.svg (lavoro 5, foglio 16), "
+      f"collocamento_libretto_taglio.svg (lavoro {LAVORO_LIBRETTO or 'da assegnare'}, fogli del regolamento)")

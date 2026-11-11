@@ -3,7 +3,7 @@
 Il laser di aira (sessione LASER) trova i fogli sul piano con la telecamera leggendo tre marker ArUco
 (DICT_4X4_250) stampati sul fronte. Le pagine coi marker le fa laser-designs (designs/fogli-stampati/segni.py)
 e sono copiate in grafica/stampa/segni/lavoro_NN_segni.svg: 4 = fogli da 9 carte, 5 = foglio da 7 carte,
-11 = scatola. Qui si leggono come rettangoli, da ridisegnare in vettoriale nei PDF (pnp.py, scatola.py).
+11 = scatola, 12 = fogli del libretto del regolamento. Qui si leggono come rettangoli, da ridisegnare in vettoriale nei PDF (pnp.py, scatola.py).
 """
 import re
 from pathlib import Path
